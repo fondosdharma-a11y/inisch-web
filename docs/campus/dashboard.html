@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Campus — INISCH</title>
+<script>(function(){var t=localStorage.getItem('inisch-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="css/campus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<header><nav>
+  <a href="../index.html" class="nav-logo"></a>
+  <div class="navlinks">
+    <a href="../index.html">Sitio INISCH</a>
+  </div>
+  <button class="theme-toggle"></button>
+  <a href="#" data-action="logout" class="btn-campus">Cerrar sesión</a>
+  <button class="navtoggle">☰</button>
+</nav></header>
+
+<div id="configBanner" class="config-banner"></div>
+
+<div class="dash-header">
+  <div class="wrap row">
+    <div>
+      <h1>Hola, <span id="studentName">alumno</span></h1>
+      <p>Este es tu progreso en el Sistema Código Holográfico.</p>
+    </div>
+  </div>
+</div>
+
+<div class="course-block">
+  <h2 id="courseTitle">Etapa 1: Iniciación — El Despertar</h2>
+  <p class="desc">Guía de Interiorización Personal del Sistema Código Holográfico.</p>
+  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+  <p class="note" id="progressLabel" style="margin-top:8px;">0 de 0 lecciones completadas</p>
+
+  <div id="lessonList" style="margin-top:30px;"></div>
+</div>
+
+<div class="wrap" style="padding:0 32px 80px;">
+  <div class="cta-final">
+    <h2>¿Listo para la siguiente etapa?</h2>
+    <p>Al completar la Etapa 1 podrás continuar hacia la Etapa 2: Maestría.</p>
+    <a href="../formacion.html#etapa2" class="btn-line">Conocer Etapa 2</a>
+  </div>
+</div>
+
+<script src="js/supabase-config.js"></script>
+<script src="js/app.js"></script>
+<script>
+(async function(){
+  var configBanner = document.getElementById('configBanner');
+  if (campusNotConfigured()){
+    showNotConfiguredBanner(configBanner);
+    document.getElementById('lessonList').innerHTML = '<p style="color:var(--ink-dim); font-size:14.5px;">Cuando el campus esté conectado, aquí verás tus lecciones reales de la Etapa 1.</p>';
+    return;
+  }
+
+  var session = await requireSession('login.html');
+  if (!session) return;
+  var userId = session.user.id;
+
+  // Perfil
+  var profileRes = await supabaseClient.from('profiles').select('full_name').eq('id', userId).single();
+  if (profileRes.data && profileRes.data.full_name){
+    document.getElementById('studentName').textContent = profileRes.data.full_name;
+  }
+
+  // Curso Etapa 1 + lecciones
+  var courseRes = await supabaseClient.from('courses').select('id, title').eq('etapa', 1).single();
+  if (courseRes.error || !courseRes.data){
+    document.getElementById('lessonList').innerHTML = '<p style="color:var(--ink-dim);">Aún no hay contenido cargado para la Etapa 1.</p>';
+    return;
+  }
+  document.getElementById('courseTitle').textContent = courseRes.data.title;
+
+  var lessonsRes = await supabaseClient.from('lessons').select('id, title, order_index').eq('course_id', courseRes.data.id).order('order_index');
+  var lessons = lessonsRes.data || [];
+
+  var progressRes = await supabaseClient.from('progress').select('lesson_id').eq('student_id', userId);
+  var doneIds = (progressRes.data || []).map(function(r){ return r.lesson_id; });
+
+  function renderProgress(){
+    var pct = lessons.length ? Math.round((doneIds.length / lessons.length) * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = doneIds.length + ' de ' + lessons.length + ' lecciones completadas';
+  }
+  renderProgress();
+
+  var listEl = document.getElementById('lessonList');
+  listEl.innerHTML = '';
+  lessons.forEach(function(lesson){
+    var isDone = doneIds.indexOf(lesson.id) !== -1;
+    var row = document.createElement('div');
+    row.className = 'lesson-row';
+    row.innerHTML =
+      '<div class="lesson-check' + (isDone ? ' done' : '') + '" data-lesson="' + lesson.id + '">' + (isDone ? '✓' : '') + '</div>' +
+      '<div class="lesson-title' + (isDone ? ' done' : '') + '">' + lesson.title + '</div>';
+    listEl.appendChild(row);
+
+    row.querySelector('.lesson-check').addEventListener('click', async function(){
+      var already = doneIds.indexOf(lesson.id) !== -1;
+      if (already){
+        await supabaseClient.from('progress').delete().eq('student_id', userId).eq('lesson_id', lesson.id);
+        doneIds = doneIds.filter(function(id){ return id !== lesson.id; });
+      } else {
+        await supabaseClient.from('progress').insert({ student_id: userId, lesson_id: lesson.id });
+        doneIds.push(lesson.id);
+      }
+      this.classList.toggle('done');
+      this.textContent = this.classList.contains('done') ? '✓' : '';
+      row.querySelector('.lesson-title').classList.toggle('done');
+      renderProgress();
+    });
+  });
+})();
+</script>
+<script src="../js/theme.js"></script>
+</body>
+</html>
