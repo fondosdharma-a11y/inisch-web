@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>INISCH — Propuesta 1: Código Ancestral</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap');
+  :root{
+    --ink:#25353C; --ink-dim:#63767C; --teal:#3C7285; --teal-2:#5E9CAD; --teal-deep:#254C58;
+    --gold:#C6A03B; --bg:#F7F2E7; --bg-2:#EFE5D0; --line: rgba(60,114,133,0.20); --line-gold: rgba(198,160,59,0.35);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{ background:var(--bg); color:var(--ink); font-family:'Jost', sans-serif; font-weight:300; line-height:1.65; }
+  h1,h2,h3{ font-family:'Cormorant Garamond', serif; font-weight:600; color:var(--teal-deep); }
+  a{ color:inherit; text-decoration:none; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 32px; }
+  header{ position:sticky; top:0; z-index:50; background:rgba(247,242,231,0.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--line-gold);}
+  nav{ display:flex; align-items:center; justify-content:space-between; padding:14px 32px; max-width:1180px; margin:0 auto;}
+  .nav-logo{ width:46px; height:46px; border-radius:50%; overflow:hidden; background-image:url('../assets/LOGO_INISCH_NUEVO_png_copia__1_.png'); background-size:230% auto; background-position:center 6%; background-repeat:no-repeat; border:1px solid var(--line-gold); }
+  .navlinks{ display:flex; gap:32px; font-size:14.5px; color:var(--ink-dim); }
+  .navlinks a:hover{ color:var(--teal); }
+  .btn-campus{ background:var(--teal-deep); color:#F7F2E7; padding:10px 22px; border-radius:2px; font-size:13.5px; }
+  .navtoggle{ display:none; background:none; border:none; font-size:24px; color:var(--teal-deep); }
+  .masthead{ width:100%; height:230px; overflow:hidden; border-bottom:1px solid var(--line-gold); }
+  .masthead img{ width:100%; height:100%; object-fit:cover; object-position:center 40%; display:block; }
+  .hero{ padding:90px 32px 80px; text-align:center; }
+  .eyebrow{ font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--teal); font-size:18px; margin-bottom:22px; }
+  h1.hero-title{ font-size:clamp(38px,6vw,66px); line-height:1.12; max-width:780px; margin:0 auto 26px; }
+  h1.hero-title em{ font-style:italic; color:var(--gold); }
+  .hero-sub{ max-width:540px; margin:0 auto 40px; color:var(--ink-dim); font-size:16.5px; }
+  .hero-cta{ display:flex; gap:18px; justify-content:center; flex-wrap:wrap; }
+  .btn-teal{ background:var(--teal-deep); color:#F7F2E7; padding:14px 30px; font-size:14.5px; border-radius:2px; }
+  .btn-line{ border:1px solid var(--line-gold); color:var(--teal-deep); padding:14px 30px; font-size:14.5px; border-radius:2px; }
+  .sistema{ padding:90px 32px; border-top:1px solid var(--line); background:var(--bg-2); }
+  .sistema-grid{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:70px; align-items:center; }
+  .sistema-mark{ width:100%; aspect-ratio:1; border-radius:50%; overflow:hidden; background-image:url('../assets/LOGO_INISCH_NUEVO_png_copia__1_.png'); background-size:180% auto; background-position:center 8%; border:1px solid var(--line-gold); }
+  .sistema h2{ font-size:clamp(28px,3.4vw,40px); margin-bottom:22px; line-height:1.2; }
+  .sistema p{ color:var(--ink-dim); font-size:16px; margin-bottom:16px; max-width:480px; }
+  .quote{ font-family:'Cormorant Garamond', serif; font-style:italic; font-size:21px; color:var(--teal); margin-top:24px; max-width:460px; line-height:1.5; }
+  .programas{ padding:100px 32px; }
+  .prog-head{ text-align:center; max-width:600px; margin:0 auto 64px; }
+  .prog-head h2{ font-size:clamp(28px,3.4vw,38px); margin-bottom:16px; }
+  .prog-head p{ color:var(--ink-dim); font-size:16px; }
+  .prog-item{ display:grid; grid-template-columns:64px 1fr 190px; gap:26px; align-items:center; padding:32px 0; border-top:1px solid var(--line); }
+  .prog-list .prog-item:last-child{ border-bottom:1px solid var(--line); }
+  .prog-num{ font-family:'Cormorant Garamond', serif; font-size:28px; color:var(--gold); font-style:italic; }
+  .prog-item h3{ font-size:22px; color:var(--teal-deep); margin-bottom:6px; font-weight:600; }
+  .prog-item p{ color:var(--ink-dim); font-size:14.5px; max-width:520px; }
+  .prog-tag{ text-align:right; color:var(--teal); font-size:13px; font-style:italic; font-family:'Cormorant Garamond',serif; }
+  .cert{ padding:100px 32px; text-align:center; background:var(--bg-2); border-top:1px solid var(--line); }
+  .cert h2{ font-size:clamp(26px,3vw,34px); margin-bottom:18px; }
+  .cert p.lead{ color:var(--ink-dim); max-width:560px; margin:0 auto 54px; font-size:16px; }
+  .cert-row{ display:flex; justify-content:center; gap:56px; flex-wrap:wrap; }
+  .cert-item{ max-width:200px; }
+  .cert-item .cw{ font-family:'Cormorant Garamond', serif; font-size:19px; color:var(--teal-deep); font-weight:600; margin-bottom:8px; }
+  .cert-item p{ font-size:13.5px; color:var(--ink-dim); }
+  .cta-final{ margin:100px 32px; padding:80px 60px; border:1px solid var(--line-gold); border-radius:4px; text-align:center; background:linear-gradient(180deg, var(--bg), var(--bg-2)); }
+  .cta-final h2{ font-size:clamp(26px,3.2vw,36px); max-width:600px; margin:0 auto 22px; }
+  .cta-final p{ color:var(--ink-dim); max-width:480px; margin:0 auto 34px; }
+  footer{ padding:56px 32px 40px; border-top:1px solid var(--line-gold); }
+  .foot-top{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:36px; margin-bottom:36px; }
+  .foot-logo img{ height:110px; }
+  .foot-grid{ display:flex; gap:50px; flex-wrap:wrap; }
+  .foot-col h4{ font-size:13px; color:var(--gold); margin-bottom:12px; font-weight:500; }
+  .foot-col a{ display:block; color:var(--ink-dim); font-size:14px; margin-bottom:8px; }
+  .foot-bottom{ font-size:12.5px; color:var(--ink-dim); text-align:center; padding-top:22px; border-top:1px solid var(--line); }
+  @media (max-width:860px){ .navlinks{display:none;} .navtoggle{display:block;} .sistema-grid{grid-template-columns:1fr; gap:44px;} .sistema-mark{max-width:260px; margin:0 auto;} .prog-item{grid-template-columns:1fr; gap:8px;} .prog-tag{text-align:left;} .masthead{height:150px;} }
+</style>
+</head>
+<body>
+<header><nav>
+  <div class="nav-logo"></div>
+  <div class="navlinks"><a href="#sistema">El Sistema</a><a href="#programas">Formación</a><a href="#cert">Certificaciones</a><a href="#">Blog</a><a href="#">Contacto</a></div>
+  <a href="#" class="btn-campus">Campus de alumnos</a>
+  <button class="navtoggle">☰</button>
+</nav></header>
+<div class="masthead"><img src="../assets/Screenshot_2026-09-02_at_1_44_09_PM.png" alt="INISCH"></div>
+<section class="hero">
+  <div class="eyebrow">Instituto Internacional del Sistema Código Holográfico</div>
+  <h1 class="hero-title">Vuelve a ti. Comprende tu historia. <em>Expande</em> tu manera de vivir.</h1>
+  <p class="hero-sub">Formación, acompañamiento y experiencias para quienes sienten el llamado a conocerse profundamente y transformar su realidad desde adentro hacia afuera.</p>
+  <div class="hero-cta"><a href="#programas" class="btn-teal">Conocer las formaciones</a><a href="#" class="btn-line">Hablar con un especialista</a></div>
+</section>
+<section class="sistema" id="sistema">
+  <div class="wrap sistema-grid">
+    <div class="sistema-mark"></div>
+    <div>
+      <h2>El Universo es un holograma. Todo lo que existe está también dentro de ti.</h2>
+      <p>El Sistema Código Holográfico integra de manera lógica y demostrable ciencias exactas, corrientes psicológicas y sabiduría ancestral: Física Cuántica, Psicología Lacaniana, Psicología Junguiana y Leyes Herméticas.</p>
+      <p>Un camino creado por Isabel Elizalde para dejar de percibirse como víctima de las circunstancias y asumir el rol de observador consciente de la propia realidad.</p>
+      <p class="quote">"Nadie puede guiar a otro a donde no ha llegado primero."</p>
+    </div>
+  </div>
+</section>
+<section class="programas" id="programas">
+  <div class="wrap">
+    <div class="prog-head"><h2>Un camino. Diferentes experiencias. Una misma dirección.</h2><p>Siete formas de profundizar en el autoconocimiento, según dónde te encuentres en tu proceso.</p></div>
+    <div class="prog-list">
+      <div class="prog-item"><div class="prog-num">I</div><div><h3>Formación de Especialistas en Autoconocimiento</h3><p>Programa integral en 3 etapas, con opción de certificación SEP-CONOCER.</p></div><div class="prog-tag">Certificación oficial</div></div>
+      <div class="prog-item"><div class="prog-num">II</div><div><h3>Acompañamiento Especializado</h3><p>Consultas individuales: espacios de escucha, reflexión y comprensión.</p></div><div class="prog-tag">Sesión 1:1</div></div>
+      <div class="prog-item"><div class="prog-num">III</div><div><h3>Rituales y Experiencias Transformadoras</h3><p>Simbolismo, introspección y prácticas de conexión interior.</p></div><div class="prog-tag">Presencial</div></div>
+      <div class="prog-item"><div class="prog-num">IV</div><div><h3>Numerología Holográfica</h3><p>Talleres y consultas sobre patrones, talentos y ciclos personales.</p></div><div class="prog-tag">Talleres · Consultas</div></div>
+      <div class="prog-item"><div class="prog-num">V</div><div><h3>Círculos de Mujeres</h3><p>Encuentro desde la dimensión individual y colectiva de lo femenino.</p></div><div class="prog-tag">Grupal</div></div>
+      <div class="prog-item"><div class="prog-num">VI</div><div><h3>Inmersión Sonora — Atención Fina</h3><p>El sonido como medio para observar, sentir y permitir.</p></div><div class="prog-tag">Experiencial</div></div>
+      <div class="prog-item"><div class="prog-num">VII</div><div><h3>Viajes de Experiencia y Expansión</h3><p>Espiritualidad, cultura y exploración interior en cada destino.</p></div><div class="prog-tag">Nacional · Internacional</div></div>
+    </div>
+  </div>
+</section>
+<section class="cert" id="cert">
+  <div class="wrap">
+    <h2>Respaldo institucional y validez oficial</h2>
+    <p class="lead">Al egresar, cuentas con el respaldo completo de INISCH — con opción a certificaciones con reconocimiento legal.</p>
+    <div class="cert-row">
+      <div class="cert-item"><div class="cw">SEP · CONOCER</div><p>Estándar EC1375, cédula en el RENAP.</p></div>
+      <div class="cert-item"><div class="cw">Apostilla de La Haya</div><p>Validez legal en más de 120 países.</p></div>
+      <div class="cert-item"><div class="cw">STPS · DC-3</div><p>Registro como Agente Capacitador Externo.</p></div>
+    </div>
+  </div>
+</section>
+<div class="wrap"><div class="cta-final"><h2>Tu formación ya te espera dentro del campus.</h2><p>Accede a tus clases en línea, sesiones en vivo, materiales y tu progreso por etapa.</p><a href="#" class="btn-teal">Entrar a la plataforma de alumnos</a></div></div>
+<footer><div class="wrap">
+  <div class="foot-top">
+    <div class="foot-logo"><img src="../assets/LOGO_INISCH_NUEVO_png_copia__1_.png" alt="INISCH"></div>
+    <div class="foot-grid">
+      <div class="foot-col"><h4>Formación</h4><a href="#">Etapa 1 · Iniciación</a><a href="#">Etapa 2 · Maestría</a><a href="#">Etapa 3 · Instructores</a></div>
+      <div class="foot-col"><h4>Experiencias</h4><a href="#">Numerología Holográfica</a><a href="#">Círculos de Mujeres</a><a href="#">Viajes de Expansión</a></div>
+      <div class="foot-col"><h4>Contacto</h4><a href="#">WhatsApp +52 33 1470 1563</a><a href="#">Campus de alumnos</a></div>
+    </div>
+  </div>
+  <div class="foot-bottom">Instituto Internacional del Sistema Código Holográfico — INISCH</div>
+</div></footer>
+</body>
+</html>
