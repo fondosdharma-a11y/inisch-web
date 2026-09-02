@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>INISCH — Instituto Internacional del Sistema Código Holográfico</title>
 <meta name="description" content="Formación, acompañamiento y experiencias para el autoconocimiento. Sistema Código Holográfico, con opción de certificación oficial SEP-CONOCER.">
+<script>(function(){var t=localStorage.getItem('inisch-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
 <link rel="stylesheet" href="css/main.css">
 <style>
   .masthead{ width:100%; height:230px; overflow:hidden; border-bottom:1px solid var(--line-gold); }
@@ -13,16 +14,19 @@
   .eyebrow{ font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--teal); font-size:18px; margin-bottom:22px; }
   h1.hero-title{ font-size:clamp(38px,6vw,66px); line-height:1.12; max-width:780px; margin:0 auto 26px; }
   h1.hero-title em{ font-style:italic; color:var(--gold); }
+  [data-theme="dark"] h1.hero-title em{ font-style:normal; }
   .hero-sub{ max-width:540px; margin:0 auto 40px; color:var(--ink-dim); font-size:16.5px; }
   .hero-cta{ display:flex; gap:18px; justify-content:center; flex-wrap:wrap; }
   .sistema-grid{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:70px; align-items:center; }
   .sistema-mark{ width:100%; aspect-ratio:1; border-radius:50%; overflow:hidden; background-image:url('../assets/LOGO_INISCH_NUEVO_png_copia__1_.png'); background-size:180% auto; background-position:center 8%; border:1px solid var(--line-gold); }
+  [data-theme="dark"] .sistema-mark{ filter: drop-shadow(0 0 40px rgba(111,178,196,0.25)); }
   .prog-item{ display:grid; grid-template-columns:64px 1fr 190px; gap:26px; align-items:center; padding:32px 0; border-top:1px solid var(--line); }
   .prog-list .prog-item:last-child{ border-bottom:1px solid var(--line); }
   .prog-num{ font-family:'Cormorant Garamond', serif; font-size:28px; color:var(--gold); font-style:italic; }
   .prog-item h3{ font-size:22px; color:var(--teal-deep); margin-bottom:6px; font-weight:600; }
   .prog-item p{ color:var(--ink-dim); font-size:14.5px; max-width:520px; }
   .prog-tag{ text-align:right; color:var(--teal); font-size:13px; font-style:italic; font-family:'Cormorant Garamond',serif; }
+  [data-theme="dark"] .prog-tag{ font-style:normal; }
   .cert-row{ display:flex; justify-content:center; gap:56px; flex-wrap:wrap; }
   .cert-item{ max-width:200px; text-align:center; }
   .cert-item .cw{ font-family:'Cormorant Garamond', serif; font-size:19px; color:var(--teal-deep); font-weight:600; margin-bottom:8px; }
@@ -43,6 +47,7 @@
     <a href="blog/index.html">Blog</a>
     <a href="contacto.html">Contacto</a>
   </div>
+  <button class="theme-toggle"></button>
   <a href="#" class="btn-campus">Campus de alumnos</a>
   <button class="navtoggle">☰</button>
 </nav></header>
@@ -121,5 +126,6 @@
   </div>
   <div class="foot-bottom">Instituto Internacional del Sistema Código Holográfico — INISCH</div>
 </footer>
+<script src="js/theme.js"></script>
 </body>
 </html>
