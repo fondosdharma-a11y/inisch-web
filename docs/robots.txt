@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /campus/
+
+Sitemap: https://www.inisch.com/sitemap.xml
