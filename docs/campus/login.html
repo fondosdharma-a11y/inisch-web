@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campus de Alumnos — INISCH</title>
+<script>(function(){var t=localStorage.getItem('inisch-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="../css/main.css">
+<link rel="stylesheet" href="css/campus.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+<header><nav>
+  <a href="../index.html" class="nav-logo"></a>
+  <div class="navlinks">
+    <a href="../index.html">Sitio INISCH</a>
+  </div>
+  <button class="theme-toggle"></button>
+  <button class="navtoggle">☰</button>
+</nav></header>
+
+<div id="configBanner" class="config-banner"></div>
+
+<div class="campus-shell">
+  <div class="auth-card">
+    <h1 id="formTitle">Entrar al Campus</h1>
+    <p class="sub" id="formSub">Accede con tu correo y contraseña para continuar tu formación.</p>
+    <div id="authMsg" class="auth-msg"></div>
+
+    <div class="field" id="nameField" style="display:none;">
+      <label for="fullName">Nombre completo</label>
+      <input type="text" id="fullName" autocomplete="name">
+    </div>
+    <div class="field">
+      <label for="email">Correo electrónico</label>
+      <input type="email" id="email" autocomplete="email">
+    </div>
+    <div class="field">
+      <label for="password">Contraseña</label>
+      <input type="password" id="password" autocomplete="current-password">
+    </div>
+    <button id="submitBtn" class="btn-teal btn-full">Entrar</button>
+
+    <div class="auth-switch">
+      <span id="switchText">¿Aún no tienes cuenta?</span>
+      <a href="#" id="switchLink">Crear cuenta</a>
+    </div>
+    <div class="auth-switch" style="margin-top:8px;">
+      <a href="https://wa.me/523314701563" target="_blank">¿Problemas para entrar? Escríbenos por WhatsApp</a>
+    </div>
+  </div>
+</div>
+
+<script src="js/supabase-config.js"></script>
+<script src="js/app.js"></script>
+<script>
+  var isSignup = false;
+  var configBanner = document.getElementById('configBanner');
+  if (campusNotConfigured()) showNotConfiguredBanner(configBanner);
+
+  document.getElementById('switchLink').addEventListener('click', function(e){
+    e.preventDefault();
+    isSignup = !isSignup;
+    document.getElementById('formTitle').textContent = isSignup ? 'Crear tu cuenta' : 'Entrar al Campus';
+    document.getElementById('formSub').textContent = isSignup ? 'Regístrate con el correo que usaste al inscribirte.' : 'Accede con tu correo y contraseña para continuar tu formación.';
+    document.getElementById('nameField').style.display = isSignup ? 'block' : 'none';
+    document.getElementById('submitBtn').textContent = isSignup ? 'Crear cuenta' : 'Entrar';
+    document.getElementById('switchText').textContent = isSignup ? '¿Ya tienes cuenta?' : '¿Aún no tienes cuenta?';
+    document.getElementById('switchLink').textContent = isSignup ? 'Entrar' : 'Crear cuenta';
+  });
+
+  function showMsg(text, type){
+    var el = document.getElementById('authMsg');
+    el.textContent = text;
+    el.className = 'auth-msg ' + type;
+    el.style.display = 'block';
+  }
+
+  document.getElementById('submitBtn').addEventListener('click', async function(){
+    if (campusNotConfigured()){
+      showMsg('El campus aún no está conectado a la base de datos.', 'error');
+      return;
+    }
+    var email = document.getElementById('email').value.trim();
+    var password = document.getElementById('password').value;
+    var fullName = document.getElementById('fullName').value.trim();
+
+    if (!email || !password){ showMsg('Escribe tu correo y contraseña.', 'error'); return; }
+
+    if (isSignup){
+      var res = await supabaseClient.auth.signUp({
+        email: email, password: password,
+        options: { data: { full_name: fullName } }
+      });
+      if (res.error){ showMsg(res.error.message, 'error'); return; }
+      showMsg('Cuenta creada. Revisa tu correo para confirmar tu acceso.', 'ok');
+    } else {
+      var res2 = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
+      if (res2.error){ showMsg(res2.error.message, 'error'); return; }
+      window.location.href = 'dashboard.html';
+    }
+  });
+</script>
+<script src="../js/theme.js"></script>
+</body>
+</html>
