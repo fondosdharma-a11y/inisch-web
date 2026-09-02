@@ -6,97 +6,105 @@ Repositorio de trabajo para el desarrollo del sitio institucional y la plataform
 
 **https://fondosdharma-a11y.github.io/inisch-web/**
 
-Publicado con GitHub Pages desde la carpeta `/docs` de la rama `main`. El repositorio es público (requisito de GitHub Pages en el plan gratuito).
+Dominio personalizado configurado del lado de GitHub: `www.inisch.com` (falta apuntar el DNS en Porkbun, ver abajo). Publicado con GitHub Pages desde `/docs` en la rama `main`.
 
 ## Estructura
 
 ```
 /internal-docs                     -> Documentacion de planeacion del proyecto (no se publica)
 /database/schema.sql               -> Esquema completo de base de datos para Supabase
-/supabase/functions/stripe-webhook -> Edge Function que activa el acceso al pagar en Stripe
+/supabase/functions/
+  /stripe-webhook                  -> Activa el acceso del alumno al pagar en Stripe
+  /generate-certificate            -> Genera el PDF de constancia cuando el alumno termina una etapa
+  /sales-chat                      -> Agente de IA de ventas/admisiones (usa Claude)
 /docs                              -> Sitio real publicado por GitHub Pages
-  /docs/css/main.css               -> Hoja de estilos compartida, con modo claro y oscuro
-  /docs/js/theme.js                -> Logica del boton de modo claro/oscuro
-  /docs/index.html ... contacto.html, blog/  -> Paginas del sitio de marca
+  /docs/CNAME                      -> Dominio personalizado (www.inisch.com)
+  /docs/js/chat-widget.js          -> Widget del chat de IA (activo en todas las paginas)
   /docs/campus/                    -> LA PLATAFORMA DE ALUMNOS (campus virtual)
     /docs/campus/login.html        -> Inicio de sesion / registro
-    /docs/campus/dashboard.html    -> Catalogo de la Etapa 1 y progreso del alumno
-    /docs/campus/js/supabase-config.js -> AQUI SE PEGAN LAS LLAVES DE SUPABASE (ver abajo)
-    /docs/campus/js/app.js         -> Logica compartida de sesion/logout
-    /docs/campus/css/campus.css    -> Estilos del campus
+    /docs/campus/dashboard.html    -> Catalogo, progreso y certificado de la Etapa 1
+    /docs/campus/js/supabase-config.js -> AQUI SE PEGAN LAS LLAVES DE SUPABASE
 /assets                            -> Logotipo e imagenes de marca (subidas manualmente, ver abajo)
 ```
 
 ## Modo claro / oscuro
 
-Todas las paginas (incluido el campus) tienen un boton de tema en la barra de navegacion:
+Todas las paginas (incluido el campus) tienen un boton de tema: **claro** = "Codigo Ancestral" (marfil, teal + oro), **oscuro** = "Holograma Vivo" (teal oscuro, mismos acentos).
 
-- **Modo claro** = direccion "Codigo Ancestral": fondo marfil, teal + oro.
-- **Modo oscuro** = direccion "Holograma Vivo": fondo teal oscuro, mismos acentos.
-
-## 🚀 Como activar el Campus de Alumnos (3 pasos, ~10 minutos)
-
-El campus ya esta construido (login, registro, catalogo de la Etapa 1, seguimiento de progreso). Le falta un solo paso para funcionar de verdad: conectarlo a una base de datos gratuita.
+## 🚀 Como activar el Campus de Alumnos (requiere crear una cuenta gratuita)
 
 **Paso 1 — Crear el proyecto en Supabase**
-1. Ve a https://supabase.com y crea una cuenta gratuita (con tu correo o con GitHub).
-2. Crea un proyecto nuevo (elige cualquier nombre, por ejemplo "inisch-campus", y una contraseña segura para la base de datos — guardala).
-3. Espera 1-2 minutos mientras Supabase aprovisiona el proyecto.
+1. Ve a https://supabase.com, crea cuenta gratuita y un proyecto nuevo.
+2. Espera 1-2 minutos mientras se aprovisiona.
 
 **Paso 2 — Cargar el esquema de base de datos**
-1. En el menu izquierdo de Supabase, entra a **SQL Editor**.
-2. Abre el archivo `/database/schema.sql` de este repositorio, copia todo su contenido.
-3. Pegalo en el SQL Editor de Supabase y presiona **Run**.
-4. Esto crea todas las tablas (perfiles, cursos, lecciones, inscripciones, progreso, certificados) y carga la Etapa 1 como catalogo piloto.
+1. En Supabase, entra a **SQL Editor**.
+2. Copia todo el contenido de `/database/schema.sql` de este repo y pegalo ahi. Dale **Run**.
 
-**Paso 3 — Conectar las llaves**
-1. En Supabase, ve a **Project Settings -> API**.
-2. Copia el valor de **Project URL**.
-3. Copia el valor de **anon public** (la llave publica, NO la "service_role").
-4. En GitHub, edita el archivo `docs/campus/js/supabase-config.js` (boton del lapiz para editar directo en la web) y pega ambos valores donde dice `PEGA_AQUI_TU_...`.
-5. Guarda (Commit changes).
+**Paso 3 — Crear el bucket de certificados**
+1. En Supabase, ve a **Storage -> New bucket**.
+2. Nombre: `certificates`. Marca la opcion **Public bucket**. Crear.
 
-Listo — en cuanto GitHub Pages vuelva a publicar (1-2 minutos), el botón "Campus de alumnos" del sitio ya permite crear cuenta, iniciar sesion y ver el progreso real guardado en tu base de datos.
+**Paso 4 — Conectar las llaves al sitio**
+1. En Supabase: **Project Settings -> API**. Copia "Project URL" y "anon public" key.
+2. En GitHub, edita `docs/campus/js/supabase-config.js` y pega ambos valores.
 
-### Activar cobros automaticos (opcional, mas adelante)
-Cuando quieras que Stripe active el acceso automaticamente al pagar, sigue las instrucciones dentro de `/supabase/functions/stripe-webhook/index.ts` (requiere instalar la CLI de Supabase). Mientras tanto, puedes dar de alta manualmente a un alumno como "activo" desde el Table Editor de Supabase.
+Con esto, el login, registro, progreso y certificados (generados automaticamente en PDF cuando el alumno completa todas las lecciones) ya funcionan de verdad.
+
+**Paso 5 (opcional) — Activar cobros automaticos por Stripe**
+Instala la CLI de Supabase y sigue las instrucciones dentro de `/supabase/functions/stripe-webhook/index.ts`.
+
+## 🤖 Como activar el agente de IA de ventas (chat del sitio)
+
+Ya esta el widget de chat visible en todas las paginas (esquina inferior derecha). Mientras no se active, responde invitando a escribir por WhatsApp —no rompe nada. Para activarlo de verdad:
+
+1. Consigue una API key en https://console.anthropic.com
+2. Instala la CLI de Supabase y corre: `supabase functions deploy sales-chat`
+3. `supabase secrets set ANTHROPIC_API_KEY=sk-ant-...`
+4. Copia la URL que te da el despliegue (algo como `https://TU-PROYECTO.functions.supabase.co/sales-chat`)
+5. En cada pagina de `/docs`, antes de `<script src="js/chat-widget.js">`, agrega:
+   `<script>window.INISCH_CHAT_FUNCTION_URL = 'TU_URL_AQUI';</script>`
+   (avisame cuando tengas la URL y yo hago este cambio en las 11 paginas de una vez).
+
+El agente ya conoce todas las etapas, precios, requisitos y certificaciones reales de INISCH (esta todo escrito en su system prompt dentro de `/supabase/functions/sales-chat/index.ts`).
 
 ## Plataforma de alumnos: decision de arquitectura
 
-Se decidio (ver `/internal-docs/plan-maestro-inisch.md`, seccion 4) construir el campus sobre **Supabase** (Postgres + Auth + Storage + Edge Functions) + **Stripe** para pagos + **video en YouTube/Vimeo no listado** para evitar costos de almacenamiento. Esta combinacion da el mejor balance de eficacia, automatizacion y costo: practicamente $0 hasta que haya alumnos pagando en volumen real.
+Se decidio (ver `/internal-docs/plan-maestro-inisch.md`) construir el campus sobre **Supabase** + **Stripe** + **video en YouTube/Vimeo no listado**, por ser la combinacion de mejor costo/automatizacion/eficacia: practicamente $0 hasta que haya alumnos pagando en volumen real.
 
 ## Estado actual
 
-- [x] Dominio comprado: **INISCH.com** (Porkbun)
+- [x] Dominio comprado: **INISCH.com** (Porkbun) y configurado del lado de GitHub Pages
 - [x] Pasarela de pago decidida: **Stripe**
 - [x] Logotipo de marca recibido
 - [x] Sitio institucional completo, publicado en GitHub Pages
 - [x] Modo claro/oscuro en todas las paginas
 - [x] Blog con 3 articulos publicados
-- [x] Arquitectura de la plataforma de alumnos decidida y **construida** (login, dashboard, esquema SQL, Edge Function de Stripe)
-- [ ] Crear el proyecto de Supabase y pegar las llaves (ver instrucciones arriba — requiere accion del usuario, es gratis)
-- [ ] Conectar dominio INISCH.com como dominio personalizado de GitHub Pages
+- [x] Campus construido: login, registro, catalogo Etapa 1, progreso, certificado PDF automatico
+- [x] Agente de IA de ventas/admisiones construido (widget + Edge Function con system prompt real de INISCH)
+- [x] Edge Function de Stripe lista (falta desplegar)
+- [ ] Crear el proyecto de Supabase y completar los pasos 1-4 de arriba (requiere accion del usuario, es gratis)
+- [ ] Apuntar el DNS de INISCH.com en Porkbun hacia GitHub Pages (ver abajo)
+- [ ] Desplegar las 3 Edge Functions (requiere Supabase CLI)
 - [ ] Cargar videos reales de la Etapa 1 (YouTube/Vimeo no listado) en la tabla `lessons`
-- [ ] Desplegar la Edge Function de Stripe para activacion automatica de pagos
-- [ ] Generacion automatica de certificados en PDF
-- [ ] Primeros agentes de IA
 
 ## ⚠️ Pendiente: subir imágenes de marca a `/assets`
 
-Sube estos 2 archivos a la carpeta `assets/` del repositorio (Add file -> Upload files), con estos nombres exactos:
+Sube estos 2 archivos a la carpeta `assets/` (Add file -> Upload files), con estos nombres exactos:
 
 - `assets/LOGO_INISCH_NUEVO_png_copia__1_.png`
 - `assets/Screenshot_2026-09-02_at_1_44_09_PM.png`
 
-## Conectar el dominio INISCH.com (pendiente, requiere accion del usuario)
+## Conectar el dominio INISCH.com (pendiente, requiere accion del usuario en Porkbun)
 
-1. En GitHub: Settings del repo -> Pages -> Custom domain -> escribir `www.inisch.com`.
-2. En Porkbun: agregar un registro CNAME apuntando `www` a `fondosdharma-a11y.github.io`, y/o registros A apuntando la raiz a 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153.
-3. Esperar propagacion DNS y activar "Enforce HTTPS" en GitHub.
+El lado de GitHub ya esta listo (`docs/CNAME` = `www.inisch.com`). Falta en Porkbun:
+1. Agregar un registro **CNAME** con nombre `www` apuntando a `fondosdharma-a11y.github.io`.
+2. (Opcional, para que `inisch.com` sin "www" tambien funcione) Agregar 4 registros **A** en la raiz apuntando a: 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153.
+3. Esperar propagacion DNS (minutos a horas). En GitHub, Settings -> Pages, activar "Enforce HTTPS" cuando el dominio aparezca verificado.
 
 ## Como ver el sitio localmente
 
-Descarga el repositorio ("Code -> Download ZIP") y abre `docs/index.html` en tu navegador. El campus (`docs/campus/login.html`) tambien funciona localmente una vez conectadas las llaves de Supabase.
+Descarga el repositorio ("Code -> Download ZIP") y abre `docs/index.html` en tu navegador.
 
 ## Proximos pasos
 
