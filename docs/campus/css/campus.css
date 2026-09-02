@@ -1,0 +1,46 @@
+/* INISCH CAMPUS — estilos especificos del campus, se cargan despues de css/main.css */
+
+.campus-shell{ min-height:70vh; display:flex; align-items:center; justify-content:center; padding:60px 32px; }
+.auth-card{ max-width:400px; width:100%; border:1px solid var(--line-gold); border-radius:6px; padding:44px; background:var(--bg-2); }
+.auth-card h1{ font-size:26px; margin-bottom:8px; text-align:center; }
+.auth-card p.sub{ color:var(--ink-dim); font-size:14px; text-align:center; margin-bottom:30px; }
+.field{ margin-bottom:18px; }
+.field label{ display:block; font-size:13px; color:var(--ink-dim); margin-bottom:6px; }
+.field input{
+  width:100%; padding:12px 14px; border:1px solid var(--line-gold); border-radius:4px;
+  background:var(--bg); color:var(--ink); font-family:inherit; font-size:15px;
+}
+.field input:focus{ outline:2px solid var(--teal); outline-offset:1px; }
+.btn-full{ width:100%; text-align:center; display:block; border:none; cursor:pointer; }
+.auth-switch{ text-align:center; margin-top:20px; font-size:13.5px; color:var(--ink-dim); }
+.auth-switch a{ color:var(--teal); text-decoration:underline; }
+.auth-msg{ font-size:13.5px; padding:10px 14px; border-radius:4px; margin-bottom:16px; display:none; }
+.auth-msg.error{ background:rgba(200,60,60,0.12); color:#B33A3A; }
+.auth-msg.ok{ background:rgba(60,150,90,0.12); color:#2E7D4F; }
+.config-banner{
+  display:none; max-width:900px; margin:20px auto; padding:14px 20px; border-radius:4px;
+  background:var(--bg-2); border:1px solid var(--line-gold); color:var(--ink-dim); font-size:13.5px; text-align:center;
+}
+.config-banner code{ background:var(--bg); padding:2px 6px; border-radius:3px; }
+
+.dash-header{ padding:40px 32px 20px; border-bottom:1px solid var(--line); }
+.dash-header .row{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
+.dash-header h1{ font-size:28px; }
+.dash-header p{ color:var(--ink-dim); font-size:14px; margin-top:4px; }
+
+.course-block{ padding:40px 32px; max-width:800px; margin:0 auto; }
+.course-block h2{ font-size:22px; margin-bottom:6px; }
+.course-block p.desc{ color:var(--ink-dim); font-size:14.5px; margin-bottom:26px; }
+.lesson-row{
+  display:flex; align-items:center; gap:16px; padding:16px 0; border-top:1px solid var(--line);
+}
+.lesson-row:first-of-type{ border-top:none; }
+.lesson-check{
+  width:26px; height:26px; border-radius:50%; border:1px solid var(--line-gold); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:13px; color:var(--gold); cursor:pointer;
+}
+.lesson-check.done{ background:var(--gold); color:var(--bg); border-color:var(--gold); }
+.lesson-title{ flex:1; font-size:15px; }
+.lesson-title.done{ color:var(--ink-dim); text-decoration:line-through; }
+.progress-track{ height:6px; border-radius:3px; background:var(--line); overflow:hidden; margin-top:14px; max-width:320px; }
+.progress-fill{ height:100%; background:var(--gold); border-radius:3px; transition:width .3s ease; }
