@@ -6,47 +6,64 @@ Repositorio de trabajo para el desarrollo del sitio institucional y la plataform
 
 **https://fondosdharma-a11y.github.io/inisch-web/**
 
-Publicado con GitHub Pages desde la carpeta `/docs` de la rama `main`. El repositorio es público (requisito de GitHub Pages en el plan gratuito) — esto es correcto para un sitio de marketing que de todas formas debe ser visible al público.
+Publicado con GitHub Pages desde la carpeta `/docs` de la rama `main`. El repositorio es público (requisito de GitHub Pages en el plan gratuito).
 
 ## Estructura
 
 ```
-/internal-docs               -> Documentacion de planeacion del proyecto (no se publica)
-/docs                        -> Sitio real publicado por GitHub Pages
-  /docs/css/main.css         -> Hoja de estilos compartida, con modo claro y oscuro
-  /docs/js/theme.js          -> Logica del boton de modo claro/oscuro (persistente via localStorage)
-  /docs/index.html           -> Home
-  /docs/formacion.html       -> Formacion de Especialistas (Etapas 1, 2 y 3 completas)
-  /docs/acompanamiento.html  -> Acompanamiento Especializado
-  /docs/numerologia.html     -> Numerologia Holografica
-  /docs/experiencias.html    -> Rituales, Circulos de Mujeres, Inmersion Sonora, Viajes
-  /docs/certificaciones.html -> SEP-CONOCER, RENAP, Apostilla de La Haya, STPS/DC-3
-  /docs/contacto.html        -> Contacto / WhatsApp
-  /docs/blog/                -> Indice de blog + 3 articulos publicados
-  /docs/propuesta-1-*.html   -> Mockup de diseno original (referencia)
-  /docs/propuesta-3-*.html   -> Mockup de diseno alternativo (referencia)
-/assets                      -> Logotipo e imagenes de marca (subidas manualmente, ver abajo)
+/internal-docs                     -> Documentacion de planeacion del proyecto (no se publica)
+/database/schema.sql               -> Esquema completo de base de datos para Supabase
+/supabase/functions/stripe-webhook -> Edge Function que activa el acceso al pagar en Stripe
+/docs                              -> Sitio real publicado por GitHub Pages
+  /docs/css/main.css               -> Hoja de estilos compartida, con modo claro y oscuro
+  /docs/js/theme.js                -> Logica del boton de modo claro/oscuro
+  /docs/index.html ... contacto.html, blog/  -> Paginas del sitio de marca
+  /docs/campus/                    -> LA PLATAFORMA DE ALUMNOS (campus virtual)
+    /docs/campus/login.html        -> Inicio de sesion / registro
+    /docs/campus/dashboard.html    -> Catalogo de la Etapa 1 y progreso del alumno
+    /docs/campus/js/supabase-config.js -> AQUI SE PEGAN LAS LLAVES DE SUPABASE (ver abajo)
+    /docs/campus/js/app.js         -> Logica compartida de sesion/logout
+    /docs/campus/css/campus.css    -> Estilos del campus
+/assets                            -> Logotipo e imagenes de marca (subidas manualmente, ver abajo)
 ```
 
 ## Modo claro / oscuro
 
-Todas las paginas tienen un boton de tema en la barra de navegacion:
+Todas las paginas (incluido el campus) tienen un boton de tema en la barra de navegacion:
 
-- **Modo claro** = direccion "Codigo Ancestral": fondo marfil, teal + oro, tipografia Cormorant Garamond + Jost.
-- **Modo oscuro** = direccion "Holograma Vivo": fondo teal oscuro, mismos acentos teal + oro, tipografia Space Grotesk + IBM Plex Sans.
+- **Modo claro** = direccion "Codigo Ancestral": fondo marfil, teal + oro.
+- **Modo oscuro** = direccion "Holograma Vivo": fondo teal oscuro, mismos acentos.
 
-La preferencia se guarda en el navegador del visitante.
+## 🚀 Como activar el Campus de Alumnos (3 pasos, ~10 minutos)
+
+El campus ya esta construido (login, registro, catalogo de la Etapa 1, seguimiento de progreso). Le falta un solo paso para funcionar de verdad: conectarlo a una base de datos gratuita.
+
+**Paso 1 — Crear el proyecto en Supabase**
+1. Ve a https://supabase.com y crea una cuenta gratuita (con tu correo o con GitHub).
+2. Crea un proyecto nuevo (elige cualquier nombre, por ejemplo "inisch-campus", y una contraseña segura para la base de datos — guardala).
+3. Espera 1-2 minutos mientras Supabase aprovisiona el proyecto.
+
+**Paso 2 — Cargar el esquema de base de datos**
+1. En el menu izquierdo de Supabase, entra a **SQL Editor**.
+2. Abre el archivo `/database/schema.sql` de este repositorio, copia todo su contenido.
+3. Pegalo en el SQL Editor de Supabase y presiona **Run**.
+4. Esto crea todas las tablas (perfiles, cursos, lecciones, inscripciones, progreso, certificados) y carga la Etapa 1 como catalogo piloto.
+
+**Paso 3 — Conectar las llaves**
+1. En Supabase, ve a **Project Settings -> API**.
+2. Copia el valor de **Project URL**.
+3. Copia el valor de **anon public** (la llave publica, NO la "service_role").
+4. En GitHub, edita el archivo `docs/campus/js/supabase-config.js` (boton del lapiz para editar directo en la web) y pega ambos valores donde dice `PEGA_AQUI_TU_...`.
+5. Guarda (Commit changes).
+
+Listo — en cuanto GitHub Pages vuelva a publicar (1-2 minutos), el botón "Campus de alumnos" del sitio ya permite crear cuenta, iniciar sesion y ver el progreso real guardado en tu base de datos.
+
+### Activar cobros automaticos (opcional, mas adelante)
+Cuando quieras que Stripe active el acceso automaticamente al pagar, sigue las instrucciones dentro de `/supabase/functions/stripe-webhook/index.ts` (requiere instalar la CLI de Supabase). Mientras tanto, puedes dar de alta manualmente a un alumno como "activo" desde el Table Editor de Supabase.
 
 ## Plataforma de alumnos: decision de arquitectura
 
-Se decidio (ver `/internal-docs/plan-maestro-inisch.md`, seccion 4) construir el campus sobre:
-
-- **Supabase** (Postgres + Auth + Storage + Edge Functions) para autenticacion, base de datos de cursos/progreso/certificados
-- **Stripe** para pagos y mensualidades
-- **Video** alojado en YouTube/Vimeo no listado (evita costos de almacenamiento)
-- **Frontend** estatico, servido igual que el sitio de marca
-
-Esta combinacion da el mejor balance de eficacia, automatizacion y costo (practicamente $0 hasta que haya alumnos pagando en volumen). Detalle completo, esquema de base de datos y proximos pasos en el documento de planeacion.
+Se decidio (ver `/internal-docs/plan-maestro-inisch.md`, seccion 4) construir el campus sobre **Supabase** (Postgres + Auth + Storage + Edge Functions) + **Stripe** para pagos + **video en YouTube/Vimeo no listado** para evitar costos de almacenamiento. Esta combinacion da el mejor balance de eficacia, automatizacion y costo: practicamente $0 hasta que haya alumnos pagando en volumen real.
 
 ## Estado actual
 
@@ -56,31 +73,31 @@ Esta combinacion da el mejor balance de eficacia, automatizacion y costo (practi
 - [x] Sitio institucional completo, publicado en GitHub Pages
 - [x] Modo claro/oscuro en todas las paginas
 - [x] Blog con 3 articulos publicados
-- [x] Arquitectura de la plataforma de alumnos decidida (Supabase + Stripe)
+- [x] Arquitectura de la plataforma de alumnos decidida y **construida** (login, dashboard, esquema SQL, Edge Function de Stripe)
+- [ ] Crear el proyecto de Supabase y pegar las llaves (ver instrucciones arriba — requiere accion del usuario, es gratis)
 - [ ] Conectar dominio INISCH.com como dominio personalizado de GitHub Pages
-- [ ] Crear proyecto de Supabase (requiere que el usuario cree la cuenta)
-- [ ] Construir el campus (login, cursos, progreso, certificados)
+- [ ] Cargar videos reales de la Etapa 1 (YouTube/Vimeo no listado) en la tabla `lessons`
+- [ ] Desplegar la Edge Function de Stripe para activacion automatica de pagos
+- [ ] Generacion automatica de certificados en PDF
 - [ ] Primeros agentes de IA
 
 ## ⚠️ Pendiente: subir imágenes de marca a `/assets`
 
-Para que el sitio se vea completo, sube estos 2 archivos a la carpeta `assets/` del repositorio, con estos nombres exactos:
+Sube estos 2 archivos a la carpeta `assets/` del repositorio (Add file -> Upload files), con estos nombres exactos:
 
-- `assets/LOGO_INISCH_NUEVO_png_copia__1_.png` — logotipo completo (emblema + texto)
-- `assets/Screenshot_2026-09-02_at_1_44_09_PM.png` — banner de marca (solo visible en modo claro)
-
-Como subirlos: entra a https://github.com/fondosdharma-a11y/inisch-web, abre la carpeta `assets`, boton **Add file -> Upload files**, arrastra los 2 archivos y da **Commit changes**. El sitio en GitHub Pages los tomara automaticamente sin ningún paso adicional.
+- `assets/LOGO_INISCH_NUEVO_png_copia__1_.png`
+- `assets/Screenshot_2026-09-02_at_1_44_09_PM.png`
 
 ## Conectar el dominio INISCH.com (pendiente, requiere accion del usuario)
 
-1. En GitHub: Settings del repo -> Pages -> Custom domain -> escribir `www.inisch.com` (o `inisch.com`).
-2. En Porkbun (donde se compro el dominio): agregar un registro CNAME apuntando `www` a `fondosdharma-a11y.github.io`, y/o registros A apuntando la raíz a las IPs de GitHub Pages (185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153).
-3. Esperar propagacion DNS (minutos a horas) y activar "Enforce HTTPS" en GitHub una vez verificado.
+1. En GitHub: Settings del repo -> Pages -> Custom domain -> escribir `www.inisch.com`.
+2. En Porkbun: agregar un registro CNAME apuntando `www` a `fondosdharma-a11y.github.io`, y/o registros A apuntando la raiz a 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153.
+3. Esperar propagacion DNS y activar "Enforce HTTPS" en GitHub.
 
 ## Como ver el sitio localmente
 
-Descarga el repositorio ("Code -> Download ZIP" o `git clone`) y abre `docs/index.html` directamente en tu navegador.
+Descarga el repositorio ("Code -> Download ZIP") y abre `docs/index.html` en tu navegador. El campus (`docs/campus/login.html`) tambien funciona localmente una vez conectadas las llaves de Supabase.
 
 ## Proximos pasos
 
-Ver `/internal-docs/plan-maestro-inisch.md`, secciones 4 y 6, para el detalle de la plataforma de alumnos y la hoja de ruta completa.
+Ver `/internal-docs/plan-maestro-inisch.md` para el detalle completo y la hoja de ruta por fases.
