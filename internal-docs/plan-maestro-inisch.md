@@ -1,7 +1,7 @@
 # Plan Maestro — Sitio Web + Plataforma de Alumnos + Agentes IA
 ## Instituto Internacional del Sistema Código Holográfico (INISCH)
 
-*Versión inicial de planeación — se irá ampliando conforme se comparta más información (marca, contenidos, precios finales, equipo, proveedores).*
+*Documento vivo — se actualiza conforme avanza el proyecto.*
 
 ---
 
@@ -29,24 +29,28 @@
 
 ---
 
-## 3. Arquitectura del sitio web institucional
+## 3. Arquitectura del sitio web institucional ✅ IMPLEMENTADO
+
+Sitio publicado en GitHub Pages (`/docs` del repositorio, rama `main`): https://fondosdharma-a11y.github.io/inisch-web/
 
 1. Inicio — propuesta de valor, 7 líneas de producto, CTA
 2. El Sistema Código Holográfico — historia, fundamentos, Isabel Elizalde
-3. Formación de Especialistas — Etapa 1 / 2 / 3
+3. Formación de Especialistas — Etapa 1 / 2 / 3, con precios y requisitos reales
 4. Acompañamiento Especializado
 5. Numerología Holográfica
-6. Círculos de Mujeres / Inmersión Sonora / Viajes (landing individual)
+6. Experiencias — Rituales, Círculos de Mujeres, Inmersión Sonora, Viajes
 7. Certificaciones y Validez Oficial
-8. Blog / Recursos
-9. Plataforma de Alumnos (login)
+8. Blog (3 artículos publicados)
+9. Modo claro/oscuro en todas las páginas
 10. Contacto / WhatsApp
+
+Pendiente: conectar el dominio INISCH.com como dominio personalizado de GitHub Pages (requiere que el usuario agregue los registros DNS en Porkbun).
 
 ---
 
 ## 4. Plataforma de Alumnos (Campus Virtual)
 
-### 4.1 Módulos funcionales
+### 4.1 Módulos funcionales necesarios
 - Autenticación y perfil (alumno / instructor / admin)
 - Catálogo de cursos por Etapa + cursos complementarios
 - Reproductor de clases (on-demand + en vivo)
@@ -59,15 +63,44 @@
 - Biblioteca de recursos descargables
 - Panel de administración
 
-### 4.2 Decisión tecnológica
+### 4.2 DECISIÓN DE ARQUITECTURA (tomada por criterio de eficacia, automatización y menor costo)
 
-| Opción | Cuándo conviene |
-|---|---|
-| A. Todo-en-uno (Kajabi/Thinkific) | Lanzar rápido sin equipo técnico |
-| B. WordPress + LMS (LearnDash) | Control de marca con presupuesto medio |
-| C. Desarrollo a medida | Ecosistema propio con IA profunda |
+Se descartaron las plataformas todo-en-uno (Kajabi/Thinkific) por su costo mensual recurrente en USD y baja capacidad de automatización a medida. Se descartó también WordPress+LMS por requerir mantenimiento de servidor y ser menos eficiente para integrar agentes de IA vía API.
 
-**Recomendación:** iniciar en B, migrable a C en 12–18 meses según volumen.
+**Stack elegido:**
+
+| Capa | Herramienta | Por qué | Costo |
+|---|---|---|---|
+| Sitio de marca | GitHub Pages | Ya implementado, gratis, sin mantenimiento de servidor | $0 |
+| Frontend del campus | App estática (HTML/JS o framework ligero) servida igual en GitHub Pages o Cloudflare Pages | Coherente con el resto del sitio, sin backend propio que mantener | $0 |
+| Autenticación + Base de datos + Storage | **Supabase** (Postgres administrado) | Auth de alumnos, tablas de cursos/progreso/certificados, almacenamiento de PDFs, todo con API lista para usar desde el frontend estático. Plan gratuito: 500MB BD, 50,000 usuarios activos/mes, 1GB storage — suficiente para arrancar y crecer varios años antes de pagar | $0 al inicio, ~$25 USD/mes al escalar |
+| Pagos | **Stripe** (ya decidido) | Checkout, suscripciones para mensualidades, webhooks | Solo comisión por transacción |
+| Automatización (webhooks Stripe → activar acceso, recordatorios, etc.) | **Supabase Edge Functions** | Sin servidor propio que mantener, se ejecutan bajo demanda | Incluido en plan gratuito hasta cierto volumen |
+| Video de clases | YouTube o Vimeo en modo "no listado", embebido en el campus | Evita costos de almacenamiento/ancho de banda de video, que son el gasto más caro en cualquier LMS propio | $0 |
+| Certificados PDF | Generados por Edge Function a partir de una plantilla, guardados en Supabase Storage | Automatizado, sin intervención manual | Incluido |
+
+**Por qué esta combinación gana en los 3 criterios pedidos:**
+- **Eficacia:** Supabase da en una sola herramienta lo que en WordPress requeriría 4-5 plugins distintos (auth, base de datos, storage, API).
+- **Automatización:** las Edge Functions permiten conectar Stripe → activación de acceso → notificación al alumno sin intervención manual, y son la misma tecnología que usarán después los agentes de IA (sección 5) para leer/escribir datos de alumnos.
+- **Costo:** $0 de infraestructura hasta que haya un volumen real de alumnos pagando, momento en el cual el costo (~$25 USD/mes) es marginal frente al ingreso que ya estaría generando la Etapa 2/3.
+
+### 4.3 Esquema inicial de base de datos (borrador)
+
+```
+students        (id, email, full_name, created_at)
+enrollments     (id, student_id, etapa, status, stripe_subscription_id, started_at)
+courses         (id, etapa, title, order_index)
+lessons         (id, course_id, title, video_url, order_index, unlocks_after_lesson_id)
+progress        (id, student_id, lesson_id, completed_at)
+certificates    (id, student_id, etapa, issued_at, pdf_url, folio)
+```
+
+### 4.4 Próximos pasos de implementación
+1. Crear proyecto en Supabase (gratuito) — requiere que el usuario cree la cuenta (correo + verificación), Claude puede diseñar el esquema y el código pero no puede crear la cuenta por él.
+2. Definir las tablas del esquema 4.3 y las políticas de seguridad (Row Level Security) para que cada alumno solo vea su propio progreso.
+3. Construir la pantalla de login/registro del campus (frontend estático + supabase-js).
+4. Cargar el catálogo de cursos de la Etapa 1 como piloto.
+5. Conectar Stripe Checkout → Edge Function → activación automática de acceso.
 
 ---
 
@@ -91,22 +124,26 @@
 
 ## 6. Plan de trabajo por fases
 
-### Fase 0 — Fundamentos ✅ en curso
+### Fase 0 — Fundamentos ✅ completado
 - [x] Dominio INISCH.com (Porkbun)
 - [x] Stripe como pasarela de pago
 - [x] Logotipo recibido
 - [x] Arquitectura de información del sitio definida
 
-### Fase 1 — Sitio web institucional 🔄 en curso
-- [x] 3 direcciones de diseño exploradas, 2 finalistas rediseñadas con marca real
-- [ ] Elegir dirección definitiva
-- [ ] Páginas internas (Formación por etapas, Certificaciones, Blog)
-- [ ] SEO técnico + blog inicial
+### Fase 1 — Sitio web institucional ✅ completado
+- [x] Dirección de diseño definida (con modo claro/oscuro usando ambas propuestas)
+- [x] Todas las páginas internas construidas con datos reales
+- [x] Blog con 3 artículos publicados
+- [x] Publicado en GitHub Pages
+- [ ] Conectar dominio INISCH.com (DNS en Porkbun)
 - [ ] Primer agente IA: chat de ventas/WhatsApp
 
-### Fase 2 — Plataforma de alumnos / Campus
-- [ ] Estructura de cursos por Etapa
-- [ ] Carga de contenido (video, PDF, audio)
+### Fase 2 — Plataforma de alumnos / Campus 🔄 siguiente
+- [x] Arquitectura técnica decidida (Supabase + Stripe + frontend estático)
+- [ ] Cuenta de Supabase creada (requiere acción del usuario)
+- [ ] Esquema de base de datos implementado
+- [ ] Login/registro del campus
+- [ ] Catálogo Etapa 1 como piloto
 - [ ] Progreso, certificados, pagos
 - [ ] Comunidad / Círculos
 
