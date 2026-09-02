@@ -38,6 +38,15 @@
   <p class="note" id="progressLabel" style="margin-top:8px;">0 de 0 lecciones completadas</p>
 
   <div id="lessonList" style="margin-top:30px;"></div>
+
+  <div id="certSection" style="margin-top:40px; display:none;">
+    <div class="price-box">
+      <h4>Certificado de esta etapa</h4>
+      <p id="certStatus" style="color:var(--ink-dim); font-size:14px; margin-bottom:16px;">Completa todas las lecciones para poder generar tu certificado.</p>
+      <button id="certBtn" class="btn-teal btn-full" style="display:none;">Generar mi certificado</button>
+      <a id="certLink" class="btn-line btn-full" style="display:none; text-align:center;" target="_blank">Descargar certificado (PDF)</a>
+    </div>
+  </div>
 </div>
 
 <div class="wrap" style="padding:0 32px 80px;">
@@ -62,15 +71,14 @@
   var session = await requireSession('login.html');
   if (!session) return;
   var userId = session.user.id;
+  var ETAPA = 1;
 
-  // Perfil
   var profileRes = await supabaseClient.from('profiles').select('full_name').eq('id', userId).single();
   if (profileRes.data && profileRes.data.full_name){
     document.getElementById('studentName').textContent = profileRes.data.full_name;
   }
 
-  // Curso Etapa 1 + lecciones
-  var courseRes = await supabaseClient.from('courses').select('id, title').eq('etapa', 1).single();
+  var courseRes = await supabaseClient.from('courses').select('id, title').eq('etapa', ETAPA).single();
   if (courseRes.error || !courseRes.data){
     document.getElementById('lessonList').innerHTML = '<p style="color:var(--ink-dim);">Aún no hay contenido cargado para la Etapa 1.</p>';
     return;
@@ -83,12 +91,70 @@
   var progressRes = await supabaseClient.from('progress').select('lesson_id').eq('student_id', userId);
   var doneIds = (progressRes.data || []).map(function(r){ return r.lesson_id; });
 
+  var certSection = document.getElementById('certSection');
+  var certStatus = document.getElementById('certStatus');
+  var certBtn = document.getElementById('certBtn');
+  var certLink = document.getElementById('certLink');
+
+  async function checkExistingCertificate(){
+    var res = await supabaseClient.from('certificates').select('folio, pdf_url').eq('student_id', userId).eq('etapa', ETAPA).maybeSingle();
+    if (res.data){
+      certStatus.textContent = 'Folio: ' + res.data.folio;
+      certBtn.style.display = 'none';
+      certLink.style.display = 'block';
+      certLink.href = res.data.pdf_url;
+    }
+  }
+
   function renderProgress(){
     var pct = lessons.length ? Math.round((doneIds.length / lessons.length) * 100) : 0;
     document.getElementById('progressFill').style.width = pct + '%';
     document.getElementById('progressLabel').textContent = doneIds.length + ' de ' + lessons.length + ' lecciones completadas';
+
+    if (lessons.length > 0){
+      certSection.style.display = 'block';
+      if (doneIds.length >= lessons.length){
+        certStatus.textContent = '¡Completaste todas las lecciones! Ya puedes generar tu certificado.';
+        if (certLink.style.display !== 'block') certBtn.style.display = 'block';
+      } else {
+        certStatus.textContent = 'Completa todas las lecciones para poder generar tu certificado.';
+        certBtn.style.display = 'none';
+        certLink.style.display = 'none';
+      }
+    }
   }
   renderProgress();
+  checkExistingCertificate();
+
+  certBtn.addEventListener('click', async function(){
+    certBtn.disabled = true;
+    certBtn.textContent = 'Generando...';
+    try {
+      var resp = await fetch(SUPABASE_URL + '/functions/v1/generate-certificate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + session.access_token,
+        },
+        body: JSON.stringify({ etapa: ETAPA }),
+      });
+      var data = await resp.json();
+      if (!resp.ok){
+        certStatus.textContent = data.error || 'No se pudo generar el certificado.';
+        certBtn.disabled = false;
+        certBtn.textContent = 'Generar mi certificado';
+        return;
+      }
+      certStatus.textContent = 'Folio: ' + data.folio;
+      certBtn.style.display = 'none';
+      certLink.style.display = 'block';
+      certLink.href = data.pdf_url;
+    } catch (e){
+      certStatus.textContent = 'La funcion de certificados aun no esta desplegada en Supabase.';
+      certBtn.disabled = false;
+      certBtn.textContent = 'Generar mi certificado';
+    }
+  });
 
   var listEl = document.getElementById('lessonList');
   listEl.innerHTML = '';
