@@ -3,105 +3,197 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Campus de Alumnos — INISCH</title>
-<script>(function(){var t=localStorage.getItem('inisch-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
-<link rel="stylesheet" href="../css/main.css">
+<title>Campus de alumnos — INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="stylesheet" href="css/campus.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  body{display:flex;align-items:center;justify-content:center;padding:32px 20px}
+  .auth{width:100%;max-width:920px;display:grid;grid-template-columns:1.05fr .95fr;
+    border:1px solid var(--line-gold);border-radius:16px;overflow:hidden;box-shadow:var(--sh);
+    background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.015));backdrop-filter:blur(8px)}
+  .auth-side{padding:46px 42px;border-right:1px solid var(--line);position:relative;overflow:hidden;
+    display:flex;flex-direction:column;justify-content:center}
+  .auth-side::after{content:"";position:absolute;right:-120px;bottom:-120px;width:340px;height:340px;
+    background:url('../assets/mandala.png') center/contain no-repeat;opacity:.10;pointer-events:none}
+  .auth-side h1{font-size:31px;line-height:1.15;margin-bottom:14px}
+  .auth-form{padding:44px 40px}
+  .tabs{display:flex;gap:4px;margin-bottom:26px;border-bottom:1px solid var(--line)}
+  .tab{flex:1;padding:11px 0;background:none;border:none;color:var(--ink-dim);font-size:14.5px;
+    cursor:pointer;border-bottom:2px solid transparent;transition:all .25s var(--ease)}
+  .tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+  .brand{display:flex;align-items:center;gap:13px;margin-bottom:30px}
+  .brand img{width:44px;height:44px;border-radius:50%;border:1px solid var(--line-gold)}
+  .brand .bn{font-family:'Space Grotesk',sans-serif;font-size:18px;letter-spacing:.13em}
+  .brand .bs{font-size:10.5px;color:var(--ink-soft);letter-spacing:.15em;text-transform:uppercase}
+  .msg{border-radius:8px;padding:12px 15px;font-size:13.5px;margin-bottom:18px;display:none}
+  .msg.err{display:block;border:1px solid rgba(224,120,90,.4);background:rgba(224,120,90,.1);color:#F0B4A2}
+  .msg.ok{display:block;border:1px solid rgba(95,191,143,.4);background:rgba(95,191,143,.1);color:#A7DCC2}
+  .feat{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;font-size:14px;color:var(--ink-dim)}
+  .feat .fi{color:var(--gold);flex-shrink:0}
+  @media(max-width:820px){
+    .auth{grid-template-columns:1fr}
+    .auth-side{display:none}
+    .auth-form{padding:34px 24px}
+  }
+</style>
 </head>
 <body>
-<header><nav>
-  <a href="../index.html" class="nav-logo"></a>
-  <div class="navlinks">
-    <a href="../index.html">Sitio INISCH</a>
+
+<div class="auth">
+  <div class="auth-side">
+    <div class="eyebrow">Tu espacio de proceso</div>
+    <h1>Volver a ti,<br>a tu propio ritmo</h1>
+    <p class="muted tiny" style="margin-bottom:26px;font-size:14.5px">
+      El campus reúne tus lecciones, tus registros y las herramientas del Sistema en un solo lugar.
+    </p>
+    <div class="feat"><span class="fi">◈</span><div>Tus lecciones con seguimiento de avance</div></div>
+    <div class="feat"><span class="fi">🎥</span><div><b style="color:var(--ink);font-weight:500">Mi Película</b> — el registro guiado de tu <em>desde dónde</em></div></div>
+    <div class="feat"><span class="fi">✎</span><div><b style="color:var(--ink);font-weight:500">Bitácora</b> — el diario del <em>darte cuenta</em></div></div>
+    <div class="feat"><span class="fi">◉</span><div>Práctica de Atención Fina y meditación</div></div>
+    <div class="quote" style="margin-top:26px;font-size:17px">Nadie puede guiar a otro a donde no ha llegado primero.</div>
   </div>
-  <button class="theme-toggle"></button>
-  <button class="navtoggle">☰</button>
-</nav></header>
 
-<div id="configBanner" class="config-banner"></div>
+  <div class="auth-form">
+    <a href="../index.html" class="brand">
+      <img src="../assets/mandala.png" alt="INISCH">
+      <div><div class="bn">INISCH</div><div class="bs">Campus de alumnos</div></div>
+    </a>
 
-<div class="campus-shell">
-  <div class="auth-card">
-    <h1 id="formTitle">Entrar al Campus</h1>
-    <p class="sub" id="formSub">Accede con tu correo y contraseña para continuar tu formación.</p>
-    <div id="authMsg" class="auth-msg"></div>
+    <div class="tabs">
+      <button class="tab on" id="t-in">Entrar</button>
+      <button class="tab" id="t-up">Crear cuenta</button>
+    </div>
 
-    <div class="field" id="nameField" style="display:none;">
-      <label for="fullName">Nombre completo</label>
-      <input type="text" id="fullName" autocomplete="name">
-    </div>
-    <div class="field">
-      <label for="email">Correo electrónico</label>
-      <input type="email" id="email" autocomplete="email">
-    </div>
-    <div class="field">
-      <label for="password">Contraseña</label>
-      <input type="password" id="password" autocomplete="current-password">
-    </div>
-    <button id="submitBtn" class="btn-teal btn-full">Entrar</button>
+    <div class="msg" id="msg"></div>
 
-    <div class="auth-switch">
-      <span id="switchText">¿Aún no tienes cuenta?</span>
-      <a href="#" id="switchLink">Crear cuenta</a>
-    </div>
-    <div class="auth-switch" style="margin-top:8px;">
-      <a href="https://wa.me/523314701563" target="_blank">¿Problemas para entrar? Escríbenos por WhatsApp</a>
-    </div>
+    <!-- ENTRAR -->
+    <form id="f-in" autocomplete="on">
+      <div class="field">
+        <label for="i-mail">Correo electrónico</label>
+        <input type="email" id="i-mail" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="i-pass">Contraseña</label>
+        <input type="password" id="i-pass" autocomplete="current-password" required>
+      </div>
+      <button type="submit" class="btn" style="width:100%">Entrar al campus</button>
+      <p class="tiny soft" style="margin-top:14px;text-align:center">
+        <a href="#" id="lnk-reset" style="color:var(--ink-dim)">Olvidé mi contraseña</a>
+      </p>
+    </form>
+
+    <!-- REGISTRO -->
+    <form id="f-up" style="display:none" autocomplete="on">
+      <div class="field">
+        <label for="u-name">Nombre completo</label>
+        <input type="text" id="u-name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="u-mail">Correo electrónico</label>
+        <input type="email" id="u-mail" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="u-wa">WhatsApp <span class="soft">(opcional)</span></label>
+        <input type="text" id="u-wa" autocomplete="tel">
+      </div>
+      <div class="field">
+        <label for="u-pass">Contraseña <span class="soft">(mínimo 8 caracteres)</span></label>
+        <input type="password" id="u-pass" autocomplete="new-password" minlength="8" required>
+      </div>
+      <button type="submit" class="btn" style="width:100%">Crear mi cuenta</button>
+      <p class="tiny soft" style="margin-top:14px">
+        Al crear tu cuenta aceptas los <a href="../terminos.html" style="color:var(--ink-dim)">términos</a>
+        y el <a href="../privacidad.html" style="color:var(--ink-dim)">aviso de privacidad</a>.
+      </p>
+    </form>
+
+    <p class="tiny soft" style="margin-top:24px;text-align:center">
+      ¿Aún no eres alumno? <a href="../formacion.html" style="color:var(--gold)">Conoce la formación</a>
+    </p>
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
-<script src="js/app.js"></script>
 <script>
-  var isSignup = false;
-  var configBanner = document.getElementById('configBanner');
-  if (campusNotConfigured()) showNotConfiguredBanner(configBanner);
+(function(){
+  var msg = document.getElementById("msg");
+  function show(kind, text){ msg.className = "msg " + kind; msg.textContent = text; }
+  function clear(){ msg.className = "msg"; msg.textContent = ""; }
 
-  document.getElementById('switchLink').addEventListener('click', function(e){
-    e.preventDefault();
-    isSignup = !isSignup;
-    document.getElementById('formTitle').textContent = isSignup ? 'Crear tu cuenta' : 'Entrar al Campus';
-    document.getElementById('formSub').textContent = isSignup ? 'Regístrate con el correo que usaste al inscribirte.' : 'Accede con tu correo y contraseña para continuar tu formación.';
-    document.getElementById('nameField').style.display = isSignup ? 'block' : 'none';
-    document.getElementById('submitBtn').textContent = isSignup ? 'Crear cuenta' : 'Entrar';
-    document.getElementById('switchText').textContent = isSignup ? '¿Ya tienes cuenta?' : '¿Aún no tienes cuenta?';
-    document.getElementById('switchLink').textContent = isSignup ? 'Entrar' : 'Crear cuenta';
-  });
+  var tIn=document.getElementById("t-in"), tUp=document.getElementById("t-up");
+  var fIn=document.getElementById("f-in"), fUp=document.getElementById("f-up");
+  tIn.onclick=function(){ tIn.classList.add("on"); tUp.classList.remove("on"); fIn.style.display=""; fUp.style.display="none"; clear(); };
+  tUp.onclick=function(){ tUp.classList.add("on"); tIn.classList.remove("on"); fUp.style.display=""; fIn.style.display="none"; clear(); };
 
-  function showMsg(text, type){
-    var el = document.getElementById('authMsg');
-    el.textContent = text;
-    el.className = 'auth-msg ' + type;
-    el.style.display = 'block';
+  if (!CAMPUS_CONFIGURED){
+    show("ok", "Modo demostración: entra con cualquier correo y contraseña para recorrer el campus.");
   }
 
-  document.getElementById('submitBtn').addEventListener('click', async function(){
-    if (campusNotConfigured()){
-      showMsg('El campus aún no está conectado a la base de datos.', 'error');
-      return;
+  fIn.onsubmit = function(e){
+    e.preventDefault(); clear();
+    var mail = document.getElementById("i-mail").value.trim();
+    var pass = document.getElementById("i-pass").value;
+    if (!CAMPUS_CONFIGURED){
+      try{ localStorage.setItem("inisch-demo:user", JSON.stringify({ id:"demo", email:mail, full_name:mail.split("@")[0], demo:true })); }catch(err){}
+      location.href = "dashboard.html"; return;
     }
-    var email = document.getElementById('email').value.trim();
-    var password = document.getElementById('password').value;
-    var fullName = document.getElementById('fullName').value.trim();
+    var btn = fIn.querySelector("button[type=submit]");
+    btn.disabled = true; btn.textContent = "Entrando…";
+    supabaseClient.auth.signInWithPassword({ email:mail, password:pass }).then(function(r){
+      if (r.error){ show("err", traducir(r.error.message)); btn.disabled=false; btn.textContent="Entrar al campus"; return; }
+      location.href = "dashboard.html";
+    });
+  };
 
-    if (!email || !password){ showMsg('Escribe tu correo y contraseña.', 'error'); return; }
-
-    if (isSignup){
-      var res = await supabaseClient.auth.signUp({
-        email: email, password: password,
-        options: { data: { full_name: fullName } }
-      });
-      if (res.error){ showMsg(res.error.message, 'error'); return; }
-      showMsg('Cuenta creada. Revisa tu correo para confirmar tu acceso.', 'ok');
-    } else {
-      var res2 = await supabaseClient.auth.signInWithPassword({ email: email, password: password });
-      if (res2.error){ showMsg(res2.error.message, 'error'); return; }
-      window.location.href = 'dashboard.html';
+  fUp.onsubmit = function(e){
+    e.preventDefault(); clear();
+    var name=document.getElementById("u-name").value.trim();
+    var mail=document.getElementById("u-mail").value.trim();
+    var wa  =document.getElementById("u-wa").value.trim();
+    var pass=document.getElementById("u-pass").value;
+    if (pass.length < 8){ show("err","La contraseña necesita al menos 8 caracteres."); return; }
+    if (!CAMPUS_CONFIGURED){
+      try{ localStorage.setItem("inisch-demo:user", JSON.stringify({ id:"demo", email:mail, full_name:name, whatsapp:wa, demo:true })); }catch(err){}
+      location.href = "dashboard.html"; return;
     }
-  });
+    var btn = fUp.querySelector("button[type=submit]");
+    btn.disabled = true; btn.textContent = "Creando…";
+    supabaseClient.auth.signUp({
+      email: mail, password: pass,
+      options:{ data:{ full_name:name, whatsapp:wa } }
+    }).then(function(r){
+      btn.disabled=false; btn.textContent="Crear mi cuenta";
+      if (r.error){ show("err", traducir(r.error.message)); return; }
+      if (r.data && r.data.session){ location.href="dashboard.html"; return; }
+      show("ok","Cuenta creada. Revisa tu correo para confirmar la dirección y después entra.");
+    });
+  };
+
+  document.getElementById("lnk-reset").onclick = function(e){
+    e.preventDefault();
+    var mail = document.getElementById("i-mail").value.trim();
+    if (!mail){ show("err","Escribe tu correo arriba y vuelve a presionar."); return; }
+    if (!CAMPUS_CONFIGURED){ show("ok","En modo demostración no hace falta contraseña."); return; }
+    supabaseClient.auth.resetPasswordForEmail(mail, {
+      redirectTo: location.origin + "/campus/login.html"
+    }).then(function(r){
+      if (r.error) show("err", traducir(r.error.message));
+      else show("ok","Te enviamos un correo para restablecer tu contraseña.");
+    });
+  };
+
+  function traducir(m){
+    m = String(m||"");
+    if (/Invalid login credentials/i.test(m)) return "Correo o contraseña incorrectos.";
+    if (/Email not confirmed/i.test(m))      return "Falta confirmar tu correo. Revisa tu bandeja.";
+    if (/already registered|already exists/i.test(m)) return "Ya existe una cuenta con ese correo. Intenta entrar.";
+    if (/rate limit|too many/i.test(m))      return "Demasiados intentos. Espera un momento.";
+    if (/password/i.test(m) && /short|least/i.test(m)) return "La contraseña es demasiado corta.";
+    return "No se pudo completar: " + m;
+  }
+})();
 </script>
-<script src="../js/theme.js"></script>
-<script src="../js/reveal.js"></script>
 </body>
 </html>
