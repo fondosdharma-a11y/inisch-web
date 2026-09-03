@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bitácora — Campus INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="stylesheet" href="css/campus.css">
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/campus-core.js"></script>
+<script>
+
+var PATRONES = [
+  ["control",     "Control",     "Quise que algo saliera como yo quería"],
+  ["expectativa", "Expectativa", "Esperaba algo que no ocurrió"],
+  ["apego",       "Apego",       "Me aferré, temí perder algo o a alguien"],
+  ["juicio",      "Juicio",      "Critiqué, comparé o tomé partido"],
+  ["otro",        "Otro",        "No encaja en los anteriores"]
+];
+
+Campus.boot("Bitácora", function(c, u){
+  var E = Campus.esc;
+
+  var head = document.createElement("div");
+  head.className = "reveal";
+  head.innerHTML =
+    '<div class="eyebrow">Herramienta</div>' +
+    '<h1 style="font-size:clamp(26px,4vw,36px);line-height:1.12">Bitácora del <i>darte cuenta</i></h1>' +
+    '<p class="muted" style="margin-top:10px;max-width="620px">' +
+      'Cada vez que notes un patrón repitiéndose, anótalo aquí. ' +
+      'Con el tiempo vas a ver la forma de tu película con mucha claridad.</p>';
+  c.appendChild(head);
+
+  var acciones = document.createElement("div");
+  acciones.className = "reveal";
+  acciones.style.margin = "22px 0";
+  acciones.innerHTML = '<button class="btn-p" id="bt-new">+ Nueva anotación</button>';
+  c.appendChild(acciones);
+
+  var zone = document.createElement("div");
+  zone.innerHTML = '<div class="card"><p class="muted tiny">Cargando tu bitácora…</p></div>';
+  c.appendChild(zone);
+
+  acciones.querySelector("#bt-new").addEventListener("click", function(){ editor({}); });
+
+  function render(){
+    Campus.DB.list("bitacora", { order:"fecha", desc:true }).then(function(rows){
+      rows = rows || [];
+      var h = "";
+
+      /* resumen de patrones */
+      if (rows.length){
+        var cnt = {};
+        rows.forEach(function(r){ if(r.patron) cnt[r.patron] = (cnt[r.patron]||0)+1; });
+        var max = 0, dom = null;
+        for (var k in cnt){ if (cnt[k] > max){ max = cnt[k]; dom = k; } }
+
+        h += '<div class="card reveal" style="margin-bottom:24px">';
+        h += '<b>Tu patrón más frecuente</b>';
+        if (dom){
+          var nom = PATRONES.filter(function(p){return p[0]===dom;})[0];
+          h += '<p class="muted" style="margin-top:8px;font-size:15px">De ' + rows.length +
+               ' anotacion' + (rows.length===1?"":"es") + ', <b style="color:var(--gold)">' +
+               E(nom ? nom[1] : dom) + '</b> aparece ' + max + ' ' + (max===1?"vez":"veces") + '.</p>';
+        }
+        h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">';
+        PATRONES.forEach(function(p){
+          var n = cnt[p[0]] || 0;
+          h += '<span class="chip' + (n?" on":"") + '">' + E(p[1]) + (n ? ' · ' + n : '') + '</span>';
+        });
+        h += '</div></div>';
+      }
+
+      if (!rows.length){
+        h += '<div class="card reveal" style="text-align:center;padding:42px 24px">' +
+             '<div style="font-size:34px;opacity:.5;margin-bottom:12px">✎</div>' +
+             '<b>Tu bitácora está vacía</b>' +
+             '<p class="muted" style="margin-top:8px;max-width:440px;margin-left:auto;margin-right:auto;font-size:15px">' +
+             'No necesitas escribir todos los días. Anota cuando algo te mueva: una discusión, ' +
+             'una molestia, una reacción que te sorprendió de ti mismo.</p></div>';
+      } else {
+        rows.forEach(function(r){
+          var nom = PATRONES.filter(function(p){return p[0]===r.patron;})[0];
+          h += '<div class="card reveal" style="margin-bottom:14px">';
+          h += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">';
+          h += '<div style="flex:1">';
+          h += '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px">' +
+               '<span class="tiny soft">' + E(fechaLarga(r.fecha)) + '</span>' +
+               (nom ? '<span class="chip on tiny">' + E(nom[1]) + '</span>' : '') +
+               '</div>';
+          if (r.situacion)   h += '<p style="font-size:15.5px">' + E(r.situacion) + '</p>';
+          if (r.emocion)     h += '<p class="muted tiny" style="margin-top:8px"><b>Sentí:</b> ' + E(r.emocion) + '</p>';
+          if (r.desde_donde) h += '<p class="muted tiny" style="margin-top:5px"><b>Desde dónde:</b> ' + E(r.desde_donde) + '</p>';
+          if (r.comprension) h += '<p style="margin-top:12px;padding-left:14px;border-left:2px solid var(--gold);font-size:15px">' + E(r.comprension) + '</p>';
+          h += '</div>';
+          h += '<div style="display:flex;flex-direction:column;gap:6px">' +
+               '<button class="btn-o btn-sm bt-open" data-id="' + r.id + '">Editar</button>' +
+               '<button class="btn-o btn-sm bt-del" data-id="' + r.id + '">✕</button></div>';
+          h += '</div></div>';
+        });
+      }
+
+      zone.innerHTML = h;
+      Campus.reveal(c);
+
+      zone.querySelectorAll(".bt-open").forEach(function(b){
+        b.addEventListener("click", function(){
+          var r = rows.filter(function(x){ return String(x.id)===b.dataset.id; })[0];
+          if (r) editor(r);
+        });
+      });
+      zone.querySelectorAll(".bt-del").forEach(function(b){
+        b.addEventListener("click", function(){
+          if (!confirm("¿Eliminar esta anotación?")) return;
+          Campus.DB.remove("bitacora", b.dataset.id).then(function(){ Campus.toast("Anotación eliminada"); render(); });
+        });
+      });
+    }).catch(function(e){
+      console.error(e);
+      zone.innerHTML = '<div class="card"><p class="muted">No pudimos cargar tu bitácora. ' +
+        'Si acabas de conectar Supabase, revisa que hayas ejecutado <code>schema-v2.sql</code>.</p></div>';
+    });
+  }
+
+  function fechaLarga(f){
+    if (!f) return "";
+    var p = String(f).slice(0,10).split("-");
+    var M = ["enero","febrero","marzo","abril","mayo","junio","julio",
+             "agosto","septiembre","octubre","noviembre","diciembre"];
+    return parseInt(p[2],10) + " de " + M[parseInt(p[1],10)-1] + " de " + p[0];
+  }
+
+  function editor(rec){
+    var back = document.createElement("div"); back.className = "sheet-back";
+    var sh = document.createElement("div");   sh.className = "sheet";
+    var hoy = new Date().toISOString().slice(0,10);
+
+    var h = '<div class="sheet-head">' +
+      '<div><div class="eyebrow">Bitácora</div>' +
+      '<h2 style="font-size:22px;margin-top:4px">' + (rec.id ? "Editar anotación" : "Nueva anotación") + '</h2></div>' +
+      '<button class="btn-o btn-sm sh-x">Cerrar</button></div>';
+
+    h += '<div class="sheet-body">';
+    h += '<label class="fl">Fecha</label><input class="fi" type="date" id="b-fecha" value="' + E(String(rec.fecha||hoy).slice(0,10)) + '">';
+
+    h += '<label class="fl" style="margin-top:18px">¿Qué pasó?</label>' +
+         '<textarea class="fi ft" id="b-sit" rows="3" placeholder="Describe la situación como si la contaras a alguien más">' + E(rec.situacion||"") + '</textarea>';
+
+    h += '<label class="fl" style="margin-top:18px">¿Qué sentiste?</label>' +
+         '<input class="fi" id="b-emo" placeholder="Ej. enojo, tristeza, ansiedad, vergüenza" value="' + E(rec.emocion||"") + '">';
+
+    h += '<label class="fl" style="margin-top:18px">¿Qué patrón reconoces?</label>';
+    h += '<div class="chips" id="b-pat">';
+    PATRONES.forEach(function(p){
+      h += '<button type="button" class="chip' + (rec.patron===p[0]?" on":"") + '" data-v="' + p[0] + '" title="' + E(p[2]) + '">' + E(p[1]) + '</button>';
+    });
+    h += '</div>';
+
+    h += '<label class="fl" style="margin-top:18px">¿Desde dónde viene esto?</label>' +
+         '<textarea class="fi ft" id="b-dd" rows="3" placeholder="¿A quién de tu infancia le viste o le escuchaste esto? ¿Qué escena se está repitiendo?">' + E(rec.desde_donde||"") + '</textarea>';
+
+    h += '<label class="fl" style="margin-top:18px">¿Qué comprendiste?</label>' +
+         '<textarea class="fi ft" id="b-comp" rows="3" placeholder="No tiene que ser una conclusión. Basta con lo que alcanzaste a ver.">' + E(rec.comprension||"") + '</textarea>';
+    h += '</div>';
+
+    h += '<div class="sheet-foot"><span class="tiny soft" id="b-status"></span>' +
+         '<button class="btn-p btn-sm sh-save">Guardar</button></div>';
+
+    sh.innerHTML = h;
+    document.body.appendChild(back); document.body.appendChild(sh);
+    requestAnimationFrame(function(){ back.classList.add("on"); sh.classList.add("on"); });
+
+    var patron = rec.patron || null;
+    sh.querySelectorAll("#b-pat .chip").forEach(function(b){
+      b.addEventListener("click", function(){
+        sh.querySelectorAll("#b-pat .chip").forEach(function(x){ x.classList.remove("on"); });
+        b.classList.add("on"); patron = b.dataset.v;
+      });
+    });
+
+    function close(){
+      back.classList.remove("on"); sh.classList.remove("on");
+      setTimeout(function(){ back.remove(); sh.remove(); }, 260);
+    }
+    sh.querySelector(".sh-x").addEventListener("click", function(){ close(); });
+    back.addEventListener("click", close);
+
+    sh.querySelector(".sh-save").addEventListener("click", function(){
+      var row = {
+        fecha:       sh.querySelector("#b-fecha").value || hoy,
+        situacion:   sh.querySelector("#b-sit").value.trim(),
+        emocion:     sh.querySelector("#b-emo").value.trim(),
+        patron:      patron,
+        desde_donde: sh.querySelector("#b-dd").value.trim(),
+        comprension: sh.querySelector("#b-comp").value.trim()
+      };
+      if (rec.id) row.id = rec.id;
+      if (!row.situacion){ Campus.toast("Escribe al menos qué pasó."); return; }
+      sh.querySelector("#b-status").textContent = "Guardando…";
+      Campus.DB.save("bitacora", row).then(function(){
+        Campus.toast("Anotación guardada"); close(); render();
+      }).catch(function(e){ console.error(e); Campus.toast("No se pudo guardar."); });
+    });
+  }
+
+  render();
+});
+
+</script>
+</body>
+</html>
