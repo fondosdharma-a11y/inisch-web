@@ -209,7 +209,8 @@
     { h:"practica.html",   ic:"◉", t:"Práctica" },
     { lbl:"Mi cuenta" },
     { h:"certificados.html", ic:"✦", t:"Certificados" },
-    { h:"perfil.html",     ic:"☺", t:"Mi perfil" }
+    { h:"perfil.html",     ic:"☺", t:"Mi perfil" },
+    { h:"instructores.html", ic:"◈", t:"Instructores", soloInstructor:true }
   ];
 
   function buildChrome(pageTitle){
@@ -230,6 +231,10 @@
       var a = el("a", it.h===page ? "on" : "");
       a.href = it.h;
       a.innerHTML = '<span class="ic">'+it.ic+'</span><span>'+esc(it.t)+'</span>';
+      if (it.soloInstructor){
+        a.style.display = "none";           // oculto hasta confirmar el rol
+        a.setAttribute("data-instructor","1");
+      }
       nav.appendChild(a);
     });
     side.appendChild(nav);
@@ -298,6 +303,13 @@
           'Lo que escribas se guarda solo en este navegador. Para activarlo de verdad, pega tus claves de Supabase en ' +
           '<code>campus/js/supabase-config.js</code>.</div>';
         content.appendChild(b);
+      }
+      if (!DEMO){
+        esInstructor().then(function(si){
+          if (!si) return;
+          var e2 = document.querySelectorAll('[data-instructor="1"]');
+          for (var i=0;i<e2.length;i++) e2[i].style.display = "";
+        }).catch(function(){});
       }
       try { render(content, u); } catch(e){ console.error(e); toast("Ocurrió un error al cargar."); }
     });

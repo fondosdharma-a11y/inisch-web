@@ -78,6 +78,11 @@ Campus.boot("Mi Película", function(c, u){
     '</div>';
   c.appendChild(regla);
 
+  var acc = document.createElement("div");
+  acc.style.cssText = "margin-bottom:20px";
+  acc.innerHTML = '<a class="btn-o btn-sm" href="exportar.html">Exportar a PDF</a>';
+  c.appendChild(acc);
+
   var zone = document.createElement("div");
   zone.innerHTML = '<div class="card"><p class="muted tiny">Cargando tu registro…</p></div>';
   c.appendChild(zone);
