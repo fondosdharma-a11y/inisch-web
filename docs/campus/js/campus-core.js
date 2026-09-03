@@ -10,6 +10,12 @@
   var DEMO = (typeof CAMPUS_CONFIGURED === "undefined") || !CAMPUS_CONFIGURED;
   var LS = "inisch-demo:";
 
+  /* ---------- tema claro / oscuro ---------- */
+  var TKEY = "inisch-theme";
+  function temaActual(){ try{ return localStorage.getItem(TKEY) || "dark"; }catch(e){ return "dark"; } }
+  function aplicarTema(t){ document.documentElement.setAttribute("data-theme", t); }
+  aplicarTema(temaActual());
+
   /* ---------- utilidades ---------- */
   function el(t, c, h){ var e=document.createElement(t); if(c) e.className=c; if(h!=null) e.innerHTML=h; return e; }
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, function(m){
@@ -240,6 +246,7 @@
         '<span class="tb-title">'+esc(pageTitle||"")+'</span>' +
       '</div>' +
       '<div class="tb-right">' +
+        '<button class="tb-theme" id="cx-tema" title="Cambiar tema"></button>' +
         '<button class="btn-o btn-sm" id="cx-out">Salir</button>' +
         '<div class="avatar" id="cx-av">··</div>' +
       '</div>';
@@ -264,6 +271,16 @@
     document.addEventListener("keydown", function(e){ if(e.key==="Escape") shut(); });
 
     tb.querySelector("#cx-out").addEventListener("click", signOut);
+
+    var bt = tb.querySelector("#cx-tema");
+    function pintarTema(){ bt.innerHTML = temaActual() === "dark" ? "\u2600" : "\u263D"; }
+    pintarTema();
+    bt.addEventListener("click", function(){
+      var n = temaActual() === "dark" ? "light" : "dark";
+      try{ localStorage.setItem(TKEY, n); }catch(e){}
+      aplicarTema(n); pintarTema();
+    });
+
     return content;
   }
 
@@ -311,7 +328,29 @@
       '<div class="rt"><div class="rn">'+Math.round(pct)+'%</div><div class="rl">'+esc(label||"")+'</div></div></div>';
   }
 
+  /* ---------- utilidades compartidas ---------- */
+  function fechaLarga(f, en){
+    if (!f) return "";
+    var M  = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+    var MM = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    var p = String(f).slice(0,10).split("-");
+    var d = parseInt(p[2],10), m = parseInt(p[1],10)-1, y = p[0];
+    return en ? (MM[m] + " " + d + ", " + y) : (d + " de " + M[m] + " de " + y);
+  }
+  function esInstructor(){
+    if (DEMO) return false;
+    return supabaseClient.from("profiles").select("role").eq("id", USER.id).single()
+      .then(function(r){ return !!(r.data && (r.data.role === "instructor" || r.data.role === "admin")); })
+      .catch(function(){ return false; });
+  }
+  function param(n){
+    var m = new RegExp("[?&]" + n + "=([^&#]*)").exec(location.search);
+    return m ? decodeURIComponent(m[1]) : null;
+  }
+
   window.Campus = {
+    fechaLarga: fechaLarga, esInstructor: esInstructor, param: param,
+    tema: temaActual, aplicarTema: aplicarTema,
     DEMO: DEMO, boot: boot, DB: DB, todas: todas, toast: toast, esc: esc, el: el,
     reveal: reveal, ring: ring, signOut: signOut, initials: initials,
     user: function(){ return USER; }
