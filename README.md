@@ -1,38 +1,18 @@
 # INISCH — Sitio web + Plataforma de Alumnos
 
-## ✅ SITIO ACTIVO Y FUNCIONANDO
+## 🌐 SITIO EN VIVO
 
-**Español:** https://fondosdharma-a11y.github.io/inisch-web/
-**English:** https://fondosdharma-a11y.github.io/inisch-web/en/
+### https://www.inisch.com
 
-Las 34 páginas del sitio (ES + EN + campus + sitemap) fueron verificadas y responden correctamente.
+| | |
+|---|---|
+| **Español** | https://www.inisch.com |
+| **English** | https://www.inisch.com/en/ |
+| **Campus de Alumnos** | https://www.inisch.com/campus/login.html |
 
----
-
-## ⚠️ IMPORTANTE: por qué inisch.com todavía no funciona
-
-**Causa identificada:** Porkbun tiene activado un servicio de **parking / redirección** en el dominio. Al abrir `www.inisch.com` o `inisch.com`, Porkbun redirige a su propia página promocional (`inisch-com.l.ink` — "A Brand New Domain!"), **ignorando los registros DNS configurados**.
-
-Esto también estaba rompiendo el acceso por `github.io`, porque el archivo `CNAME` hacía que GitHub redirigiera todo el tráfico al dominio secuestrado. Por eso se removió el CNAME temporalmente y el sitio volvió a estar accesible.
-
-### Cómo arreglarlo (acción del usuario en Porkbun)
-
-1. Entra a **porkbun.com** → tu dominio **inisch.com**
-2. Busca y **DESACTIVA** cualquiera de estas opciones si está encendida:
-   - **URL Forwarding** / **Domain Forwarding** / **Redirect**
-   - **Parking** / **Parked page** / **Coming Soon page**
-   - Cualquier entrada de tipo **ALIAS** o **URL Redirect** en los DNS Records apuntando a `l.ink` o a Porkbun
-3. Verifica que en **DNS Records** solo queden estos 5 registros:
-
-| Type | Host | Answer |
-|---|---|---|
-| CNAME | `www` | `fondosdharma-a11y.github.io` |
-| A | (vacío) | 185.199.108.153 |
-| A | (vacío) | 185.199.109.153 |
-| A | (vacío) | 185.199.110.153 |
-| A | (vacío) | 185.199.111.153 |
-
-4. Cuando el parking esté desactivado y los registros correctos, avisa para volver a activar el dominio personalizado en GitHub Pages (volver a crear `docs/CNAME` con `www.inisch.com` y activar Enforce HTTPS).
+- Dominio propio activo con **HTTPS forzado** (certificado válido hasta 2026-12-01, renovación automática)
+- `inisch.com` redirige automáticamente a `www.inisch.com`
+- 34 rutas verificadas funcionando (ES + EN + campus + SEO)
 
 ---
 
@@ -48,11 +28,12 @@ Esto también estaba rompiendo el acceso por `github.io`, porque el archivo `CNA
   /generate-certificate            -> Genera el PDF de constancia al completar una etapa
   /sales-chat                      -> Agente de IA de ventas/admisiones (Claude)
 /docs                              -> Sitio publicado por GitHub Pages
+  CNAME                            -> www.inisch.com
   index, formacion, nosotros, acompanamiento, numerologia, experiencias,
   certificaciones, faq, contacto, privacidad, terminos, blog/  -> Sitio en espanol
   /docs/en/                        -> Sitio completo en ingles (15 paginas)
   /docs/campus/                    -> Plataforma de alumnos (login, dashboard, certificados)
-  robots.txt, sitemap.xml          -> SEO (28 URLs indexadas)
+  robots.txt, sitemap.xml          -> SEO (28 URLs)
 /assets                            -> Logotipo e imagenes de marca (PENDIENTE subir)
 ```
 
@@ -66,22 +47,21 @@ Botón de tema en todas las páginas: **claro** = "Código Ancestral" (marfil, t
 
 ## Estado actual
 
-- [x] Sitio institucional completo ES + EN (34 rutas verificadas funcionando)
-- [x] Publicado y accesible en GitHub Pages con HTTPS
+- [x] **Dominio www.inisch.com activo con HTTPS**
+- [x] Sitio institucional completo ES + EN (34 rutas verificadas)
 - [x] Modo claro/oscuro en todo el sitio
 - [x] Blog con 3 artículos en ambos idiomas
 - [x] Campus construido (login, progreso, certificado PDF automático)
 - [x] Agente de IA de ventas construido (widget + Edge Function)
 - [x] SEO técnico (robots.txt, sitemap.xml)
 - [x] Guiones de los 6 videos de la Etapa 1
-- [ ] **Desactivar el parking/forwarding de Porkbun** (ver arriba — bloquea el dominio propio)
-- [ ] Subir 2 imágenes de marca a `/assets`
+- [ ] Subir 2 imágenes de marca a `/assets` — el logo y el banner aún no se ven en el sitio
 - [ ] Crear proyecto de Supabase y pegar llaves en `docs/campus/js/supabase-config.js`
 - [ ] Grabar los 6 videos de la Etapa 1
 - [ ] Desplegar las 3 Edge Functions (requiere Supabase CLI)
 - [ ] Revisar Aviso de Privacidad / Términos con un abogado
 
-## ⚠️ Pendiente: subir imágenes de marca a `/assets`
+## ⚠️ Siguiente paso inmediato: subir imágenes de marca
 
 Link directo: https://github.com/fondosdharma-a11y/inisch-web/upload/main/assets
 
@@ -89,12 +69,18 @@ Sube estos 2 archivos con estos nombres exactos:
 - `LOGO_INISCH_NUEVO_png_copia__1_.png`
 - `Screenshot_2026-09-02_at_1_44_09_PM.png`
 
+En cuanto estén, el logo y el banner aparecen automáticamente en las 34 páginas.
+
 ## Activar el Campus de Alumnos
 
 1. Crea proyecto gratuito en https://supabase.com
 2. Corre `/database/schema.sql` en el SQL Editor
 3. Crea bucket público `certificates` en Storage
 4. Pega Project URL + anon key en `docs/campus/js/supabase-config.js`
+
+## Nota histórica sobre el dominio
+
+El dominio tardo en activarse porque Porkbun tenia un servicio de **parking/URL forwarding** que interceptaba el trafico y lo redirigia a su pagina promocional (`inisch-com.l.ink`), ignorando los registros DNS. Al desactivarlo, el dominio funciono de inmediato. Si en el futuro el sitio vuelve a mostrar una pagina de Porkbun, revisar que ese forwarding no se haya reactivado.
 
 ## Cómo ver el sitio localmente
 
