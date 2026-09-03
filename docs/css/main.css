@@ -142,3 +142,22 @@ footer{ padding:56px 32px 40px; border-top:1px solid var(--line-gold); }
   .etapa-grid{ grid-template-columns:1fr; }
   .contrast{ grid-template-columns:1fr; }
 }
+
+
+/* ACORDEON FAQ */
+details.acc{ border-top:1px solid var(--line); padding:0; }
+details.acc:last-of-type{ border-bottom:1px solid var(--line); }
+details.acc summary{
+  cursor:pointer; padding:20px 30px 20px 0; font-size:16.5px; color:var(--teal-deep);
+  font-family:'Cormorant Garamond', serif; font-weight:600; list-style:none; position:relative;
+}
+[data-theme="dark"] details.acc summary{ font-family:'Space Grotesk', sans-serif; }
+details.acc summary::-webkit-details-marker{ display:none; }
+details.acc summary::after{
+  content:'+'; position:absolute; right:4px; top:50%; transform:translateY(-50%);
+  color:var(--gold); font-size:20px; font-family:'Jost',sans-serif; font-weight:300;
+}
+details.acc[open] summary::after{ content:'\2212'; }
+details.acc summary:hover{ color:var(--teal); }
+details.acc p{ padding:0 30px 22px 0; color:var(--ink-dim); font-size:15px; margin:0; }
+details.acc summary:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
