@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Numerolog&iacute;a Hologr&aacute;fica &mdash; INISCH</title>
+<meta name="description" content="Calcula gratis tu Número de Vida, tu Año Personal y tu número de Expresión según la Numerología Holográfica del Sistema Código Holográfico.">
+<script>(function(){var t=localStorage.getItem('inisch-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="icon" type="image/png" href="assets/favicon.png">
+<link rel="stylesheet" href="css/main.css">
+<style>
+  .calc-wrap{ max-width:660px; margin:0 auto; padding:50px 32px 90px; }
+  .calc-card{ border:1px solid var(--line-gold); border-radius:6px; padding:36px; background:var(--bg-2); }
+  .calc-field{ margin-bottom:20px; }
+  .calc-field label{ display:block; font-size:14px; color:var(--ink-dim); margin-bottom:7px; }
+  .calc-field input{ width:100%; padding:13px 15px; border:1px solid var(--line-gold); border-radius:4px;
+    background:var(--bg); color:var(--ink); font-family:inherit; font-size:16px; }
+  .calc-field input:focus{ outline:none; border-color:var(--teal); }
+  .num-badge{ width:96px; height:96px; border-radius:50%; border:2px solid var(--gold);
+    display:flex; align-items:center; justify-content:center; font-size:42px; color:var(--teal-deep);
+    font-family:'Cormorant Garamond',serif; margin:0 auto 16px; background:var(--bg); }
+  [data-theme="dark"] .num-badge{ font-family:'Space Grotesk',sans-serif; color:var(--ink); }
+  .res-block{ border-top:1px solid var(--line); padding:30px 0; text-align:center; }
+  .res-block:first-of-type{ border-top:none; }
+  .res-k{ font-size:13.5px; color:var(--gold); letter-spacing:.08em; margin-bottom:8px; }
+  .res-t{ font-size:24px; margin-bottom:10px; }
+  .res-d{ color:var(--ink-dim); font-size:15.5px; text-align:left; }
+  .mini-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:8px; }
+  @media(max-width:600px){ .mini-grid{ grid-template-columns:1fr; } .calc-card{ padding:26px 20px; } }
+</style>
+</head>
+<body>
+<header><nav>
+  <a href="index.html" class="nav-logo"></a>
+  <div class="navlinks">
+    <a href="nosotros.html">El Sistema</a>
+    <a href="formacion.html">Formaci&oacute;n</a>
+    <a href="acompanamiento.html">Acompa&ntilde;amiento</a>
+    <a href="numerologia.html" class="active">Numerolog&iacute;a</a>
+    <a href="experiencias.html">Experiencias</a>
+    <a href="empresas.html">Empresas</a>
+    <a href="test.html">Test</a>
+    <a href="contacto.html">Contacto</a>
+    <a href="en/numerology-calculator.html" style="font-weight:600;">EN</a>
+  </div>
+  <button class="theme-toggle"></button>
+  <a href="campus/login.html" class="btn-campus">Campus de alumnos</a>
+  <button class="navtoggle">&#9776;</button>
+</nav></header>
+
+<div class="page-hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Inicio</a> / <a href="numerologia.html">Numerolog&iacute;a</a> / Calculadora</div>
+    <div class="eyebrow" style="color:var(--gold); margin-bottom:10px;">Gratuito</div>
+    <h1>Calcula tu c&oacute;digo num&eacute;rico</h1>
+    <p class="lead">Tu fecha de nacimiento y tu nombre contienen frecuencias que, en la Numerolog&iacute;a Hologr&aacute;fica, funcionan como coordenadas: no dicen qu&eacute; te va a pasar, sino desde d&oacute;nde est&aacute;s interpretando lo que pasa.</p>
+  </div>
+</div>
+
+<div class="calc-wrap">
+  <div class="calc-card">
+    <div class="calc-field">
+      <label for="fecha">Tu fecha de nacimiento</label>
+      <input type="date" id="fecha">
+    </div>
+    <div class="calc-field">
+      <label for="nombre">Tu nombre completo de nacimiento (opcional)</label>
+      <input type="text" id="nombre" placeholder="Como aparece en tu acta de nacimiento" autocomplete="off">
+    </div>
+    <button class="btn-teal" style="width:100%; border:none; cursor:pointer;" onclick="calcular()">Ver mi c&oacute;digo</button>
+    <p class="note" style="margin-top:16px;">Nada de lo que escribas se env&iacute;a ni se guarda. El c&aacute;lculo ocurre por completo en tu navegador.</p>
+  </div>
+
+  <div id="resultado" style="display:none; margin-top:30px;"></div>
+</div>
+
+<footer>
+  <div class="foot-top">
+    <div class="foot-logo"><img src="assets/mandala.png" alt="INISCH"><span class="fl-txt">INISCH</span></div>
+    <div class="foot-grid">
+      <div class="foot-col"><h4>Formaci&oacute;n</h4><a href="formacion.html#etapa1">Etapa 1 &middot; Iniciaci&oacute;n</a><a href="formacion.html#etapa2">Etapa 2 &middot; Maestr&iacute;a</a><a href="formacion.html#etapa3">Etapa 3 &middot; Instructores</a></div>
+      <div class="foot-col"><h4>Instituto</h4><a href="nosotros.html">Nosotros</a><a href="certificaciones.html">Certificaciones</a><a href="faq.html">Preguntas frecuentes</a><a href="blog/index.html">Blog</a></div>
+      <div class="foot-col"><h4>Legal</h4><a href="privacidad.html">Aviso de privacidad</a><a href="terminos.html">T&eacute;rminos y condiciones</a></div>
+      <div class="foot-col"><h4>Contacto</h4><a href="https://wa.me/523314701563" target="_blank">WhatsApp +52 33 1470 1563</a><a href="campus/login.html">Campus de alumnos</a></div>
+    </div>
+  </div>
+  <div class="foot-bottom">Instituto Internacional del Sistema C&oacute;digo Hologr&aacute;fico &mdash; INISCH</div>
+</footer>
+
+<script>
+
+var MEANINGS = {
+  1:{t:"El Iniciador",k:"Independencia \u00b7 Liderazgo \u00b7 Inicio",
+     d:"Una frecuencia de apertura y comienzo. Suele expresarse como necesidad de autonom\u00eda y de abrir camino propio. El desaf\u00edo aparece cuando la independencia se vuelve aislamiento o cuando cuesta pedir ayuda."},
+  2:{t:"El Mediador",k:"Sensibilidad \u00b7 Cooperaci\u00f3n \u00b7 Escucha",
+     d:"Frecuencia receptiva, asociada a la energ\u00eda femenina descrita en el Sistema: asimila, envuelve, armoniza. El desaf\u00edo suele estar en poner l\u00edmites y en no disolverse en las necesidades del otro."},
+  3:{t:"El Comunicador",k:"Expresi\u00f3n \u00b7 Creatividad \u00b7 Alegr\u00eda",
+     d:"Una frecuencia expansiva ligada a la palabra y la creaci\u00f3n. El desaf\u00edo aparece cuando la expresi\u00f3n se dispersa, o cuando la alegr\u00eda se usa para no mirar lo que duele."},
+  4:{t:"El Constructor",k:"Estructura \u00b7 Disciplina \u00b7 Ra\u00edz",
+     d:"Frecuencia de forma y sostenimiento. Se relaciona con lo material, el orden y la seguridad. El desaf\u00edo suele ser la rigidez y la dificultad para soltar el control."},
+  5:{t:"El Explorador",k:"Movimiento \u00b7 Libertad \u00b7 Cambio",
+     d:"Frecuencia de tr\u00e1nsito y experiencia. Busca variedad y evita el encierro. El desaf\u00edo aparece cuando el movimiento se vuelve huida de lo que hay que comprender."},
+  6:{t:"El Cuidador",k:"Responsabilidad \u00b7 Servicio \u00b7 Familia",
+     d:"Frecuencia vinculada al hogar, al cuidado y a los v\u00ednculos. El desaf\u00edo aparece en la codependencia y en cargar responsabilidades que no corresponden."},
+  7:{t:"El Buscador",k:"Introspecci\u00f3n \u00b7 An\u00e1lisis \u00b7 Silencio",
+     d:"Frecuencia de indagaci\u00f3n y profundidad, muy afin al trabajo de observaci\u00f3n del Sistema. El desaf\u00edo suele ser el retiro excesivo y la desconfianza."},
+  8:{t:"El Realizador",k:"Poder \u00b7 Materia \u00b7 Logro",
+     d:"Frecuencia de manifestaci\u00f3n en el plano concreto. El desaf\u00edo aparece cuando el valor personal se mide solo por resultados o posesiones."},
+  9:{t:"El Humanitario",k:"Compasi\u00f3n \u00b7 Cierre \u00b7 Entrega",
+     d:"Frecuencia de culminaci\u00f3n y de mirada amplia. Muy ligada a la Comprensi\u00f3n, Compasi\u00f3n y Bondad que el Sistema define como Amor Real. El desaf\u00edo es el desgaste por dar sin l\u00edmite."},
+  11:{t:"Maestro Intuitivo",k:"Intuici\u00f3n \u00b7 Sensibilidad alta \u00b7 Visi\u00f3n",
+     d:"N\u00famero maestro. Intensifica la frecuencia del 2: percepci\u00f3n muy fina y sensibilidad marcada. Suele venir acompa\u00f1ado de tensi\u00f3n nerviosa hasta que la persona aprende a sostener lo que percibe."},
+  22:{t:"Maestro Constructor",k:"Visi\u00f3n \u00b7 Materializaci\u00f3n \u00b7 Alcance",
+     d:"N\u00famero maestro. Combina la estructura del 4 con una visi\u00f3n amplia: capacidad de llevar ideas grandes a la forma concreta. El desaf\u00edo es la presi\u00f3n autoimpuesta."},
+  33:{t:"Maestro Guia",k:"Servicio \u00b7 Ense\u00f1anza \u00b7 Entrega",
+     d:"N\u00famero maestro poco frecuente. Amplifica el 6 hacia la ense\u00f1anza y el acompa\u00f1amiento. El desaf\u00edo es diferenciar el servicio genuino del sacrificio."}
+};
+
+function reduce(n, keepMaster){
+  while (n > 9){
+    if (keepMaster && (n === 11 || n === 22 || n === 33)) return n;
+    var s = 0, x = n;
+    while (x > 0){ s += x % 10; x = Math.floor(x/10); }
+    n = s;
+  }
+  return n;
+}
+function digitsSum(str){
+  var s = 0;
+  for (var i=0;i<str.length;i++){ var c = str.charCodeAt(i)-48; if (c>=0 && c<=9) s += c; }
+  return s;
+}
+
+var LETTERS = {A:1,J:1,S:1,B:2,K:2,T:2,C:3,L:3,U:3,D:4,M:4,V:4,E:5,N:5,W:5,F:6,O:6,X:6,G:7,P:7,Y:7,H:8,Q:8,Z:8,I:9,R:9};
+var VOWELS = "AEIOU";
+
+function nameNumber(name, mode){
+  var s = name.toUpperCase()
+    .replace(/\u00c1/g,"A").replace(/\u00c9/g,"E").replace(/\u00cd/g,"I")
+    .replace(/\u00d3/g,"O").replace(/\u00da/g,"U").replace(/\u00d1/g,"N");
+  var total = 0;
+  for (var i=0;i<s.length;i++){
+    var ch = s[i];
+    if (!LETTERS[ch]) continue;
+    var isV = VOWELS.indexOf(ch) >= 0;
+    if (mode === "all" || (mode === "vowels" && isV) || (mode === "cons" && !isV)) total += LETTERS[ch];
+  }
+  return total ? reduce(total, true) : 0;
+}
+
+function block(label, n, extra){
+  var m = MEANINGS[n];
+  if (!m) return "";
+  return '<div class="res-block">' +
+    '<div class="num-badge">' + n + '</div>' +
+    '<div class="res-k">' + label + '</div>' +
+    '<div class="res-t">' + m.t + '</div>' +
+    '<div class="res-k" style="color:var(--ink-dim); margin-bottom:14px;">' + m.k + '</div>' +
+    '<div class="res-d">' + m.d + (extra || "") + '</div>' +
+  '</div>';
+}
+
+function calcular(){
+  var f = document.getElementById('fecha').value;
+  if (!f){ alert('Escribe tu fecha de nacimiento para continuar.'); return; }
+  var parts = f.split('-');
+  var y = parseInt(parts[0],10), mo = parseInt(parts[1],10), d = parseInt(parts[2],10);
+
+  var vida = reduce(digitsSum(parts[0]) + digitsSum(parts[1]) + digitsSum(parts[2]), true);
+  var hoy = new Date();
+  var anioActual = hoy.getFullYear();
+  var cumpleYaPaso = (hoy.getMonth()+1 > mo) || ((hoy.getMonth()+1 === mo) && hoy.getDate() >= d);
+  var anioRef = cumpleYaPaso ? anioActual : anioActual - 1;
+  var personal = reduce(reduce(d,false) + reduce(mo,false) + digitsSum(String(anioRef)), false);
+  var nacimiento = reduce(d, true);
+
+  var html = '<div class="calc-card">';
+  html += '<h2 style="font-size:22px; text-align:center; margin-bottom:6px;">Tu c\u00f3digo</h2>';
+  html += '<p class="note" style="text-align:center; margin-bottom:10px;">Una lectura orientativa. La consulta completa integra muchos m\u00e1s factores.</p>';
+
+  html += block("N\u00famero de Vida", vida,
+    "<p style='margin-top:12px;'>Es la frecuencia base de tu matriz: el punto desde el cual interpretas tu experiencia. Se obtiene de la suma total de tu fecha de nacimiento.</p>");
+
+  html += block("N\u00famero de Nacimiento", nacimiento,
+    "<p style='margin-top:12px;'>Se desprende del d\u00eda en que naciste y matiza tu N\u00famero de Vida con un talento o recurso particular.</p>");
+
+  html += block("Tu A\u00f1o Personal (" + anioRef + "\u2013" + (anioRef+1) + ")", personal,
+    "<p style='margin-top:12px;'>Indica el ciclo que est\u00e1s atravesando ahora mismo. Cambia en cada cumplea\u00f1os y se mueve en ciclos de nueve a\u00f1os.</p>");
+
+  var nombre = document.getElementById('nombre').value.trim();
+  if (nombre.length > 1){
+    var expr = nameNumber(nombre, "all");
+    var alma = nameNumber(nombre, "vowels");
+    if (expr) html += block("N\u00famero de Expresi\u00f3n", expr,
+      "<p style='margin-top:12px;'>Surge de todas las letras de tu nombre. Se relaciona con la manera en que te muestras y act\u00faas hacia afuera.</p>");
+    if (alma) html += block("Anhelo del Alma", alma,
+      "<p style='margin-top:12px;'>Surge solo de las vocales de tu nombre. Apunta a lo que te mueve por dentro, m\u00e1s all\u00e1 de lo que muestras.</p>");
+  }
+
+  html += '<div style="border-top:1px solid var(--line); padding-top:26px; margin-top:10px; text-align:center;">';
+  html += '<p style="color:var(--ink-dim); font-size:15.5px; margin-bottom:20px;">Estos n\u00fameros son una puerta de entrada. En una consulta de Numerolog\u00eda Hologr\u00e1fica se leen en conjunto con tu programaci\u00f3n de infancia y tus ciclos evolutivos \u2014 tu <em>pel\u00edcula</em> completa.</p>';
+  html += '<a href="https://wa.me/523314701563?text=' + encodeURIComponent("Hola, calcul\u00e9 mi n\u00famero de vida (" + vida + ") en la p\u00e1gina y me gustar\u00eda saber m\u00e1s sobre una consulta de Numerolog\u00eda Hologr\u00e1fica.") + '" target="_blank" class="btn-teal">Agendar una consulta completa</a> ';
+  html += '<a href="test.html" class="btn-line">Hacer el test de orientaci\u00f3n</a>';
+  html += '</div>';
+
+  html += '<p class="note" style="margin-top:26px;">La Numerolog\u00eda Hologr\u00e1fica es una herramienta simb\u00f3lica de exploraci\u00f3n y autoconocimiento. No predice el futuro ni constituye diagn\u00f3stico o tratamiento m\u00e9dico, psicol\u00f3gico o financiero.</p>';
+  html += '</div>';
+
+  var box = document.getElementById('resultado');
+  box.innerHTML = html;
+  box.style.display = 'block';
+  box.scrollIntoView({behavior:'smooth', block:'start'});
+}
+</script>
+<script src="js/theme.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/chat-widget.js"></script>
+</body>
+</html>
