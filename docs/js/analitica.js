@@ -1,31 +1,22 @@
 /* ============================================================
    ANALITICA  ·  INISCH
    ============================================================
-   Sirve para saber cuanta gente entra, por donde llega y donde
-   se va. Hoy estas decidiendo a ciegas.
+   ACTIVO: Google Tag Manager (contenedor GTM-5GVFHKR3)
 
-   ELIGE UNA OPCION y llena su dato. Si dejas las dos vacias,
-   no se carga nada y el sitio funciona igual.
+   IMPORTANTE: el contenedor por si solo NO mide nada. Es una
+   caja donde se meten etiquetas. Para tener estadisticas hay
+   que crear una propiedad de Google Analytics 4 y agregar su
+   etiqueta DENTRO del contenedor. Ver instrucciones al final.
 
-   ------------------------------------------------------------
-   OPCION A · Plausible  (recomendada)
-     Sin cookies, no rastrea personas, cumple con GDPR y con la
-     ley mexicana sin necesidad de banner de consentimiento.
-     Cuesta desde 9 USD al mes.
-     1. Crea cuenta en plausible.io y agrega el dominio inisch.com
-     2. Escribe abajo:  PLAUSIBLE = "inisch.com"
-
-   ------------------------------------------------------------
-   OPCION B · Google Analytics 4  (gratis)
-     Usa cookies y envia datos a Google, asi que SI requiere
-     pedir consentimiento. El banner ya esta programado aqui.
-     1. Entra a analytics.google.com, crea una propiedad
-     2. Copia el identificador (empieza con G-)
-     3. Escribe abajo:  GA4 = "G-XXXXXXXXXX"
+   Este archivo implementa el "Modo de consentimiento" (Consent
+   Mode v2) que Google exige: el contenedor carga siempre, pero
+   arranca con TODOS los permisos denegados. Ninguna cookie de
+   medicion se escribe hasta que la persona acepta.
    ============================================================ */
 
-var PLAUSIBLE = "";             // sin usar: elegimos Google Analytics
-var GA4       = "";             // <-- PEGA AQUI TU ID (empieza con G-)
+var GTM       = "GTM-5GVFHKR3";   // contenedor de Google Tag Manager
+var GA4       = "";               // solo si quieres GA4 directo, SIN usar GTM
+var PLAUSIBLE = "";               // alternativa sin cookies (desactivada)
 
 /* ------------------------------------------------------------
    De aqui para abajo no hace falta tocar nada.
@@ -40,34 +31,69 @@ var GA4       = "";             // <-- PEGA AQUI TU ID (empieza con G-)
   }
   function T(es, en){ return isEN() ? en : es; }
 
-  function cargar(src, attrs){
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+
+  function leer(){ try { return localStorage.getItem(CLAVE); } catch(e){ return null; } }
+  function guardar(v){ try { localStorage.setItem(CLAVE, v); } catch(e){} }
+
+  var noRastrear = (navigator.doNotTrack === "1" || window.doNotTrack === "1" ||
+                    navigator.msDoNotTrack === "1");
+
+  /* ---------- 1. Estado inicial: todo denegado ----------
+     Se declara ANTES de cargar el contenedor. Asi las etiquetas
+     que vivan dentro de GTM respetan el consentimiento solas. */
+  function consentimientoPorDefecto(){
+    var previo = leer();
+    var concedido = (previo === "si") && !noRastrear;
+    gtag("consent", "default", {
+      ad_storage:              "denied",
+      ad_user_data:            "denied",
+      ad_personalization:      "denied",
+      analytics_storage:       concedido ? "granted" : "denied",
+      functionality_storage:   "granted",
+      security_storage:        "granted",
+      wait_for_update:         500
+    });
+    gtag("set", "ads_data_redaction", true);
+    gtag("set", "url_passthrough", true);
+  }
+
+  function conceder(){
+    gtag("consent", "update", { analytics_storage: "granted" });
+    dataLayer.push({ event: "consentimiento_aceptado" });
+  }
+
+  /* ---------- 2. Cargadores ---------- */
+  function cargarGTM(id){
+    dataLayer.push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
     var s = document.createElement("script");
-    s.async = true; s.src = src;
-    if (attrs) for (var k in attrs) s.setAttribute(k, attrs[k]);
+    s.async = true;
+    s.src = "https://www.googletagmanager.com/gtm.js?id=" + encodeURIComponent(id);
     document.head.appendChild(s);
-    return s;
   }
-
-  /* ---------- Plausible: sin cookies, no necesita permiso ---------- */
-  function iniciarPlausible(){
-    cargar("https://plausible.io/js/script.js", { "data-domain": PLAUSIBLE, defer: "defer" });
-  }
-
-  /* ---------- Google Analytics: solo tras aceptar ---------- */
-  function iniciarGA(){
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){ dataLayer.push(arguments); }
-    window.gtag = gtag;
+  function cargarGA4(id){
     gtag("js", new Date());
-    // Menos invasivo: sin publicidad y con la IP anonimizada
-    gtag("config", GA4, { anonymize_ip: true, allow_google_signals: false, allow_ad_personalization_signals: false });
-    cargar("https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(GA4));
+    gtag("config", id, { anonymize_ip: true, allow_google_signals: false, allow_ad_personalization_signals: false });
+    var s = document.createElement("script");
+    s.async = true;
+    s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(id);
+    document.head.appendChild(s);
+  }
+  function cargarPlausible(dom){
+    var s = document.createElement("script");
+    s.defer = true; s.setAttribute("data-domain", dom);
+    s.src = "https://plausible.io/js/script.js";
+    document.head.appendChild(s);
   }
 
-  /* ---------- Aviso de consentimiento (solo si hace falta) ---------- */
+  /* ---------- 3. Aviso de consentimiento ---------- */
   function pedirPermiso(){
     var caja = document.createElement("div");
     caja.className = "consent";
+    caja.setAttribute("role", "dialog");
+    caja.setAttribute("aria-label", T("Aviso de cookies", "Cookie notice"));
     caja.innerHTML =
       '<p>' + T(
         'Usamos cookies de medici\u00f3n para entender c\u00f3mo se usa el sitio. Puedes rechazarlas y todo seguir\u00e1 funcionando igual.',
@@ -81,29 +107,54 @@ var GA4       = "";             // <-- PEGA AQUI TU ID (empieza con G-)
     document.body.appendChild(caja);
     requestAnimationFrame(function(){ caja.classList.add("on"); });
 
-    caja.querySelectorAll(".btn-consent").forEach(function(b){
-      b.addEventListener("click", function(){
-        try { localStorage.setItem(CLAVE, b.dataset.v); } catch(e){}
+    var btns = caja.querySelectorAll(".btn-consent");
+    for (var i = 0; i < btns.length; i++){
+      btns[i].addEventListener("click", function(){
+        guardar(this.dataset.v);
         caja.classList.remove("on");
         setTimeout(function(){ caja.remove(); }, 320);
-        if (b.dataset.v === "si") iniciarGA();
+        if (this.dataset.v === "si") conceder();
       });
-    });
+    }
   }
 
+  /* ---------- 4. Arranque ---------- */
   function arranque(){
-    // Respetar la senal "no rastrear" del navegador
-    var noRastrear = (navigator.doNotTrack === "1" || window.doNotTrack === "1");
+    if (PLAUSIBLE) cargarPlausible(PLAUSIBLE);   // sin cookies: no requiere permiso
 
-    if (PLAUSIBLE) iniciarPlausible();   // no usa cookies: siempre se puede
+    if (!GTM && !GA4) return;
 
-    if (!GA4 || noRastrear) return;
-    var previo = null;
-    try { previo = localStorage.getItem(CLAVE); } catch(e){}
-    if (previo === "si") iniciarGA();
-    else if (previo !== "no") pedirPermiso();
+    consentimientoPorDefecto();
+
+    if (GTM) cargarGTM(GTM);
+    else if (GA4 && leer() === "si" && !noRastrear) cargarGA4(GA4);
+
+    // Si el navegador pide no ser rastreado, respetamos y ni preguntamos
+    if (noRastrear) return;
+
+    var previo = leer();
+    if (previo === null) pedirPermiso();
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", arranque);
-  else arranque();
+  // El consentimiento por defecto debe declararse cuanto antes
+  if (document.readyState === "loading"){
+    consentimientoPorDefecto();
+    document.addEventListener("DOMContentLoaded", arranque);
+  } else {
+    arranque();
+  }
 })();
+
+/* ============================================================
+   COMO TERMINAR DE CONFIGURARLO (dentro de tagmanager.com)
+   ============================================================
+   1. Entra a analytics.google.com y crea una propiedad para
+      inisch.com. Copia su ID de medicion (empieza con G-).
+   2. Entra a tagmanager.com, abre el contenedor GTM-5GVFHKR3.
+   3. Etiquetas -> Nueva -> "Google Analytics: Etiqueta de Google"
+      -> pega el ID G-XXXXXXX.
+   4. Activador: "Todas las paginas" (All Pages).
+   5. Guarda y presiona ENVIAR (Submit). Si no lo envias, el
+      contenedor sigue vacio y no se mide nada.
+   6. Comprueba en Google Analytics -> Informes -> Tiempo real.
+   ============================================================ */
