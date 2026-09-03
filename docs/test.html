@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test: ¿Qué camino es para ti? — INISCH</title>
+<meta name="description" content="Responde 8 preguntas y descubre qué formación o experiencia del Sistema Código Holográfico corresponde a tu momento actual.">
+<script>(function(){var t=localStorage.getItem('inisch-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="stylesheet" href="css/main.css">
+<style>
+  .quiz-wrap{ max-width:640px; margin:0 auto; padding:50px 32px 90px; }
+  .quiz-card{ border:1px solid var(--line-gold); border-radius:6px; padding:40px; background:var(--bg-2); }
+  .quiz-progress{ height:5px; border-radius:3px; background:var(--line); overflow:hidden; margin-bottom:26px; }
+  .quiz-fill{ height:100%; background:var(--gold); width:0%; transition:width .3s ease; }
+  .quiz-step{ font-size:13px; color:var(--ink-dim); margin-bottom:10px; }
+  .quiz-q{ font-size:22px; margin-bottom:24px; line-height:1.3; }
+  .quiz-opt{ display:block; width:100%; text-align:left; padding:15px 18px; margin-bottom:11px; border:1px solid var(--line-gold); border-radius:4px; background:var(--bg); color:var(--ink); font-family:inherit; font-size:15px; cursor:pointer; transition:all .18s ease; }
+  .quiz-opt:hover{ border-color:var(--teal); background:var(--bg-2); }
+  .quiz-intro-meta{ display:flex; gap:24px; justify-content:center; flex-wrap:wrap; margin:26px 0 30px; color:var(--ink-dim); font-size:14px; }
+  .result-badge{ font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--gold); font-size:16px; margin-bottom:8px; }
+  [data-theme="dark"] .result-badge{ font-style:normal; font-family:'Space Grotesk',sans-serif; }
+  .result-title{ font-size:30px; margin-bottom:16px; }
+  .result-body{ color:var(--ink-dim); font-size:16px; margin-bottom:24px; }
+  .result-cta{ display:flex; gap:14px; flex-wrap:wrap; margin-top:26px; }
+  .back-link{ display:block; text-align:center; margin-top:24px; font-size:14px; color:var(--ink-dim); }
+  .back-link:hover{ color:var(--teal); }
+</style>
+</head>
+<body>
+<header><nav>
+  <a href="index.html" class="nav-logo"></a>
+  <div class="navlinks">
+    <a href="nosotros.html">Nosotros</a>
+    <a href="formacion.html">Formación</a>
+    <a href="acompanamiento.html">Acompañamiento</a>
+    <a href="experiencias.html">Experiencias</a>
+    <a href="certificaciones.html">Certificaciones</a>
+    <a href="test.html" class="active">Test</a>
+    <a href="contacto.html">Contacto</a>
+    <a href="en/quiz.html" style="font-weight:600;">EN</a>
+  </div>
+  <button class="theme-toggle"></button>
+  <a href="campus/login.html" class="btn-campus">Campus de alumnos</a>
+  <button class="navtoggle">☰</button>
+</nav></header>
+
+<div class="page-hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Inicio</a> / Test</div>
+    <h1>¿Qué camino es para ti?</h1>
+    <p class="lead">Ocho preguntas para identificar qué formación o experiencia del Sistema Código Holográfico corresponde a tu momento actual. Sin costo y sin registro.</p>
+  </div>
+</div>
+
+<div class="quiz-wrap">
+  <div class="quiz-card" id="card">
+
+    <div id="intro">
+      <h2 style="font-size:24px; margin-bottom:12px;">Antes de empezar</h2>
+      <p style="color:var(--ink-dim); font-size:15.5px;">Este test no diagnostica ni sustituye acompañamiento profesional. Es una guía para ayudarte a elegir por dónde comenzar entre las opciones de INISCH.</p>
+      <div class="quiz-intro-meta">
+        <span>8 preguntas</span>
+        <span>2 minutos</span>
+        <span>Resultado inmediato</span>
+      </div>
+      <button class="btn-teal" style="width:100%; border:none; cursor:pointer;" onclick="startQuiz()">Comenzar el test</button>
+    </div>
+
+    <div id="quiz" style="display:none;">
+      <div class="quiz-progress"><div class="quiz-fill" id="fill"></div></div>
+      <div class="quiz-step" id="step"></div>
+      <div class="quiz-q" id="question"></div>
+      <div id="options"></div>
+    </div>
+
+    <div id="result" style="display:none;">
+      <div class="result-badge">Tu resultado</div>
+      <h2 class="result-title" id="rTitle"></h2>
+      <p class="result-body" id="rBody"></p>
+      <div id="rExtra"></div>
+      <div class="result-cta" id="rCta"></div>
+      <a href="#" class="back-link" onclick="location.reload(); return false;">Volver a hacer el test</a>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="foot-top">
+    <div class="foot-logo"><img src="../assets/LOGO_INISCH_NUEVO_png_copia__1_.png" alt="INISCH"></div>
+    <div class="foot-grid">
+      <div class="foot-col"><h4>Formación</h4><a href="formacion.html#etapa1">Etapa 1 · Iniciación</a><a href="formacion.html#etapa2">Etapa 2 · Maestría</a><a href="formacion.html#etapa3">Etapa 3 · Instructores</a></div>
+      <div class="foot-col"><h4>Instituto</h4><a href="nosotros.html">Nosotros</a><a href="certificaciones.html">Certificaciones</a><a href="faq.html">Preguntas frecuentes</a><a href="blog/index.html">Blog</a></div>
+      <div class="foot-col"><h4>Legal</h4><a href="privacidad.html">Aviso de privacidad</a><a href="terminos.html">Términos y condiciones</a></div>
+      <div class="foot-col"><h4>Contacto</h4><a href="https://wa.me/523314701563" target="_blank">WhatsApp +52 33 1470 1563</a><a href="campus/login.html">Campus de alumnos</a></div>
+    </div>
+  </div>
+  <div class="foot-bottom">Instituto Internacional del Sistema Código Holográfico — INISCH</div>
+</footer>
+
+<script>
+var QUESTIONS = [
+  { q: "¿Cómo describirías tu momento actual?", a: [
+    {t:"Atravesando una situación difícil que no logro comprender", s:{inicio:3}},
+    {t:"Estable, pero siento que se repite un patrón en mi vida", s:{inicio:2, numerologia:1}},
+    {t:"En pleno proceso de cambio personal", s:{inicio:2, maestria:1}},
+    {t:"Ya trabajé mucho en mí y quiero llevarlo más lejos", s:{maestria:3}}
+  ]},
+  { q: "¿Has hecho antes algún proceso de autoconocimiento o terapia?", a: [
+    {t:"No, sería mi primera vez", s:{inicio:3}},
+    {t:"Algo suelto, nada estructurado", s:{inicio:2, numerologia:1}},
+    {t:"Sí, varios procesos", s:{maestria:2}},
+    {t:"Sí, y además acompaño a otras personas", s:{instructor:3, maestria:1}}
+  ]},
+  { q: "¿Qué te interesa más en este momento?", a: [
+    {t:"Entender por qué mi vida se repite como se repite", s:{inicio:3}},
+    {t:"Descubrir mi propósito y mis ciclos personales", s:{numerologia:3}},
+    {t:"Aprender a acompañar a otras personas", s:{maestria:3}},
+    {t:"Enseñar y formar a otros profesionalmente", s:{instructor:3}}
+  ]},
+  { q: "¿Buscas una certificación con validez oficial?", a: [
+    {t:"No, es un proceso personal", s:{inicio:2, numerologia:1}},
+    {t:"Tal vez más adelante", s:{inicio:1, maestria:2}},
+    {t:"Sí, quiero ejercer profesionalmente", s:{maestria:3}},
+    {t:"Sí, y además quiero poder capacitar en empresas", s:{instructor:3}}
+  ]},
+  { q: "¿Cuánto tiempo puedes dedicarle?", a: [
+    {t:"Un fin de semana intensivo", s:{inicio:3}},
+    {t:"Una sesión puntual", s:{numerologia:3, acompanamiento:2}},
+    {t:"Varios meses, con constancia semanal", s:{maestria:3}},
+    {t:"Tengo disponibilidad amplia y a largo plazo", s:{instructor:2, maestria:1}}
+  ]},
+  { q: "¿Prefieres un proceso individual o en grupo?", a: [
+    {t:"Individual, uno a uno", s:{acompanamiento:3, numerologia:2}},
+    {t:"En grupo, compartiendo con otros", s:{inicio:2, experiencias:2}},
+    {t:"Me da igual, lo importante es el contenido", s:{inicio:1, maestria:1}},
+    {t:"Grupo, pero con seguimiento cercano", s:{maestria:2}}
+  ]},
+  { q: "¿Qué te resuena más de esta lista?", a: [
+    {t:"Comprender el origen de mis patrones y emociones", s:{inicio:3}},
+    {t:"Los números, ciclos y el propósito de vida", s:{numerologia:3}},
+    {t:"El sonido, el ritual, la experiencia sensorial", s:{experiencias:3}},
+    {t:"La metodología, la estructura, poder aplicarla", s:{maestria:3}}
+  ]},
+  { q: "Si pudieras lograr una sola cosa este año, ¿cuál sería?", a: [
+    {t:"Dejar de repetir la misma historia", s:{inicio:3}},
+    {t:"Tener claridad sobre mi propósito", s:{numerologia:2, inicio:1}},
+    {t:"Tener una nueva profesión con la que ayudar", s:{maestria:3}},
+    {t:"Consolidarme como facilitador o instructor", s:{instructor:3}}
+  ]}
+];
+
+var RESULTS = {
+  inicio: {
+    title: "Etapa 1: Iniciación — El Despertar",
+    body: "Tu momento pide empezar por el principio: comprender el origen de tus patrones antes que cualquier otra cosa. La Etapa 1 está diseñada exactamente para eso — dejar de percibirte como víctima de las circunstancias y asumir el rol de observador consciente de tu propia realidad. Son 2 días, 16 horas, y no requiere ningún conocimiento previo.",
+    cta: [["Ver Etapa 1","formacion.html#etapa1"],["Preguntar por WhatsApp","https://wa.me/523314701563"]]
+  },
+  maestria: {
+    title: "Etapa 2: Maestría — El Encuentro Contigo Mismo",
+    body: "Tus respuestas indican que ya recorriste camino personal y ahora buscas profundidad y estructura. La Etapa 2 tiene dos momentos: primero trabajas sobre ti mismo, y después aprendes a acompañar a otros con metodología, práctica y supervisión. Incluye la opción de certificación oficial SEP-CONOCER.",
+    cta: [["Ver Etapa 2","formacion.html#etapa2"],["Ver certificaciones","certificaciones.html"]]
+  },
+  instructor: {
+    title: "Etapa 3: Formación de Instructores",
+    body: "Buscas el nivel profesional: enseñar, facilitar procesos formativos y liderar grupos. La Etapa 3 te prepara para eso, con pedagogía para adultos, oratoria, marketing digital e IA aplicada. Importante: requiere haber concluido las Etapas 1 y 2 previamente.",
+    cta: [["Ver Etapa 3","formacion.html#etapa3"],["Ver el camino completo","formacion.html"]]
+  },
+  numerologia: {
+    title: "Numerología Holográfica",
+    body: "Lo que buscas tiene que ver con leer tus ciclos, talentos y propósito personal. La Numerología Holográfica funciona como un lenguaje simbólico para identificar patrones de vida — no como una predicción cerrada del futuro. Disponible como consulta individual o taller grupal.",
+    cta: [["Ver Numerología","numerologia.html"],["Agendar consulta","https://wa.me/523314701563"]]
+  },
+  acompanamiento: {
+    title: "Acompañamiento Especializado",
+    body: "Tu momento pide un espacio individual antes que un programa formativo. Las consultas uno a uno con Especialistas en Autoconocimiento son espacios de escucha y comprensión, trabajados desde la metodología del Sistema Código Holográfico.",
+    cta: [["Ver Acompañamiento","acompanamiento.html"],["Agendar sesión","https://wa.me/523314701563"]]
+  },
+  experiencias: {
+    title: "Experiencias Transformadoras",
+    body: "Lo que resuena contigo es lo vivencial más que lo académico: el sonido, el ritual, el encuentro. Nuestras experiencias — Inmersión Sonora, Círculos de Mujeres, Rituales y Viajes de Expansión — están diseñadas para eso.",
+    cta: [["Ver Experiencias","experiencias.html"],["Preguntar fechas","https://wa.me/523314701563"]]
+  }
+};
+
+var idx = 0, scores = {};
+
+function startQuiz(){
+  document.getElementById('intro').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  render();
+}
+
+function render(){
+  var q = QUESTIONS[idx];
+  document.getElementById('fill').style.width = Math.round((idx/QUESTIONS.length)*100) + '%';
+  document.getElementById('step').textContent = 'Pregunta ' + (idx+1) + ' de ' + QUESTIONS.length;
+  document.getElementById('question').textContent = q.q;
+  var box = document.getElementById('options');
+  box.innerHTML = '';
+  q.a.forEach(function(opt){
+    var b = document.createElement('button');
+    b.className = 'quiz-opt';
+    b.textContent = opt.t;
+    b.onclick = function(){ pick(opt); };
+    box.appendChild(b);
+  });
+}
+
+function pick(opt){
+  for (var k in opt.s){ scores[k] = (scores[k]||0) + opt.s[k]; }
+  idx++;
+  if (idx < QUESTIONS.length){ render(); } else { finish(); }
+}
+
+function finish(){
+  var best = null, bestScore = -1;
+  for (var k in scores){ if (scores[k] > bestScore){ bestScore = scores[k]; best = k; } }
+  var r = RESULTS[best] || RESULTS.inicio;
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('result').style.display='block';
+  document.getElementById('rTitle').textContent = r.title;
+  document.getElementById('rBody').textContent = r.body;
+  var cta = document.getElementById('rCta');
+  cta.innerHTML = '';
+  r.cta.forEach(function(c, i){
+    var a = document.createElement('a');
+    a.href = c[1];
+    a.className = i===0 ? 'btn-teal' : 'btn-line';
+    a.textContent = c[0];
+    if (c[1].indexOf('http')===0) a.target = '_blank';
+    cta.appendChild(a);
+  });
+  var extra = document.getElementById('rExtra');
+  extra.innerHTML = '<p class="note">Este resultado es orientativo. Si tienes dudas sobre cuál es tu mejor punto de partida, escríbenos y lo revisamos contigo sin compromiso.</p>';
+}
+</script>
+<script src="js/theme.js"></script>
+<script src="js/chat-widget.js"></script>
+</body>
+</html>
