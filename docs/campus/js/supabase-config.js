@@ -23,8 +23,8 @@
 // NUNCA pongas aqui la "service_role key".
 // ============================================================
 
-const SUPABASE_URL      = "PEGA_AQUI_TU_PROJECT_URL";
-const SUPABASE_ANON_KEY  = "PEGA_AQUI_TU_ANON_PUBLIC_KEY";
+const SUPABASE_URL      = "https://ygzpxtwozqfrncvqrgqo.supabase.co";
+const SUPABASE_ANON_KEY  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlnenB4dHdvenFmcm5jdnFyZ3FvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0NDExMjAsImV4cCI6MjEwNDAxNzEyMH0.g8a1eyWqoYmdHOC4W0aOz8vo6M1oxCWUAkbpSuLjYMc";
 
 const CAMPUS_CONFIGURED = !SUPABASE_URL.startsWith("PEGA_AQUI") &&
                           !SUPABASE_ANON_KEY.startsWith("PEGA_AQUI");
