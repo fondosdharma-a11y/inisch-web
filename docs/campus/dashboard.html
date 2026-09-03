@@ -3,188 +3,155 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Mi Campus — INISCH</title>
-<script>(function(){var t=localStorage.getItem('inisch-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
-<link rel="stylesheet" href="../css/main.css">
+<title>Inicio — Campus INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="stylesheet" href="css/campus.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </head>
 <body>
-<header><nav>
-  <a href="../index.html" class="nav-logo"></a>
-  <div class="navlinks">
-    <a href="../index.html">Sitio INISCH</a>
-  </div>
-  <button class="theme-toggle"></button>
-  <a href="#" data-action="logout" class="btn-campus">Cerrar sesión</a>
-  <button class="navtoggle">☰</button>
-</nav></header>
-
-<div id="configBanner" class="config-banner"></div>
-
-<div class="dash-header">
-  <div class="wrap row">
-    <div>
-      <h1>Hola, <span id="studentName">alumno</span></h1>
-      <p>Este es tu progreso en el Sistema Código Holográfico.</p>
-    </div>
-  </div>
-</div>
-
-<div class="course-block">
-  <h2 id="courseTitle">Etapa 1: Iniciación — El Despertar</h2>
-  <p class="desc">Guía de Interiorización Personal del Sistema Código Holográfico.</p>
-  <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
-  <p class="note" id="progressLabel" style="margin-top:8px;">0 de 0 lecciones completadas</p>
-
-  <div id="lessonList" style="margin-top:30px;"></div>
-
-  <div id="certSection" style="margin-top:40px; display:none;">
-    <div class="price-box">
-      <h4>Certificado de esta etapa</h4>
-      <p id="certStatus" style="color:var(--ink-dim); font-size:14px; margin-bottom:16px;">Completa todas las lecciones para poder generar tu certificado.</p>
-      <button id="certBtn" class="btn-teal btn-full" style="display:none;">Generar mi certificado</button>
-      <a id="certLink" class="btn-line btn-full" style="display:none; text-align:center;" target="_blank">Descargar certificado (PDF)</a>
-    </div>
-  </div>
-</div>
-
-<div class="wrap" style="padding:0 32px 80px;">
-  <div class="cta-final">
-    <h2>¿Listo para la siguiente etapa?</h2>
-    <p>Al completar la Etapa 1 podrás continuar hacia la Etapa 2: Maestría.</p>
-    <a href="../formacion.html#etapa2" class="btn-line">Conocer Etapa 2</a>
-  </div>
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase-config.js"></script>
-<script src="js/app.js"></script>
+<script src="js/campus-core.js"></script>
 <script>
-(async function(){
-  var configBanner = document.getElementById('configBanner');
-  if (campusNotConfigured()){
-    showNotConfiguredBanner(configBanner);
-    document.getElementById('lessonList').innerHTML = '<p style="color:var(--ink-dim); font-size:14.5px;">Cuando el campus esté conectado, aquí verás tus lecciones reales de la Etapa 1.</p>';
-    return;
-  }
 
-  var session = await requireSession('login.html');
-  if (!session) return;
-  var userId = session.user.id;
-  var ETAPA = 1;
+Campus.boot("Inicio", function(c, u){
+  var E = Campus.esc;
+  var saludo = (function(){
+    var h = new Date().getHours();
+    if (h < 12) return "Buenos días";
+    if (h < 19) return "Buenas tardes";
+    return "Buenas noches";
+  })();
+  var nombre = (u.full_name||"").split(" ")[0] || "";
 
-  var profileRes = await supabaseClient.from('profiles').select('full_name').eq('id', userId).single();
-  if (profileRes.data && profileRes.data.full_name){
-    document.getElementById('studentName').textContent = profileRes.data.full_name;
-  }
+  var head = document.createElement("div");
+  head.className = "reveal";
+  head.style.marginBottom = "26px";
+  head.innerHTML =
+    '<div class="eyebrow">Tu proceso</div>' +
+    '<h1 style="font-size:clamp(27px,4vw,38px);line-height:1.1">' + saludo + (nombre ? ", " + E(nombre) : "") + '</h1>' +
+    '<p class="muted" style="margin-top:8px">Este es tu espacio. Avanza a tu ritmo.</p>';
+  c.appendChild(head);
 
-  var courseRes = await supabaseClient.from('courses').select('id, title').eq('etapa', ETAPA).single();
-  if (courseRes.error || !courseRes.data){
-    document.getElementById('lessonList').innerHTML = '<p style="color:var(--ink-dim);">Aún no hay contenido cargado para la Etapa 1.</p>';
-    return;
-  }
-  document.getElementById('courseTitle').textContent = courseRes.data.title;
+  var zone = document.createElement("div");
+  zone.innerHTML = '<div class="card"><p class="muted tiny">Cargando tu avance…</p></div>';
+  c.appendChild(zone);
 
-  var lessonsRes = await supabaseClient.from('lessons').select('id, title, order_index').eq('course_id', courseRes.data.id).order('order_index');
-  var lessons = lessonsRes.data || [];
+  Promise.all([Campus.DB.catalog(), Campus.DB.progress(),
+               Campus.DB.list("bitacora",{order:"fecha",desc:true}),
+               Campus.DB.list("mi_pelicula",{}),
+               Campus.DB.list("practicas",{order:"fecha",desc:true})])
+  .then(function(res){
+    var courses = res[0]||[], prog = res[1]||[], bit = res[2]||[], pel = res[3]||[], pra = res[4]||[];
+    var doneIds = {}; prog.forEach(function(p){ doneIds[p.lesson_id]=1; });
 
-  var progressRes = await supabaseClient.from('progress').select('lesson_id').eq('student_id', userId);
-  var doneIds = (progressRes.data || []).map(function(r){ return r.lesson_id; });
+    var all = []; courses.forEach(function(co){ (co.lessons||[]).forEach(function(l){ all.push(l); }); });
+    var total = all.length, done = all.filter(function(l){ return doneIds[l.id]; }).length;
+    var pct = total ? (done/total)*100 : 0;
+    var next = all.filter(function(l){ return !doneIds[l.id]; })[0];
 
-  var certSection = document.getElementById('certSection');
-  var certStatus = document.getElementById('certStatus');
-  var certBtn = document.getElementById('certBtn');
-  var certLink = document.getElementById('certLink');
-
-  async function checkExistingCertificate(){
-    var res = await supabaseClient.from('certificates').select('folio, pdf_url').eq('student_id', userId).eq('etapa', ETAPA).maybeSingle();
-    if (res.data){
-      certStatus.textContent = 'Folio: ' + res.data.folio;
-      certBtn.style.display = 'none';
-      certLink.style.display = 'block';
-      certLink.href = res.data.pdf_url;
-    }
-  }
-
-  function renderProgress(){
-    var pct = lessons.length ? Math.round((doneIds.length / lessons.length) * 100) : 0;
-    document.getElementById('progressFill').style.width = pct + '%';
-    document.getElementById('progressLabel').textContent = doneIds.length + ' de ' + lessons.length + ' lecciones completadas';
-
-    if (lessons.length > 0){
-      certSection.style.display = 'block';
-      if (doneIds.length >= lessons.length){
-        certStatus.textContent = '¡Completaste todas las lecciones! Ya puedes generar tu certificado.';
-        if (certLink.style.display !== 'block') certBtn.style.display = 'block';
-      } else {
-        certStatus.textContent = 'Completa todas las lecciones para poder generar tu certificado.';
-        certBtn.style.display = 'none';
-        certLink.style.display = 'none';
+    // racha de practica (dias consecutivos)
+    var racha = (function(){
+      if (!pra.length) return 0;
+      var set = {}; pra.forEach(function(p){ set[p.fecha]=1; });
+      var n=0, d=new Date();
+      for(;;){
+        var k = d.toISOString().slice(0,10);
+        if (set[k]) { n++; d.setDate(d.getDate()-1); }
+        else if (n===0){ d.setDate(d.getDate()-1); if(!set[d.toISOString().slice(0,10)]) break; }
+        else break;
+        if (n>400) break;
       }
-    }
-  }
-  renderProgress();
-  checkExistingCertificate();
+      return n;
+    })();
 
-  certBtn.addEventListener('click', async function(){
-    certBtn.disabled = true;
-    certBtn.textContent = 'Generando...';
-    try {
-      var resp = await fetch(SUPABASE_URL + '/functions/v1/generate-certificate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + session.access_token,
-        },
-        body: JSON.stringify({ etapa: ETAPA }),
+    var h = '';
+
+    // --- Continuar donde quedaste ---
+    h += '<div class="card reveal" style="margin-bottom:18px">';
+    h += '<div style="display:flex;gap:26px;align-items:center;flex-wrap:wrap">';
+    h += Campus.ring(pct, "avance");
+    h += '<div style="flex:1;min-width:220px">';
+    if (next){
+      h += '<div class="eyebrow">Continúa donde quedaste</div>';
+      h += '<h2 style="font-size:20px;margin-bottom:6px">' + E(next.title) + '</h2>';
+      h += '<p class="muted tiny" style="margin-bottom:16px">' + E((next.content||"").slice(0,140)) + '</p>';
+      h += '<a class="btn" href="leccion.html?id=' + encodeURIComponent(next.id) + '">Continuar lección ›</a>';
+    } else if (total) {
+      h += '<div class="eyebrow">Completado</div>';
+      h += '<h2 style="font-size:20px;margin-bottom:6px">Terminaste todas tus lecciones</h2>';
+      h += '<p class="muted tiny" style="margin-bottom:16px">Puedes descargar tu constancia o repasar cuando quieras.</p>';
+      h += '<a class="btn" href="certificados.html">Ver mis certificados ›</a>';
+    } else {
+      h += '<div class="eyebrow">Sin lecciones aún</div>';
+      h += '<h2 style="font-size:20px;margin-bottom:6px">Tu contenido aparecerá aquí</h2>';
+      h += '<p class="muted tiny">En cuanto se active tu inscripción verás tus lecciones.</p>';
+    }
+    h += '</div></div>';
+    h += '<div style="margin-top:20px"><div class="bar"><i style="width:' + pct + '%"></i></div>';
+    h += '<p class="tiny soft" style="margin-top:8px">' + done + ' de ' + total + ' lecciones completadas</p></div>';
+    h += '</div>';
+
+    // --- Tres indicadores ---
+    h += '<div class="grid g3 reveal" style="margin-bottom:18px">';
+    h += tile("🎥","Mi Película", pel.length, pel.length===1?"registro":"registros", "mi-pelicula.html");
+    h += tile("✎","Bitácora", bit.length, bit.length===1?"entrada":"entradas", "bitacora.html");
+    h += tile("◉","Práctica", racha, racha===1?"día seguido":"días seguidos", "practica.html");
+    h += '</div>';
+
+    // --- Lecciones ---
+    if (total){
+      h += '<div class="card reveal" style="margin-bottom:18px">';
+      h += '<div class="card-h"><h3>Tus lecciones</h3><a class="tiny" style="color:var(--gold)" href="lecciones.html">Ver todas ›</a></div>';
+      all.slice(0,4).forEach(function(l,i){
+        var d = !!doneIds[l.id];
+        h += '<a class="lesson' + (d?" done":"") + '" href="leccion.html?id=' + encodeURIComponent(l.id) + '">';
+        h += '<div class="num">' + (d ? "✓" : (i+1)) + '</div>';
+        h += '<div class="lt"><b>' + E(l.title) + '</b><span>' + (d?"Completada":"Pendiente") + '</span></div>';
+        h += '<span class="soft">›</span></a>';
       });
-      var data = await resp.json();
-      if (!resp.ok){
-        certStatus.textContent = data.error || 'No se pudo generar el certificado.';
-        certBtn.disabled = false;
-        certBtn.textContent = 'Generar mi certificado';
-        return;
-      }
-      certStatus.textContent = 'Folio: ' + data.folio;
-      certBtn.style.display = 'none';
-      certLink.style.display = 'block';
-      certLink.href = data.pdf_url;
-    } catch (e){
-      certStatus.textContent = 'La funcion de certificados aun no esta desplegada en Supabase.';
-      certBtn.disabled = false;
-      certBtn.textContent = 'Generar mi certificado';
+      h += '</div>';
     }
+
+    // --- Sugerencia del dia ---
+    var tips = [
+      ["Observa sin corregir","Hoy, cada vez que notes que quieres controlar algo, solo obsérvalo. No hagas nada más. Darte cuenta ya es el trabajo."],
+      ["Una expectativa menos","Identifica una expectativa que traes puesta sobre alguien. Escríbela en tu Bitácora y pregúntate de dónde viene."],
+      ["Atención Fina al comer","En tu próxima comida usa un sentido a la vez: primero mira, luego toca, luego huele, y al final saborea."],
+      ["El personaje de hoy","¿Quién de tu presente está interpretando un personaje de tu infancia? Anótalo en Mi Película."],
+      ["Tres respiraciones","Antes de responder algo que te moleste hoy, haz tres respiraciones conscientes. Nada más."],
+      ["Imagina su infancia","Piensa en alguien que te incomodó esta semana e imagina cómo fue su niñez. Observa qué se mueve."],
+      ["El silencio","Busca cinco minutos de silencio real hoy. Sin teléfono, sin música. Solo estar."]
+    ];
+    var tip = tips[new Date().getDay() % tips.length];
+    h += '<div class="card reveal" style="border-color:rgba(216,180,90,.4)">';
+    h += '<div class="eyebrow">Práctica sugerida de hoy</div>';
+    h += '<h3 style="font-size:19px;margin-bottom:8px">' + E(tip[0]) + '</h3>';
+    h += '<p class="muted" style="font-size:15px">' + E(tip[1]) + '</p>';
+    h += '<div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap">';
+    h += '<a class="btn-o btn-sm" href="bitacora.html">Anotar en Bitácora</a>';
+    h += '<a class="btn-o btn-sm" href="practica.html">Registrar práctica</a>';
+    h += '</div></div>';
+
+    zone.innerHTML = h;
+    Campus.reveal(c);
+  })
+  .catch(function(e){
+    console.error(e);
+    zone.innerHTML = '<div class="card"><p class="muted">No pudimos cargar tu avance. ' +
+      'Si acabas de conectar Supabase, revisa que hayas ejecutado <code>schema.sql</code> y <code>schema-v2.sql</code>.</p></div>';
   });
 
-  var listEl = document.getElementById('lessonList');
-  listEl.innerHTML = '';
-  lessons.forEach(function(lesson){
-    var isDone = doneIds.indexOf(lesson.id) !== -1;
-    var row = document.createElement('div');
-    row.className = 'lesson-row';
-    row.innerHTML =
-      '<div class="lesson-check' + (isDone ? ' done' : '') + '" data-lesson="' + lesson.id + '">' + (isDone ? '✓' : '') + '</div>' +
-      '<div class="lesson-title' + (isDone ? ' done' : '') + '">' + lesson.title + '</div>';
-    listEl.appendChild(row);
+  function tile(ic, label, n, unit, href){
+    return '<a class="card" href="' + href + '" style="text-align:center;display:block">' +
+      '<div style="font-size:24px;margin-bottom:8px;opacity:.85">' + ic + '</div>' +
+      '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:31px;font-weight:600;line-height:1">' + n + '</div>' +
+      '<div class="tiny soft" style="margin-top:3px">' + unit + '</div>' +
+      '<div class="tiny" style="margin-top:10px;color:var(--gold)">' + label + ' ›</div></a>';
+  }
+});
 
-    row.querySelector('.lesson-check').addEventListener('click', async function(){
-      var already = doneIds.indexOf(lesson.id) !== -1;
-      if (already){
-        await supabaseClient.from('progress').delete().eq('student_id', userId).eq('lesson_id', lesson.id);
-        doneIds = doneIds.filter(function(id){ return id !== lesson.id; });
-      } else {
-        await supabaseClient.from('progress').insert({ student_id: userId, lesson_id: lesson.id });
-        doneIds.push(lesson.id);
-      }
-      this.classList.toggle('done');
-      this.textContent = this.classList.contains('done') ? '✓' : '';
-      row.querySelector('.lesson-title').classList.toggle('done');
-      renderProgress();
-    });
-  });
-})();
 </script>
-<script src="../js/theme.js"></script>
-<script src="../js/reveal.js"></script>
 </body>
 </html>
