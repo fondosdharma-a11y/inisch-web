@@ -15,7 +15,7 @@
    ============================================================ */
 
 var GTM       = "GTM-5GVFHKR3";   // contenedor de Google Tag Manager
-var GA4       = "";               // solo si quieres GA4 directo, SIN usar GTM
+var GA4       = "G-D1VPYL1QY8";   // propiedad de Google Analytics 4
 var PLAUSIBLE = "";               // alternativa sin cookies (desactivada)
 
 /* ------------------------------------------------------------
@@ -63,6 +63,8 @@ var PLAUSIBLE = "";               // alternativa sin cookies (desactivada)
   function conceder(){
     gtag("consent", "update", { analytics_storage: "granted" });
     dataLayer.push({ event: "consentimiento_aceptado" });
+    // Reenviar la vista de pagina ahora que ya hay permiso
+    if (GA4) gtag("event", "page_view", { send_to: GA4 });
   }
 
   /* ---------- 2. Cargadores ---------- */
@@ -126,8 +128,10 @@ var PLAUSIBLE = "";               // alternativa sin cookies (desactivada)
 
     consentimientoPorDefecto();
 
+    // Ambos pueden convivir, pero GA4 se carga aqui directamente.
+    // Con el Modo de consentimiento, cargan siempre y respetan el permiso.
+    if (GA4 && !noRastrear) cargarGA4(GA4);
     if (GTM) cargarGTM(GTM);
-    else if (GA4 && leer() === "si" && !noRastrear) cargarGA4(GA4);
 
     // Si el navegador pide no ser rastreado, respetamos y ni preguntamos
     if (noRastrear) return;
@@ -148,13 +152,24 @@ var PLAUSIBLE = "";               // alternativa sin cookies (desactivada)
 /* ============================================================
    COMO TERMINAR DE CONFIGURARLO (dentro de tagmanager.com)
    ============================================================
-   1. Entra a analytics.google.com y crea una propiedad para
-      inisch.com. Copia su ID de medicion (empieza con G-).
-   2. Entra a tagmanager.com, abre el contenedor GTM-5GVFHKR3.
-   3. Etiquetas -> Nueva -> "Google Analytics: Etiqueta de Google"
-      -> pega el ID G-XXXXXXX.
-   4. Activador: "Todas las paginas" (All Pages).
-   5. Guarda y presiona ENVIAR (Submit). Si no lo envias, el
-      contenedor sigue vacio y no se mide nada.
-   6. Comprueba en Google Analytics -> Informes -> Tiempo real.
+   YA ESTA TODO LISTO. Google Analytics (G-D1VPYL1QY8) se carga
+   directamente desde este archivo, con el Modo de consentimiento.
+   No hace falta configurar nada dentro de Tag Manager para medir.
+
+   >>> ADVERTENCIA IMPORTANTE <<<
+   NO agregues una etiqueta de Google Analytics con el ID
+   G-D1VPYL1QY8 dentro del contenedor GTM-5GVFHKR3. Si lo haces,
+   cada visita se contaria DOS VECES y tus datos quedarian
+   inservibles.
+
+   El contenedor de Tag Manager sigue cargando y queda disponible
+   por si mas adelante quieres agregar OTRAS etiquetas: pixel de
+   Meta para publicidad, conversiones de Google Ads, mapas de
+   calor, etc. Para esas si es el lugar correcto.
+
+   COMPROBAR QUE FUNCIONA:
+   1. Abre inisch.com y ACEPTA el aviso de cookies.
+   2. Ve a analytics.google.com -> Informes -> Tiempo real.
+   3. Deberias aparecer en menos de un minuto.
+   Si rechazas el aviso, no apareceras: es el comportamiento correcto.
    ============================================================ */
