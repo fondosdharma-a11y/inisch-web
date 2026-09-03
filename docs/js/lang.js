@@ -26,10 +26,9 @@
     'blog/amor-real.html'             : 'en/blog/real-love.html',
     'blog/observador-consciente.html' : 'en/blog/conscious-observer.html',
     'blog/perdon-transformacion.html' : 'en/blog/forgiveness-transformation.html',
-    // Articulos aun sin version en ingles -> llevan al indice del blog EN
-    'blog/el-control.html'            : 'en/blog/index.html',
-    'blog/las-expectativas.html'      : 'en/blog/index.html',
-    'blog/siete-leyes-universales.html':'en/blog/index.html'
+    'blog/el-control.html'            : 'en/blog/control.html',
+    'blog/las-expectativas.html'      : 'en/blog/expectations.html',
+    'blog/siete-leyes-universales.html':'en/blog/seven-universal-laws.html'
   };
 
   // Invertir para EN -> ES
