@@ -84,14 +84,14 @@ window.INISCH_COHORTES = [
   }
 
   var NOMBRE = {
-    1:   { es:"El Despertar",                        en:"The Awakening" },
-    2:   { es:"Especialista en Autoconocimiento",    en:"Self-Knowledge Specialist" },
-    3:   { es:"Formaci\u00f3n de Instructores",          en:"Instructor Training" },
+    1:   { es:"Taller Intensivo del SCH",            en:"SCH Intensive Workshop" },
+    2:   { es:"Diplomado de Especialista en Autoconocimiento", en:"Self-Knowledge Specialist Diploma" },
+    3:   { es:"Maestr\u00eda para Instructor del SCH",     en:"SCH Instructor Master Program" },
     dc3: { es:"Curso DC-3 \u00b7 STPS",                  en:"DC-3 Course \u00b7 STPS" }
   };
   var ENLACE = {
-    1: "despertar.html", 2: "especialista.html",
-    3: "instructores.html", dc3: "empresas.html"
+    1: "taller.html", 2: "diplomado.html",
+    3: "maestria.html", dc3: "empresas.html"
   };
   var ENLACE_EN = {
     1: "awakening.html", 2: "specialist.html",

@@ -66,9 +66,9 @@ window.INISCH_TESTIMONIOS = [
   }
 
   var ETAPA = {
-    1: { es:"El Despertar",                     en:"The Awakening" },
-    2: { es:"Especialista en Autoconocimiento", en:"Self-Knowledge Specialist" },
-    3: { es:"Formaci\u00f3n de Instructores",       en:"Instructor Training" }
+    1: { es:"Taller Intensivo",                en:"Intensive Workshop" },
+    2: { es:"Diplomado de Especialista",       en:"Specialist Diploma" },
+    3: { es:"Maestr\u00eda para Instructor",       en:"Instructor Master Program" }
   };
 
   function tarjeta(t, pre){
