@@ -643,3 +643,24 @@ hr, .rule{ border:none; height:1px; background:linear-gradient(90deg, transparen
   .v-prev{ left:8px; } .v-next{ right:8px; }
   .v-x{ top:12px; right:12px; }
 }
+
+
+/* ============ AVISO DE CONSENTIMIENTO ============ */
+.consent{
+  position:fixed; left:20px; right:20px; bottom:20px; z-index:250;
+  max-width:620px; margin:0 auto; padding:20px 24px; border-radius:var(--r);
+  border:1px solid var(--line-gold); background:var(--bg-2);
+  box-shadow:var(--shadow-2);
+  display:flex; gap:18px; align-items:center; flex-wrap:wrap;
+  opacity:0; transform:translateY(14px); transition:all .34s var(--ease);
+}
+[data-theme="dark"] .consent{
+  background:linear-gradient(160deg, rgba(20,42,47,.98), rgba(13,26,30,.98));
+  backdrop-filter:blur(10px);
+}
+.consent.on{ opacity:1; transform:none; }
+.consent p{ flex:1; min-width:230px; font-size:14px; color:var(--ink-dim); line-height:1.55; margin:0; }
+.consent p a{ color:var(--gold); text-decoration:underline; }
+.consent-btns{ display:flex; gap:9px; }
+.consent-btns .btn-teal, .consent-btns .btn-line{ padding:10px 20px; font-size:13.5px; }
+@media(max-width:520px){ .consent-btns{ width:100%; } .consent-btns > *{ flex:1; text-align:center; } }
