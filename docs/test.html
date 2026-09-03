@@ -19,6 +19,8 @@
 <link rel="icon" type="image/png" href="assets/favicon.png">
 <meta name="description" content="Responde 8 preguntas y descubre qué formación o experiencia del Sistema Código Holográfico corresponde a tu momento actual.">
 <script>(function(){var t=localStorage.getItem('inisch-theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="css/main.css">
 <style>
   .quiz-wrap{ max-width:640px; margin:0 auto; padding:50px 32px 90px; }
@@ -38,12 +40,15 @@
   .back-link{ display:block; text-align:center; margin-top:24px; font-size:14px; color:var(--ink-dim); }
   .back-link:hover{ color:var(--teal); }
 </style>
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "EducationalOrganization", "@id": "https://www.inisch.com/#organizacion", "name": "Instituto Internacional del Sistema Código Holográfico", "alternateName": "INISCH", "url": "https://www.inisch.com/", "logo": "https://www.inisch.com/assets/mandala.png", "image": "https://www.inisch.com/assets/fotos/grupo-piramides.jpg", "description": "Instituto de formación en autoconocimiento con el Sistema Código Holográfico, metodología creada por Isabel Elizalde.", "founder": {"@type": "Person", "name": "Isabel Elizalde", "jobTitle": "Creadora del Sistema Código Holográfico", "image": "https://www.inisch.com/assets/fotos/isabel-retrato.jpg"}, "areaServed": {"@type": "Country", "name": "México"}, "contactPoint": {"@type": "ContactPoint", "contactType": "customer service", "telephone": "+52-33-1470-1563", "availableLanguage": ["Spanish", "English"]}, "sameAs": []}</script>
 </head>
 <body>
 <header><nav>
   <a href="index.html" class="nav-logo"></a>
   <div class="navlinks">
     <a href="nosotros.html">Nosotros</a>
+    <a href="isabel.html">Isabel</a>
     <a href="formacion.html">Formación</a>
     <a href="acompanamiento.html">Acompañamiento</a>
     <a href="experiencias.html">Experiencias</a>
@@ -248,6 +253,7 @@ function finish(){
   extra.innerHTML = '<p class="note">Este resultado es orientativo. Si tienes dudas sobre cuál es tu mejor punto de partida, escríbenos y lo revisamos contigo sin compromiso.</p>';
 }
 </script>
+<script src="js/analitica.js"></script>
 <script src="js/theme.js"></script>
 <script src="js/reveal.js"></script>
 <script src="js/nav.js"></script>
