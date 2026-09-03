@@ -24,8 +24,8 @@
      3. Escribe abajo:  GA4 = "G-XXXXXXXXXX"
    ============================================================ */
 
-var PLAUSIBLE = "";     // ejemplo: "inisch.com"
-var GA4       = "";     // ejemplo: "G-ABC1234567"
+var PLAUSIBLE = "inisch.com";   // ACTIVO
+var GA4       = "";             // sin usar: elegimos Plausible
 
 /* ------------------------------------------------------------
    De aqui para abajo no hace falta tocar nada.
