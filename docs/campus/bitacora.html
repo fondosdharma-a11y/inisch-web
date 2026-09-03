@@ -41,21 +41,116 @@ Campus.boot("Bitácora", function(c, u){
   acciones.innerHTML = '<button class="btn-p" id="bt-new">+ Nueva anotación</button>';
   c.appendChild(acciones);
 
+  var buscar = document.createElement("div");
+  buscar.className = "buscador";
+  buscar.innerHTML =
+    '<input class="fld" id="bq" placeholder="Buscar en lo que has escrito…" autocomplete="off">' +
+    '<select class="fld" id="bp" style="flex:0 0 auto;width:auto;min-width:150px">' +
+      '<option value="">Todos los patrones</option>' +
+      '<option value="control">Control</option>' +
+      '<option value="expectativa">Expectativa</option>' +
+      '<option value="apego">Apego</option>' +
+      '<option value="juicio">Juicio</option>' +
+      '<option value="otro">Otro</option>' +
+    '</select>' +
+    '<button class="btn-o btn-sm" id="bx">Limpiar</button>';
+  c.appendChild(buscar);
+
+  var grafZone = document.createElement("div");
+  c.appendChild(grafZone);
+
   var zone = document.createElement("div");
   zone.innerHTML = '<div class="card"><p class="muted tiny">Cargando tu bitácora…</p></div>';
   c.appendChild(zone);
 
+  var filtroTexto = "", filtroPatron = "";
+  document.getElementById("bq").addEventListener("input", function(){ filtroTexto = this.value.toLowerCase().trim(); render(); });
+  document.getElementById("bp").addEventListener("change", function(){ filtroPatron = this.value; render(); });
+  document.getElementById("bx").addEventListener("click", function(){
+    filtroTexto=""; filtroPatron="";
+    document.getElementById("bq").value=""; document.getElementById("bp").value="";
+    render();
+  });
+
+  /* ---------- Grafica: como evolucionan tus patrones mes a mes ---------- */
+  var COLOR = { control:"#D8B45A", expectativa:"#6FB2C4", apego:"#C98B7A", juicio:"#8FAAB0", otro:"#5FBF8F" };
+  function grafica(rows){
+    if (rows.length < 3){
+      grafZone.innerHTML = ""; return;
+    }
+    var meses = {}, orden = [];
+    rows.forEach(function(r){
+      var m = String(r.fecha||"").slice(0,7);
+      if (!m) return;
+      if (!meses[m]){ meses[m] = {}; orden.push(m); }
+      var p = r.patron || "otro";
+      meses[m][p] = (meses[m][p]||0) + 1;
+    });
+    orden.sort();
+    if (orden.length < 2){ grafZone.innerHTML = ""; return; }
+    orden = orden.slice(-8);
+
+    var W = 720, H = 210, pad = 34;
+    var maxT = 1;
+    orden.forEach(function(m){
+      var t = 0; for (var k in meses[m]) t += meses[m][k];
+      if (t > maxT) maxT = t;
+    });
+    var bw = (W - pad*2) / orden.length;
+
+    var s = '<svg class="grafica" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet">';
+    orden.forEach(function(m, i){
+      var x = pad + i*bw + bw*0.16, w = bw*0.68, y = H - 26;
+      var claves = Object.keys(meses[m]).sort();
+      claves.forEach(function(p){
+        var alto = (meses[m][p] / maxT) * (H - 62);
+        y -= alto;
+        s += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + w.toFixed(1) +
+             '" height="' + alto.toFixed(1) + '" fill="' + (COLOR[p]||COLOR.otro) + '" opacity=".88" rx="2"><title>' +
+             p + ": " + meses[m][p] + '</title></rect>';
+      });
+      var et = m.slice(5) + "/" + m.slice(2,4);
+      s += '<text x="' + (pad + i*bw + bw/2).toFixed(1) + '" y="' + (H-8) +
+           '" text-anchor="middle" font-size="10.5" fill="currentColor" opacity=".55">' + et + '</text>';
+    });
+    s += '</svg>';
+
+    var usados = {};
+    rows.forEach(function(r){ usados[r.patron||"otro"] = 1; });
+    var ley = '<div class="leyenda">';
+    Object.keys(usados).sort().forEach(function(p){
+      ley += '<span><i style="background:' + (COLOR[p]||COLOR.otro) + '"></i>' + p + '</span>';
+    });
+    ley += '</div>';
+
+    grafZone.innerHTML = '<div class="card reveal" style="margin-bottom:22px">' +
+      '<b>Tus patrones mes a mes</b>' +
+      '<p class="muted tiny" style="margin:6px 0 16px">Con el tiempo vas a ver si lo que más se repetía empieza a ceder.</p>' +
+      s + ley + '</div>';
+  }
+
   acciones.querySelector("#bt-new").addEventListener("click", function(){ editor({}); });
 
   function render(){
-    Campus.DB.list("bitacora", { order:"fecha", desc:true }).then(function(rows){
-      rows = rows || [];
+    Campus.DB.list("bitacora", { order:"fecha", desc:true }).then(function(todas){
+      todas = todas || [];
+      grafica(todas);
+      var rows = todas.filter(function(r){
+        if (filtroPatron && r.patron !== filtroPatron) return false;
+        if (!filtroTexto) return true;
+        var txt = [r.situacion, r.emocion, r.desde_donde, r.comprension].join(" ").toLowerCase();
+        return txt.indexOf(filtroTexto) >= 0;
+      });
       var h = "";
+      if ((filtroTexto || filtroPatron)){
+        h += '<p class="muted tiny" style="margin-bottom:14px">' + rows.length +
+             ' de ' + todas.length + ' anotaciones coinciden.</p>';
+      }
 
       /* resumen de patrones */
-      if (rows.length){
+      if (todas.length){
         var cnt = {};
-        rows.forEach(function(r){ if(r.patron) cnt[r.patron] = (cnt[r.patron]||0)+1; });
+        todas.forEach(function(r){ if(r.patron) cnt[r.patron] = (cnt[r.patron]||0)+1; });
         var max = 0, dom = null;
         for (var k in cnt){ if (cnt[k] > max){ max = cnt[k]; dom = k; } }
 
@@ -63,8 +158,8 @@ Campus.boot("Bitácora", function(c, u){
         h += '<b>Tu patrón más frecuente</b>';
         if (dom){
           var nom = PATRONES.filter(function(p){return p[0]===dom;})[0];
-          h += '<p class="muted" style="margin-top:8px;font-size:15px">De ' + rows.length +
-               ' anotacion' + (rows.length===1?"":"es") + ', <b style="color:var(--gold)">' +
+          h += '<p class="muted" style="margin-top:8px;font-size:15px">De ' + todas.length +
+               ' anotacion' + (todas.length===1?"":"es") + ', <b style="color:var(--gold)">' +
                E(nom ? nom[1] : dom) + '</b> aparece ' + max + ' ' + (max===1?"vez":"veces") + '.</p>';
         }
         h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">';

@@ -75,9 +75,9 @@ Campus.boot("Mis lecciones", function(c, u){
           h += '<b style="font-size:16px">' + E(l.title) + '</b>';
           if (l.content) h += '<p class="muted" style="margin-top:7px;font-size:15px">' + E(l.content) + '</p>';
           if (l.video_url){
-            h += '<div style="margin-top:14px"><a class="btn-p btn-sm" href="' + E(l.video_url) + '" target="_blank" rel="noopener">▶ Ver la lección</a></div>';
+            h += '<div style="margin-top:14px"><a class="btn-p btn-sm" href="leccion.html?id=' + encodeURIComponent(l.id) + '">▶ Ver la lección</a></div>';
           } else {
-            h += '<p class="tiny soft" style="margin-top:12px">El video de esta lección aún no está disponible.</p>';
+            h += '<div style="margin-top:14px"><a class="btn-o btn-sm" href="leccion.html?id=' + encodeURIComponent(l.id) + '">Abrir lección</a></div>';
           }
           h += '<div style="margin-top:14px">' +
                '<button class="btn-o btn-sm nt-open" data-l="' + l.id + '" data-t="' + E(l.title) + '">' +
