@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Película — Campus INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="stylesheet" href="css/campus.css">
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/campus-core.js"></script>
+<script>
+
+/* Banco de preguntas tomado del Manual (Guia de Interiorizacion) */
+var PREGUNTAS = {
+  figura: [
+    ["personalidad", "¿Cuál era su personalidad antes de tus 10 años?"],
+    ["funcion",      "¿Cuál era su función en casa?"],
+    ["dia_normal",   "¿Cómo era su conducta en un día normal?"],
+    ["fin_semana",   "¿Y en los fines de semana?"],
+    ["actitud_pareja","¿Cuál era su actitud hacia su pareja?"],
+    ["demostraba_amor","¿Cómo demostraba su amor?"],
+    ["enojo",        "¿Qué le provocaba enojo?"],
+    ["rinas",        "¿Cómo eran las riñas y por qué?"],
+    ["quejaba",      "¿De qué se quejaba?"],
+    ["animo",        "¿Cuál era su estado de ánimo cotidiano?"],
+    ["juzgaba",      "¿Recuerdas cómo juzgaba?"],
+    ["comunicativo", "¿Era callado(a) o comunicativo(a)?"],
+    ["bondadoso",    "¿Era bondadoso(a)?"],
+    ["controlaba",   "¿Solía controlar?"],
+    ["economia",     "¿Cómo lidiaba con su economía?"],
+    ["lloraba",      "¿Lo(a) viste llorar? ¿Por qué lo hacía o no lo hacía?"],
+    ["creia",        "¿En qué creía?"],
+    ["dificiles",    "¿Cómo reaccionaba en sus momentos difíciles?"],
+    ["angustiaba",   "¿De qué se angustiaba?"],
+    ["paciente",     "¿Era paciente o intolerante?"],
+    ["rencoroso",    "¿Era rencoroso(a)?"],
+    ["miedo",        "¿A qué le tenía miedo o temor?"],
+    ["episodio",     "¿Cuál es el episodio que más recuerdas?"]
+  ]
+};
+
+var TIPOS = {
+  paterna:      { t:"Figura paterna",  ic:"♂", d:"Tu papá o tu imagen paterna, antes de tus 10 años." },
+  materna:      { t:"Figura materna",  ic:"♀", d:"Tu mamá o tu imagen materna, antes de tus 10 años." },
+  otra_figura:  { t:"Otra figura",     ic:"◇", d:"Abuelos, tíos, hermanos mayores o quien te crió." },
+  personaje:    { t:"Personaje",       ic:"🎭", d:"Alguien de tu infancia y quién ocupa hoy ese lugar." }
+};
+
+Campus.boot("Mi Película", function(c, u){
+  var E = Campus.esc;
+
+  var head = document.createElement("div");
+  head.className = "reveal";
+  head.innerHTML =
+    '<div class="eyebrow">Herramienta</div>' +
+    '<h1 style="font-size:clamp(26px,4vw,36px);line-height:1.12">Mi Película</h1>' +
+    '<p class="muted" style="margin-top:10px;max-width:620px">' +
+      'Aquí registras tu <b>desde dónde</b>: lo que viste y escuchaste en tu infancia. ' +
+      'Nadie más que tú tiene acceso a esto.</p>';
+  c.appendChild(head);
+
+  /* Regla de oro — se puede ocultar */
+  var regla = document.createElement("div");
+  regla.className = "card reveal";
+  regla.style.borderColor = "rgba(216,180,90,.4)";
+  regla.style.margin = "20px 0 26px";
+  regla.innerHTML =
+    '<div style="display:flex;gap:14px;align-items:flex-start">' +
+      '<div style="font-size:20px;color:var(--gold)">✦</div>' +
+      '<div><b>La regla de oro</b>' +
+      '<p class="muted" style="margin-top:6px;font-size:15px">Escribe <b>solo lo que viste y escuchaste</b>, no lo que te hicieron a ti. ' +
+      'El proyector no aparece dentro de la película: solo refleja lo que tiene adentro. ' +
+      'Si te pones en primera persona, el ejercicio se convierte en queja y deja de funcionar.</p></div>' +
+    '</div>';
+  c.appendChild(regla);
+
+  var zone = document.createElement("div");
+  zone.innerHTML = '<div class="card"><p class="muted tiny">Cargando tu registro…</p></div>';
+  c.appendChild(zone);
+
+  function render(){
+    Campus.DB.list("mi_pelicula", {}).then(function(rows){
+      rows = rows || [];
+      var h = "";
+
+      /* progreso general */
+      var hechas = {};
+      rows.forEach(function(r){ hechas[r.tipo] = (hechas[r.tipo]||0) + 1; });
+      var totalResp = 0;
+      rows.forEach(function(r){
+        var a = r.respuestas || {};
+        for (var k in a){ if (String(a[k]).trim()) totalResp++; }
+      });
+
+      h += '<div class="card reveal" style="margin-bottom:24px">';
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px">';
+      h += '<div><b>Tu avance</b><p class="muted tiny" style="margin-top:4px">' +
+           rows.length + ' registro' + (rows.length===1?"":"s") + ' · ' + totalResp + ' respuesta' + (totalResp===1?"":"s") + ' escrita' + (totalResp===1?"":"s") + '</p></div>';
+      h += '<a class="btn-o btn-sm" href="bitacora.html">Ir a Bitácora ›</a>';
+      h += '</div></div>';
+
+      /* botones para crear */
+      h += '<div class="grid-4 reveal" style="margin-bottom:26px">';
+      Object.keys(TIPOS).forEach(function(k){
+        var T = TIPOS[k];
+        var n = hechas[k] || 0;
+        h += '<button class="card mp-new" data-tipo="' + k + '" style="text-align:left;cursor:pointer;border:1px solid var(--line)">' +
+             '<div style="font-size:21px;margin-bottom:8px">' + T.ic + '</div>' +
+             '<b style="font-size:15px">' + E(T.t) + '</b>' +
+             '<p class="muted tiny" style="margin-top:5px">' + E(T.d) + '</p>' +
+             '<div class="tiny" style="margin-top:10px;color:var(--gold)">' +
+               (n ? n + ' registrado' + (n===1?"":"s") : "Agregar") + ' +</div>' +
+             '</button>';
+      });
+      h += '</div>';
+
+      /* lista de registros */
+      if (!rows.length){
+        h += '<div class="card reveal" style="text-align:center;padding:42px 24px">' +
+             '<div style="font-size:34px;opacity:.5;margin-bottom:12px">🎥</div>' +
+             '<b>Tu película está en blanco</b>' +
+             '<p class="muted" style="margin-top:8px;max-width:420px;margin-left:auto;margin-right:auto;font-size:15px">' +
+             'Empieza por la figura paterna o materna. No tienes que responder todo de una vez: ' +
+             'se guarda solo y puedes volver cuando quieras.</p></div>';
+      } else {
+        rows.sort(function(a,b){ return (a.created_at||"") < (b.created_at||"") ? 1 : -1; });
+        rows.forEach(function(r){
+          var T = TIPOS[r.tipo] || { t:r.tipo, ic:"◇" };
+          var a = r.respuestas || {};
+          var n = 0; for (var k in a){ if (String(a[k]).trim()) n++; }
+          var pct = Math.round(n / PREGUNTAS.figura.length * 100);
+          h += '<div class="card reveal" style="margin-bottom:14px">';
+          h += '<div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">';
+          h += '<div style="display:flex;gap:13px;align-items:center">';
+          h += '<div style="font-size:19px;opacity:.8">' + T.ic + '</div>';
+          h += '<div><b>' + E(r.etiqueta || T.t) + '</b>' +
+               '<p class="muted tiny" style="margin-top:3px">' + T.t +
+               (r.personaje_hoy ? ' · hoy: ' + E(r.personaje_hoy) : '') +
+               ' · ' + n + '/' + PREGUNTAS.figura.length + ' respuestas</p></div>';
+          h += '</div>';
+          h += '<div style="display:flex;gap:8px">' +
+               '<button class="btn-o btn-sm mp-open" data-id="' + r.id + '">Abrir</button>' +
+               '<button class="btn-o btn-sm mp-del" data-id="' + r.id + '" title="Eliminar">✕</button>' +
+               '</div>';
+          h += '</div>';
+          h += '<div class="bar" style="margin-top:14px"><i style="width:' + pct + '%"></i></div>';
+          h += '</div>';
+        });
+      }
+
+      zone.innerHTML = h;
+      Campus.reveal(c);
+
+      /* eventos */
+      zone.querySelectorAll(".mp-new").forEach(function(b){
+        b.addEventListener("click", function(){ editor({ tipo: b.dataset.tipo, respuestas:{} }); });
+      });
+      zone.querySelectorAll(".mp-open").forEach(function(b){
+        b.addEventListener("click", function(){
+          var r = rows.filter(function(x){ return String(x.id)===b.dataset.id; })[0];
+          if (r) editor(r);
+        });
+      });
+      zone.querySelectorAll(".mp-del").forEach(function(b){
+        b.addEventListener("click", function(){
+          if (!confirm("¿Eliminar este registro? No se puede recuperar.")) return;
+          Campus.DB.remove("mi_pelicula", b.dataset.id).then(function(){
+            Campus.toast("Registro eliminado"); render();
+          });
+        });
+      });
+    }).catch(function(e){
+      console.error(e);
+      zone.innerHTML = '<div class="card"><p class="muted">No pudimos cargar tu registro. ' +
+        'Si acabas de conectar Supabase, revisa que hayas ejecutado <code>schema-v2.sql</code>.</p></div>';
+    });
+  }
+
+  /* ---------- editor en panel lateral ---------- */
+  function editor(rec){
+    var T = TIPOS[rec.tipo] || { t:rec.tipo, ic:"◇" };
+    var esPersonaje = rec.tipo === "personaje";
+
+    var back = document.createElement("div");
+    back.className = "sheet-back";
+    var sh = document.createElement("div");
+    sh.className = "sheet";
+
+    var h = '<div class="sheet-head">' +
+      '<div><div class="eyebrow">' + T.ic + ' ' + E(T.t) + '</div>' +
+      '<h2 style="font-size:22px;margin-top:4px">' + (rec.id ? "Editar registro" : "Nuevo registro") + '</h2></div>' +
+      '<button class="btn-o btn-sm sh-x">Cerrar</button></div>';
+
+    h += '<div class="sheet-body">';
+    h += '<label class="fl">¿A quién te refieres?</label>' +
+         '<input class="fi" id="f-etq" placeholder="Ej. Mi papá · Mi abuela Carmen · Mi maestra de primaria" value="' + E(rec.etiqueta||"") + '">';
+
+    if (esPersonaje){
+      h += '<label class="fl" style="margin-top:16px">¿Quién ocupa hoy ese mismo lugar en tu vida?</label>' +
+           '<input class="fi" id="f-hoy" placeholder="Ej. Mi jefe actual · Mi pareja" value="' + E(rec.personaje_hoy||"") + '">' +
+           '<p class="muted tiny" style="margin-top:7px">El personaje es el mismo una y otra vez; lo que cambia es el actor que lo interpreta.</p>';
+    }
+
+    h += '<div class="rule" style="margin:24px 0 18px"></div>';
+    h += '<p class="muted tiny" style="margin-bottom:16px">Responde lo que puedas. Se guarda automáticamente. ' +
+         'No hay respuestas correctas ni obligación de llenar todo.</p>';
+
+    PREGUNTAS.figura.forEach(function(q){
+      var val = (rec.respuestas || {})[q[0]] || "";
+      h += '<div class="qi">' +
+           '<label class="fl">' + E(q[1]) + '</label>' +
+           '<textarea class="fi ft" data-q="' + q[0] + '" rows="2">' + E(val) + '</textarea>' +
+           '</div>';
+    });
+
+    h += '<label class="fl" style="margin-top:14px">Notas libres</label>' +
+         '<textarea class="fi ft" id="f-notas" rows="3" placeholder="Cualquier cosa que quieras agregar">' + E(rec.notas||"") + '</textarea>';
+    h += '</div>';
+
+    h += '<div class="sheet-foot">' +
+         '<span class="tiny soft" id="f-status">Sin cambios</span>' +
+         '<button class="btn-p btn-sm sh-save">Guardar y cerrar</button></div>';
+
+    sh.innerHTML = h;
+    document.body.appendChild(back);
+    document.body.appendChild(sh);
+    requestAnimationFrame(function(){ back.classList.add("on"); sh.classList.add("on"); });
+
+    var status = sh.querySelector("#f-status");
+    var timer = null, dirty = false;
+
+    function collect(){
+      var resp = {};
+      sh.querySelectorAll("[data-q]").forEach(function(t){
+        if (t.value.trim()) resp[t.dataset.q] = t.value.trim();
+      });
+      var out = {
+        tipo: rec.tipo,
+        etiqueta: sh.querySelector("#f-etq").value.trim(),
+        respuestas: resp,
+        notas: sh.querySelector("#f-notas").value.trim()
+      };
+      if (rec.id) out.id = rec.id;
+      if (esPersonaje){
+        var e = sh.querySelector("#f-hoy");
+        if (e) out.personaje_hoy = e.value.trim();
+      }
+      return out;
+    }
+
+    function save(closeAfter){
+      var row = collect();
+      status.textContent = "Guardando…";
+      return Campus.DB.save("mi_pelicula", row).then(function(saved){
+        if (saved && saved.id) rec.id = saved.id;
+        dirty = false;
+        status.textContent = "Guardado ✓";
+        if (closeAfter){ close(); render(); }
+      }).catch(function(e){
+        console.error(e); status.textContent = "No se pudo guardar";
+        Campus.toast("No se pudo guardar. Revisa tu conexión.");
+      });
+    }
+
+    sh.addEventListener("input", function(){
+      dirty = true; status.textContent = "Escribiendo…";
+      clearTimeout(timer);
+      timer = setTimeout(function(){ save(false); }, 1200);   // autoguardado
+    });
+
+    function close(){
+      back.classList.remove("on"); sh.classList.remove("on");
+      setTimeout(function(){ back.remove(); sh.remove(); }, 260);
+    }
+    sh.querySelector(".sh-x").addEventListener("click", function(){
+      if (dirty){ save(true); } else { close(); render(); }
+    });
+    sh.querySelector(".sh-save").addEventListener("click", function(){ save(true); });
+    back.addEventListener("click", function(){
+      if (dirty){ save(true); } else { close(); render(); }
+    });
+  }
+
+  render();
+});
+
+</script>
+</body>
+</html>
