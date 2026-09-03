@@ -185,7 +185,7 @@
 
   function DEMO_CATALOG(){
     return [{
-      id:"c1", etapa:1, title:"Etapa 1: Iniciación — El Despertar",
+      id:"c1", etapa:1, title:"Taller Intensivo del SCH",
       description:"Guía de Interiorización Personal del Sistema Código Holográfico",
       lessons:[
         {id:"l1",title:"Bienvenida y presentación del Sistema",content:"Qué es el Sistema Código Holográfico, de dónde surge y cómo se va a trabajar.",order_index:1},
