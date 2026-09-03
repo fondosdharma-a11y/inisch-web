@@ -4,7 +4,10 @@
    EDITA SOLO ESTE ARCHIVO. El sitio se actualiza solo.
 
    Para cada cohorte:
-     etapa     1, 2 o 3   (o "dc3" para el curso STPS)
+     etapa     1 = El Despertar
+               2 = Especialista en Autoconocimiento
+               3 = Formacion de Instructores
+               "dc3" = curso DC-3 / STPS
      inicio    fecha en formato AAAA-MM-DD
      fin       opcional, para cursos de varios dias
      horario   texto libre
@@ -81,18 +84,18 @@ window.INISCH_COHORTES = [
   }
 
   var NOMBRE = {
-    1:   { es:"Etapa 1 \u00b7 Iniciaci\u00f3n",  en:"Stage 1 \u00b7 Awakening" },
-    2:   { es:"Etapa 2 \u00b7 Maestr\u00eda",    en:"Stage 2 \u00b7 Mastery" },
-    3:   { es:"Etapa 3 \u00b7 Instructores",     en:"Stage 3 \u00b7 Instructors" },
-    dc3: { es:"Curso DC-3 \u00b7 STPS",          en:"DC-3 Course \u00b7 STPS" }
+    1:   { es:"El Despertar",                        en:"The Awakening" },
+    2:   { es:"Especialista en Autoconocimiento",    en:"Self-Knowledge Specialist" },
+    3:   { es:"Formaci\u00f3n de Instructores",          en:"Instructor Training" },
+    dc3: { es:"Curso DC-3 \u00b7 STPS",                  en:"DC-3 Course \u00b7 STPS" }
   };
   var ENLACE = {
-    1: "formacion.html#etapa1", 2: "formacion.html#etapa2",
-    3: "formacion.html#etapa3", dc3: "empresas.html"
+    1: "despertar.html", 2: "especialista.html",
+    3: "instructores.html", dc3: "empresas.html"
   };
   var ENLACE_EN = {
-    1: "program.html#stage1", 2: "program.html#stage2",
-    3: "program.html#stage3", dc3: "companies.html"
+    1: "awakening.html", 2: "specialist.html",
+    3: "instructor-training.html", dc3: "companies.html"
   };
 
   function vigentes(){

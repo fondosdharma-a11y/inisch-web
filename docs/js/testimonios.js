@@ -66,9 +66,9 @@ window.INISCH_TESTIMONIOS = [
   }
 
   var ETAPA = {
-    1: { es:"Etapa 1", en:"Stage 1" },
-    2: { es:"Etapa 2", en:"Stage 2" },
-    3: { es:"Etapa 3", en:"Stage 3" }
+    1: { es:"El Despertar",                     en:"The Awakening" },
+    2: { es:"Especialista en Autoconocimiento", en:"Self-Knowledge Specialist" },
+    3: { es:"Formaci\u00f3n de Instructores",       en:"Instructor Training" }
   };
 
   function tarjeta(t, pre){

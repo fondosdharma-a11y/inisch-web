@@ -9,6 +9,12 @@
   var MAP = {
     'index.html'                      : 'en/index.html',
     'nosotros.html'                   : 'en/about.html',
+    'isabel.html'                     : 'en/isabel.html',
+    'galeria.html'                    : 'en/gallery.html',
+    'programas.html'                  : 'en/programs.html',
+    'despertar.html'                  : 'en/awakening.html',
+    'especialista.html'               : 'en/specialist.html',
+    'instructores.html'               : 'en/instructor-training.html',
     'formacion.html'                  : 'en/program.html',
     'acompanamiento.html'             : 'en/guidance.html',
     'numerologia.html'                : 'en/numerology.html',
