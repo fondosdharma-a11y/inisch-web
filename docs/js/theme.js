@@ -1,7 +1,18 @@
 (function(){
   var KEY = 'inisch-theme';
-  function currentTheme(){ return localStorage.getItem(KEY) || 'light'; }
-  function applyTheme(t){ document.documentElement.setAttribute('data-theme', t); }
+  function currentTheme(){ return localStorage.getItem(KEY) || 'dark'; }
+  function applyTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    swapBanner(t);
+  }
+  function swapBanner(t){
+    var imgs = document.querySelectorAll('.hero-banner img');
+    for (var i = 0; i < imgs.length; i++){
+      var src = imgs[i].getAttribute('src') || '';
+      var base = src.replace('-dark.svg', '.svg');
+      imgs[i].setAttribute('src', t === 'dark' ? base.replace('.svg', '-dark.svg') : base);
+    }
+  }
   function isEN(){
     var l = (document.documentElement.getAttribute('lang')||'es').toLowerCase();
     return l.indexOf('en') === 0;

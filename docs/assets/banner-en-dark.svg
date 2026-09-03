@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 520" width="1600" height="520" role="img" aria-label="INISCH — Instituto Internacional del Sistema Codigo Holografico">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0A1518"/>
+      <stop offset="38%" stop-color="#102227"/>
+      <stop offset="72%" stop-color="#152C33"/>
+      <stop offset="100%" stop-color="#0B171B"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#EBD08A"/>
+      <stop offset="50%" stop-color="#D8B45A"/>
+      <stop offset="100%" stop-color="#B08F32"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9AD3E4"/>
+      <stop offset="55%" stop-color="#6FB2C4"/>
+      <stop offset="100%" stop-color="#4E93A8"/>
+    </linearGradient>
+    <radialGradient id="core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="30%" stop-color="#FBEFC9"/>
+      <stop offset="70%" stop-color="#EBD08A"/>
+      <stop offset="100%" stop-color="#D8B45A"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#D8B45A" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#D8B45A" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="veil" x1="0" y1="0" x2="1" y2="0.6">
+      <stop offset="0%" stop-color="#6FB2C4" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#6FB2C4" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1600" height="520" fill="url(#bg)"/>
+  <path d="M0,0 L520,0 L300,520 L0,520 Z" fill="url(#veil)"/>
+  <path d="M1180,0 L1600,0 L1600,520 L1420,520 Z" fill="url(#veil)" opacity="0.7"/>
+
+  <g stroke="url(#gold)" fill="none" opacity="0.30">
+    <path d="M-40,150 C 220,60 430,250 700,150 S 1180,40 1660,170" stroke-width="1.2"/>
+    <path d="M-40,392 C 260,470 470,300 760,392 S 1220,486 1660,360" stroke-width="1.2"/>
+  </g>
+
+  <circle cx="300" cy="260" r="250" fill="url(#glow)"/>
+
+  <g>
+    <circle cx="300" cy="260" r="238" fill="none" stroke="url(#gold)" stroke-width="1.6" opacity="0.85"/>
+    <circle cx="300" cy="260" r="228" fill="none" stroke="url(#gold)" stroke-width="0.9" opacity="0.55"/>
+    <line x1="505.0" y1="260.0" x2="532.0" y2="260.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="503.2" y1="286.8" x2="516.1" y2="288.5" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="498.0" y1="313.1" x2="524.1" y2="320.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="489.4" y1="338.5" x2="501.4" y2="343.4" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="477.5" y1="362.5" x2="500.9" y2="376.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="462.6" y1="384.8" x2="473.0" y2="392.7" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="445.0" y1="405.0" x2="464.0" y2="424.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="424.8" y1="422.6" x2="432.7" y2="433.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="402.5" y1="437.5" x2="416.0" y2="460.9" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="378.5" y1="449.4" x2="383.4" y2="461.4" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="353.1" y1="458.0" x2="360.0" y2="484.1" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="326.8" y1="463.2" x2="328.5" y2="476.1" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="300.0" y1="465.0" x2="300.0" y2="492.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="273.2" y1="463.2" x2="271.5" y2="476.1" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="246.9" y1="458.0" x2="240.0" y2="484.1" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="221.5" y1="449.4" x2="216.6" y2="461.4" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="197.5" y1="437.5" x2="184.0" y2="460.9" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="175.2" y1="422.6" x2="167.3" y2="433.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="155.0" y1="405.0" x2="136.0" y2="424.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="137.4" y1="384.8" x2="127.0" y2="392.7" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="122.5" y1="362.5" x2="99.1" y2="376.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="110.6" y1="338.5" x2="98.6" y2="343.4" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="102.0" y1="313.1" x2="75.9" y2="320.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="96.8" y1="286.8" x2="83.9" y2="288.5" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="95.0" y1="260.0" x2="68.0" y2="260.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="96.8" y1="233.2" x2="83.9" y2="231.5" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="102.0" y1="206.9" x2="75.9" y2="200.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="110.6" y1="181.5" x2="98.6" y2="176.6" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="122.5" y1="157.5" x2="99.1" y2="144.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="137.4" y1="135.2" x2="127.0" y2="127.3" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="155.0" y1="115.0" x2="136.0" y2="96.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="175.2" y1="97.4" x2="167.3" y2="87.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="197.5" y1="82.5" x2="184.0" y2="59.1" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="221.5" y1="70.6" x2="216.6" y2="58.6" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="246.9" y1="62.0" x2="240.0" y2="35.9" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="273.2" y1="56.8" x2="271.5" y2="43.9" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="300.0" y1="55.0" x2="300.0" y2="28.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="326.8" y1="56.8" x2="328.5" y2="43.9" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="353.1" y1="62.0" x2="360.0" y2="35.9" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="378.5" y1="70.6" x2="383.4" y2="58.6" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="402.5" y1="82.5" x2="416.0" y2="59.1" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="424.8" y1="97.4" x2="432.7" y2="87.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="445.0" y1="115.0" x2="464.0" y2="96.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="462.6" y1="135.2" x2="473.0" y2="127.3" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="477.5" y1="157.5" x2="500.9" y2="144.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="489.4" y1="181.5" x2="501.4" y2="176.6" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <line x1="498.0" y1="206.9" x2="524.1" y2="200.0" stroke="url(#gold)" stroke-width="1.6" opacity="0.75"/>
+    <line x1="503.2" y1="233.2" x2="516.1" y2="231.5" stroke="url(#gold)" stroke-width="1.6" opacity="0.4"/>
+    <circle cx="300" cy="260" r="196" fill="none" stroke="url(#teal)" stroke-width="9" opacity="0.5"/>
+    <path d="M450.0,260.0 Q492.2,298.2 438.6,317.4 M438.6,317.4 Q463.0,368.9 406.1,366.1 M406.1,366.1 Q408.9,423.0 357.4,398.6 M357.4,398.6 Q338.2,452.2 300.0,410.0 M300.0,410.0 Q261.8,452.2 242.6,398.6 M242.6,398.6 Q191.1,423.0 193.9,366.1 M193.9,366.1 Q137.0,368.9 161.4,317.4 M161.4,317.4 Q107.8,298.2 150.0,260.0 M150.0,260.0 Q107.8,221.8 161.4,202.6 M161.4,202.6 Q137.0,151.1 193.9,153.9 M193.9,153.9 Q191.1,97.0 242.6,121.4 M242.6,121.4 Q261.8,67.8 300.0,110.0 M300.0,110.0 Q338.2,67.8 357.4,121.4 M357.4,121.4 Q408.9,97.0 406.1,153.9 M406.1,153.9 Q463.0,151.1 438.6,202.6 M438.6,202.6 Q492.2,221.8 450.0,260.0" fill="none" stroke="url(#gold)" stroke-width="2" opacity="0.75"/>
+    <path d="M412.0,260.0 Q446.8,299.3 397.0,316.0 M397.0,316.0 Q407.5,367.5 356.0,357.0 M356.0,357.0 Q339.3,406.8 300.0,372.0 M300.0,372.0 Q260.7,406.8 244.0,357.0 M244.0,357.0 Q192.5,367.5 203.0,316.0 M203.0,316.0 Q153.2,299.3 188.0,260.0 M188.0,260.0 Q153.2,220.7 203.0,204.0 M203.0,204.0 Q192.5,152.5 244.0,163.0 M244.0,163.0 Q260.7,113.2 300.0,148.0 M300.0,148.0 Q339.3,113.2 356.0,163.0 M356.0,163.0 Q407.5,152.5 397.0,204.0 M397.0,204.0 Q446.8,220.7 412.0,260.0" fill="none" stroke="url(#teal)" stroke-width="1.8" opacity="0.55"/>
+    <circle cx="300" cy="260" r="150" fill="none" stroke="url(#gold)" stroke-width="1" opacity="0.5"/>
+
+    <polygon points="300.0,92.0 274.7,199.0 181.2,141.2 239.0,234.7 132.0,260.0 239.0,285.3 181.2,378.8 274.7,321.0 300.0,428.0 325.3,321.0 418.8,378.8 361.0,285.3 468.0,260.0 361.0,234.7 418.8,141.2 325.3,199.0" fill="none" stroke="url(#teal)" stroke-width="7" stroke-linejoin="round" opacity="0.92"/>
+    <polygon points="300.0,92.0 274.7,199.0 181.2,141.2 239.0,234.7 132.0,260.0 239.0,285.3 181.2,378.8 274.7,321.0 300.0,428.0 325.3,321.0 418.8,378.8 361.0,285.3 468.0,260.0 361.0,234.7 418.8,141.2 325.3,199.0" fill="url(#teal)" opacity="0.10"/>
+
+    <circle cx="300" cy="260" r="52" fill="none" stroke="url(#gold)" stroke-width="6"/>
+    <circle cx="300" cy="260" r="40" fill="none" stroke="url(#gold)" stroke-width="1.6" opacity="0.7"/>
+    <circle cx="300" cy="260" r="24" fill="url(#core)"/>
+    <g stroke="url(#gold)" stroke-width="2.2" opacity="0.9" stroke-linecap="round">
+      <line x1="300" y1="222" x2="300" y2="202"/>
+      <line x1="300" y1="298" x2="300" y2="318"/>
+      <line x1="262" y1="260" x2="242" y2="260"/>
+      <line x1="338" y1="260" x2="358" y2="260"/>
+    </g>
+  </g>
+
+  <g transform="translate(650, 0)">
+    <text x="0" y="222" font-family="Georgia, 'Cormorant Garamond', serif" font-size="112" letter-spacing="26" fill="#EAF2F3">INISCH</text>
+    <line x1="4" y1="262" x2="196" y2="262" stroke="url(#gold)" stroke-width="2"/>
+    <text x="212" y="268" font-family="'Jost', 'Helvetica Neue', Arial, sans-serif" font-size="21" letter-spacing="3.4" fill="#93AEB4">INTERNATIONAL INSTITUTE</text>
+    <text x="4" y="308" font-family="'Jost', 'Helvetica Neue', Arial, sans-serif" font-size="21" letter-spacing="3.4" fill="#93AEB4">OF THE HOLOGRAPHIC CODE SYSTEM</text>
+    <text x="4" y="372" font-family="Georgia, 'Cormorant Garamond', serif" font-style="italic" font-size="27" fill="#C6A96A">Return to yourself. Understand. Expand how you live.</text>
+  </g>
+</svg>
