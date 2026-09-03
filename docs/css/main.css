@@ -226,3 +226,25 @@ body.mm-lock{ overflow:hidden; }
 .foot-logo{ display:flex; align-items:center; gap:14px; }
 .foot-logo .fl-txt{ font-family:'Cormorant Garamond',serif; font-size:20px; letter-spacing:.14em; color:var(--teal-deep); }
 [data-theme="dark"] .foot-logo .fl-txt{ font-family:'Space Grotesk',sans-serif; color:var(--ink); }
+
+
+/* ============ SELECTOR DE IDIOMA ============ */
+.lang-toggle{
+  display:inline-flex; align-items:center; gap:6px;
+  height:38px; padding:0 14px; border-radius:19px;
+  border:1.5px solid var(--teal); background:var(--bg);
+  color:var(--teal-deep); font-family:inherit; font-size:13px; font-weight:600;
+  letter-spacing:.06em; cursor:pointer; flex-shrink:0; white-space:nowrap;
+  text-decoration:none; box-shadow:0 1px 3px rgba(0,0,0,.07);
+  transition:background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+.lang-toggle:hover{ background:var(--teal-deep); color:var(--bg); border-color:var(--teal-deep); }
+.lang-toggle .lt-globe{ font-size:14px; opacity:.8; }
+.lang-toggle:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+[data-theme="dark"] .lang-toggle{ background:rgba(255,255,255,.05); color:var(--ink); border-color:var(--teal); }
+[data-theme="dark"] .lang-toggle:hover{ background:var(--teal); color:var(--bg); }
+@media (max-width:860px){
+  nav{ gap:8px; }
+  .lang-toggle{ padding:0 11px; }
+  .lang-toggle .lt-globe{ display:none; }
+}
