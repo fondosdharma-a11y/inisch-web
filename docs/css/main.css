@@ -144,9 +144,11 @@ footer{ padding:56px 32px 40px; border-top:1px solid var(--line-gold); }
 .foot-bottom{ font-size:12.5px; color:var(--ink-dim); text-align:center; padding-top:22px; border-top:1px solid var(--line); max-width:1180px; margin:0 auto; }
 
 @media (max-width:860px){
+  nav{ padding:12px 18px; gap:10px; }
   .theme-toggle .tt-label{ display:none; }
-  .theme-toggle{ padding:0; width:38px; justify-content:center; }
+  .theme-toggle{ padding:0; width:40px; justify-content:center; }
   .navlinks{ display:none; } .navtoggle{ display:block; }
+  .btn-campus{ display:none; }
   .etapa-grid{ grid-template-columns:1fr; }
   .contrast{ grid-template-columns:1fr; }
 }
@@ -169,3 +171,48 @@ details.acc[open] summary::after{ content:'\2212'; }
 details.acc summary:hover{ color:var(--teal); }
 details.acc p{ padding:0 30px 22px 0; color:var(--ink-dim); font-size:15px; margin:0; }
 details.acc summary:focus-visible{ outline:2px solid var(--teal); outline-offset:2px; }
+
+
+/* ============ SELECTOR DE TEMA (mas visible) ============ */
+.theme-toggle{
+  background:var(--bg);
+  border:1.5px solid var(--gold);
+  color:var(--teal-deep);
+  box-shadow:0 1px 3px rgba(0,0,0,.07);
+}
+.theme-toggle:hover{ border-color:var(--teal); background:var(--bg-2); }
+.theme-toggle .tt-icon{ font-size:16px; color:var(--gold); }
+[data-theme="dark"] .theme-toggle{
+  background:rgba(255,255,255,.05); color:var(--ink); border-color:var(--gold);
+}
+[data-theme="dark"] .theme-toggle:hover{ background:rgba(255,255,255,.11); }
+
+/* ============ MENU MOVIL ============ */
+.navtoggle{ cursor:pointer; line-height:1; padding:4px 6px; }
+.mm-backdrop{
+  display:none; position:fixed; inset:0;
+  background:rgba(0,0,0,.5); z-index:190;
+}
+.mm-backdrop.open{ display:block; }
+.mobile-menu{
+  display:none; position:fixed; top:0; right:0; bottom:0;
+  width:min(82vw, 310px); background:var(--bg-2);
+  border-left:1px solid var(--line-gold); z-index:200;
+  padding:70px 26px 40px; overflow-y:auto;
+}
+.mobile-menu.open{ display:block; }
+.mobile-menu a{
+  display:block; padding:15px 0; border-bottom:1px solid var(--line);
+  font-size:16px; color:var(--ink);
+}
+.mobile-menu a:hover{ color:var(--teal); }
+.mobile-menu a.mm-campus{
+  margin-top:24px; background:var(--teal-deep); color:var(--bg);
+  text-align:center; padding:15px; border-radius:2px; border-bottom:none;
+}
+.mm-close{
+  position:absolute; top:16px; right:20px; background:none; border:none;
+  font-size:30px; color:var(--ink); cursor:pointer; line-height:1; padding:0;
+}
+.mm-close:hover{ color:var(--teal); }
+body.mm-lock{ overflow:hidden; }
