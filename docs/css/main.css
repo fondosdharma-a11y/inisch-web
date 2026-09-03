@@ -36,7 +36,7 @@ img{ max-width:100%; display:block; }
 header{ position:sticky; top:0; z-index:50; background:rgba(247,242,231,0.94); backdrop-filter:blur(10px); border-bottom:1px solid var(--line-gold); transition:background-color .25s ease;}
 [data-theme="dark"] header{ background:rgba(13,26,30,0.86); }
 nav{ display:flex; align-items:center; justify-content:space-between; padding:14px 32px; max-width:1180px; margin:0 auto; gap:16px;}
-.nav-logo{ width:46px; height:46px; border-radius:50%; overflow:hidden; background-image:url('../assets/LOGO_INISCH_NUEVO_png_copia__1_.png'); background-size:230% auto; background-position:center 6%; background-repeat:no-repeat; border:1px solid var(--line-gold); flex-shrink:0; }
+.nav-logo{ width:46px; height:46px; border-radius:50%; overflow:hidden; background-image:url('../assets/mandala.png'); background-size:cover; background-position:center; background-repeat:no-repeat; border:1px solid var(--line-gold); flex-shrink:0; }
 .navlinks{ display:flex; gap:26px; font-size:14px; color:var(--ink-dim); flex-wrap:wrap; }
 .navlinks a:hover, .navlinks a.active{ color:var(--teal); }
 .btn-campus{ background:var(--teal-deep); color:var(--bg); padding:10px 20px; border-radius:2px; font-size:13.5px; white-space:nowrap; }
@@ -216,3 +216,13 @@ details.acc summary:focus-visible{ outline:2px solid var(--teal); outline-offset
 }
 .mm-close:hover{ color:var(--teal); }
 body.mm-lock{ overflow:hidden; }
+
+
+/* ============ BANNER / HERO ============ */
+.hero-banner{ width:100%; margin:0; padding:0; line-height:0; border-bottom:1px solid var(--line-gold); }
+.hero-banner img{ width:100%; height:auto; display:block; }
+[data-theme="dark"] .hero-banner img{ filter:invert(1) hue-rotate(180deg) saturate(1.15) brightness(0.94); }
+.foot-logo img{ width:62px; height:62px; border-radius:50%; border:1px solid var(--line-gold); }
+.foot-logo{ display:flex; align-items:center; gap:14px; }
+.foot-logo .fl-txt{ font-family:'Cormorant Garamond',serif; font-size:20px; letter-spacing:.14em; color:var(--teal-deep); }
+[data-theme="dark"] .foot-logo .fl-txt{ font-family:'Space Grotesk',sans-serif; color:var(--ink); }
