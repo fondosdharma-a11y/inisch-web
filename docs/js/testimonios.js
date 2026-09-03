@@ -68,7 +68,7 @@ window.INISCH_TESTIMONIOS = [
   var ETAPA = {
     1: { es:"Taller Intensivo",                en:"Intensive Workshop" },
     2: { es:"Diplomado de Especialista",       en:"Specialist Diploma" },
-    3: { es:"Maestr\u00eda para Instructor",       en:"Instructor Master Program" }
+    3: { es:"Certificaci\u00f3n como Instructor",  en:"Instructor Certification" }
   };
 
   function tarjeta(t, pre){

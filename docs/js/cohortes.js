@@ -86,12 +86,12 @@ window.INISCH_COHORTES = [
   var NOMBRE = {
     1:   { es:"Taller Intensivo del SCH",            en:"SCH Intensive Workshop" },
     2:   { es:"Diplomado de Especialista en Autoconocimiento", en:"Self-Knowledge Specialist Diploma" },
-    3:   { es:"Maestr\u00eda para Instructor del SCH",     en:"SCH Instructor Master Program" },
+    3:   { es:"Certificaci\u00f3n como Instructor del SCH",  en:"SCH Instructor Certification" },
     dc3: { es:"Curso DC-3 \u00b7 STPS",                  en:"DC-3 Course \u00b7 STPS" }
   };
   var ENLACE = {
     1: "taller.html", 2: "diplomado.html",
-    3: "maestria.html", dc3: "empresas.html"
+    3: "instructor.html", dc3: "empresas.html"
   };
   var ENLACE_EN = {
     1: "awakening.html", 2: "specialist.html",

@@ -14,7 +14,7 @@
     'programas.html'                  : 'en/programs.html',
     'taller.html'                     : 'en/intensive-workshop.html',
     'diplomado.html'                  : 'en/specialist-diploma.html',
-    'maestria.html'                   : 'en/instructor-program.html',
+    'instructor.html'                 : 'en/instructor-certification.html',
     'formacion.html'                  : 'en/program.html',
     'acompanamiento.html'             : 'en/guidance.html',
     'numerologia.html'                : 'en/numerology.html',
