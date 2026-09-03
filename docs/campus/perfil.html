@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi perfil — Campus INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="stylesheet" href="css/campus.css">
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/campus-core.js"></script>
+<script>
+
+Campus.boot("Mi perfil", function(c, u){
+  var E = Campus.esc;
+
+  var head = document.createElement("div");
+  head.className = "reveal";
+  head.innerHTML =
+    '<div class="eyebrow">Mi cuenta</div>' +
+    '<h1 style="font-size:clamp(26px,4vw,36px);line-height:1.12">Mi perfil</h1>';
+  c.appendChild(head);
+
+  var box = document.createElement("div");
+  box.style.marginTop = "26px";
+  c.appendChild(box);
+
+  var h = '';
+
+  /* identidad */
+  h += '<div class="card reveal" style="margin-bottom:22px">';
+  h += '<div style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">';
+  h += '<div class="avatar" style="width:64px;height:64px;font-size:22px">' + E(Campus.initials(u.full_name)) + '</div>';
+  h += '<div><b style="font-size:18px">' + E(u.full_name||"Alumno") + '</b>' +
+       '<p class="muted tiny" style="margin-top:4px">' + E(u.email||"") + '</p></div>';
+  h += '</div></div>';
+
+  /* datos editables */
+  h += '<div class="card reveal" style="margin-bottom:22px">';
+  h += '<b>Datos personales</b>';
+  h += '<p class="muted tiny" style="margin-top:5px;margin-bottom:18px">Sirven para tu constancia y para tu lectura de Numerología.</p>';
+  h += '<label class="fl">Nombre completo</label><input class="fi" id="p-nom" value="' + E(u.full_name||"") + '">';
+  h += '<label class="fl" style="margin-top:16px">Nombre tal como quieres que aparezca en tus certificados</label>' +
+       '<input class="fi" id="p-cert" placeholder="Si lo dejas vacío usamos tu nombre completo">';
+  h += '<p class="muted tiny" style="margin-top:7px">Revísalo con cuidado: los certificados oficiales no se pueden corregir después sin volver a tramitarlos.</p>';
+  h += '<label class="fl" style="margin-top:16px">Ciudad</label><input class="fi" id="p-ciu" placeholder="Ej. Guadalajara, Jalisco">';
+  h += '<label class="fl" style="margin-top:16px">Fecha de nacimiento</label><input class="fi" type="date" id="p-fn">';
+  h += '<div style="margin-top:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">' +
+       '<button class="btn-p btn-sm" id="p-save">Guardar cambios</button>' +
+       '<span class="tiny soft" id="p-st"></span></div>';
+  h += '</div>';
+
+  /* privacidad */
+  h += '<div class="card reveal" style="margin-bottom:22px">';
+  h += '<b>Tus datos y tu privacidad</b>';
+  h += '<p class="muted" style="margin-top:9px;font-size:15px">' +
+       'Todo lo que escribes en <b>Mi Película</b>, <b>Bitácora</b>, <b>Práctica</b> y tus apuntes es ' +
+       '<b>estrictamente privado</b>. Ningún instructor, administrador ni otro alumno puede verlo. ' +
+       'La base de datos está configurada para que cada cuenta acceda únicamente a sus propios registros.</p>';
+  h += '<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">' +
+       '<button class="btn-o btn-sm" id="p-export">Descargar todo lo que he escrito</button>' +
+       '<a class="btn-o btn-sm" href="../privacidad.html" target="_blank">Aviso de privacidad</a></div>';
+  h += '</div>';
+
+  /* sesion */
+  h += '<div class="card reveal">';
+  h += '<b>Sesión</b>';
+  h += '<div style="margin-top:14px"><button class="btn-o btn-sm" id="p-out">Cerrar sesión</button></div>';
+  h += '</div>';
+
+  box.innerHTML = h;
+  Campus.reveal(c);
+
+  /* cargar perfil guardado */
+  var perfilLocal = {};
+  try { perfilLocal = JSON.parse(localStorage.getItem("inisch-demo:perfil")||"{}"); } catch(e){}
+  function setv(id, v){ var e = box.querySelector(id); if (e && v) e.value = v; }
+
+  if (Campus.DEMO){
+    setv("#p-cert", perfilLocal.nombre_certificado);
+    setv("#p-ciu",  perfilLocal.ciudad);
+    setv("#p-fn",   perfilLocal.fecha_nacimiento);
+  } else {
+    supabaseClient.from("profiles").select("*").eq("id", u.id).single().then(function(r){
+      if (r.data){
+        setv("#p-cert", r.data.nombre_certificado);
+        setv("#p-ciu",  r.data.ciudad);
+        setv("#p-fn",   r.data.fecha_nacimiento);
+      }
+    }).catch(function(){});
+  }
+
+  box.querySelector("#p-save").addEventListener("click", function(){
+    var st = box.querySelector("#p-st");
+    var datos = {
+      full_name:           box.querySelector("#p-nom").value.trim(),
+      nombre_certificado:  box.querySelector("#p-cert").value.trim() || null,
+      ciudad:              box.querySelector("#p-ciu").value.trim() || null,
+      fecha_nacimiento:    box.querySelector("#p-fn").value || null
+    };
+    st.textContent = "Guardando…";
+
+    if (Campus.DEMO){
+      localStorage.setItem("inisch-demo:perfil", JSON.stringify(datos));
+      var user = JSON.parse(localStorage.getItem("inisch-demo:user")||"{}");
+      user.full_name = datos.full_name || user.full_name;
+      localStorage.setItem("inisch-demo:user", JSON.stringify(user));
+      st.textContent = "Guardado ✓"; Campus.toast("Datos guardados");
+      setTimeout(function(){ location.reload(); }, 700);
+      return;
+    }
+
+    supabaseClient.from("profiles").update(datos).eq("id", u.id).then(function(r){
+      if (r.error) throw r.error;
+      return supabaseClient.auth.updateUser({ data: { full_name: datos.full_name } });
+    }).then(function(){
+      st.textContent = "Guardado ✓"; Campus.toast("Datos guardados");
+      setTimeout(function(){ location.reload(); }, 700);
+    }).catch(function(e){
+      console.error(e); st.textContent = "No se pudo guardar";
+      Campus.toast("No se pudo guardar. Revisa tu conexión.");
+    });
+  });
+
+  /* exportar todo */
+  box.querySelector("#p-export").addEventListener("click", function(){
+    Campus.toast("Preparando tu archivo…");
+    Promise.all([Campus.DB.list("mi_pelicula",{}), Campus.DB.list("bitacora",{}),
+                 Campus.DB.list("practicas",{}), Campus.DB.list("notas_leccion",{})])
+    .then(function(r){
+      var salida = {
+        exportado: new Date().toISOString(),
+        alumno: u.full_name, correo: u.email,
+        mi_pelicula: r[0], bitacora: r[1], practicas: r[2], apuntes: r[3]
+      };
+      var blob = new Blob([JSON.stringify(salida, null, 2)], {type:"application/json"});
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "inisch-mis-registros.json";
+      a.click(); URL.revokeObjectURL(a.href);
+      Campus.toast("Archivo descargado");
+    }).catch(function(e){ console.error(e); Campus.toast("No se pudo exportar."); });
+  });
+
+  box.querySelector("#p-out").addEventListener("click", Campus.signOut);
+});
+
+</script>
+</body>
+</html>

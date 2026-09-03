@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Certificados — Campus INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="stylesheet" href="css/campus.css">
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/campus-core.js"></script>
+<script>
+
+/* Insignias: se desbloquean con el trabajo real del alumno */
+var LOGROS = [
+  { id:"primer_paso",  ic:"◈", t:"El primer paso",       d:"Completaste tu primera lección.",
+    test:function(s){ return s.lecciones >= 1; } },
+  { id:"observador",   ic:"◉", t:"Observador consciente", d:"Registraste 5 anotaciones en tu Bitácora.",
+    test:function(s){ return s.bitacora >= 5; } },
+  { id:"proyector",    ic:"🎥", t:"Detrás del proyector",  d:"Llenaste la figura paterna y la materna en Mi Película.",
+    test:function(s){ return s.tienePaterna && s.tieneMaterna; } },
+  { id:"constancia",   ic:"✦", t:"Constancia",            d:"Practicaste 7 días.",
+    test:function(s){ return s.diasPractica >= 7; } },
+  { id:"personajes",   ic:"🎭", t:"Los personajes",        d:"Identificaste 3 personajes de tu película.",
+    test:function(s){ return s.personajes >= 3; } },
+  { id:"etapa_uno",    ic:"❖", t:"Etapa 1 completa",      d:"Terminaste todas las lecciones de la Etapa 1.",
+    test:function(s){ return s.total > 0 && s.lecciones >= s.total; } }
+];
+
+Campus.boot("Certificados", function(c, u){
+  var E = Campus.esc;
+
+  var head = document.createElement("div");
+  head.className = "reveal";
+  head.innerHTML =
+    '<div class="eyebrow">Tu recorrido</div>' +
+    '<h1 style="font-size:clamp(26px,4vw,36px);line-height:1.12">Certificados e insignias</h1>' +
+    '<p class="muted" style="margin-top:10px;max-width:620px">' +
+      'Las insignias marcan el trabajo que has sostenido. Los certificados los emite el Instituto al concluir cada etapa.</p>';
+  c.appendChild(head);
+
+  var zone = document.createElement("div");
+  zone.style.marginTop = "26px";
+  zone.innerHTML = '<div class="card"><p class="muted tiny">Cargando…</p></div>';
+  c.appendChild(zone);
+
+  Promise.all([Campus.DB.catalog(), Campus.DB.progress(),
+               Campus.DB.list("bitacora",{}), Campus.DB.list("mi_pelicula",{}),
+               Campus.DB.list("practicas",{})])
+  .then(function(r){
+    var courses=r[0]||[], prog=r[1]||[], bit=r[2]||[], pel=r[3]||[], pra=r[4]||[];
+    var total = 0; courses.forEach(function(co){ total += (co.lessons||[]).length; });
+    var dias = {}; pra.forEach(function(p){ if(p.fecha) dias[String(p.fecha).slice(0,10)]=true; });
+
+    var s = {
+      lecciones: prog.length,
+      total: total,
+      bitacora: bit.length,
+      personajes: pel.filter(function(x){ return x.tipo==="personaje"; }).length,
+      tienePaterna: pel.some(function(x){ return x.tipo==="paterna"; }),
+      tieneMaterna: pel.some(function(x){ return x.tipo==="materna"; }),
+      diasPractica: Object.keys(dias).length
+    };
+
+    var ganadas = LOGROS.filter(function(l){ try{ return l.test(s); }catch(e){ return false; } });
+
+    var h = '';
+    h += '<div class="card reveal" style="margin-bottom:26px;text-align:center">' +
+         Campus.ring(LOGROS.length ? ganadas.length/LOGROS.length*100 : 0,
+                     ganadas.length + " de " + LOGROS.length) +
+         '<p class="muted" style="margin-top:14px;font-size:15px">insignias desbloqueadas</p></div>';
+
+    h += '<h2 style="font-size:19px;margin:0 0 16px">Insignias</h2>';
+    h += '<div class="grid-3 reveal">';
+    LOGROS.forEach(function(l){
+      var on = ganadas.indexOf(l) >= 0;
+      h += '<div class="card badge' + (on?" on":"") + '" style="text-align:center">' +
+           '<div class="bg-ic">' + l.ic + '</div>' +
+           '<b style="font-size:15px">' + E(l.t) + '</b>' +
+           '<p class="muted tiny" style="margin-top:6px">' + E(l.d) + '</p>' +
+           '<div class="tiny" style="margin-top:11px;color:' + (on?"var(--gold)":"var(--ink-dim)") + '">' +
+             (on ? "✓ Desbloqueada" : "Pendiente") + '</div></div>';
+    });
+    h += '</div>';
+
+    h += '<h2 style="font-size:19px;margin:34px 0 16px">Certificados oficiales</h2>';
+    h += '<div class="card reveal">' +
+         '<p class="muted" style="font-size:15px">Al concluir satisfactoriamente una etapa, el Instituto emite tu constancia y aparecerá aquí para descargarla.</p>' +
+         '<div class="rule" style="margin:20px 0"></div>' +
+         '<p class="tiny soft">Si además tramitaste la <b>Certificación SEP-CONOCER (EC1375)</b>, ese documento lo emite ' +
+         'el organismo certificador y se consulta directamente en el RENAP. No se descarga desde el campus.</p>' +
+         '<div style="margin-top:18px"><a class="btn-o btn-sm" href="../certificaciones.html">Ver información de certificaciones</a></div>' +
+         '</div>';
+
+    h += '<div class="card reveal" style="margin-top:22px">' +
+         '<b>Nombre para tus certificados</b>' +
+         '<p class="muted tiny" style="margin-top:6px">Así aparecerá impreso. Revísalo antes de que se emita tu constancia.</p>' +
+         '<div style="margin-top:14px"><a class="btn-o btn-sm" href="perfil.html">Revisar en Mi perfil ›</a></div>' +
+         '</div>';
+
+    zone.innerHTML = h;
+    Campus.reveal(c);
+  })
+  .catch(function(e){
+    console.error(e);
+    zone.innerHTML = '<div class="card"><p class="muted">No pudimos cargar tus logros.</p></div>';
+  });
+});
+
+</script>
+</body>
+</html>

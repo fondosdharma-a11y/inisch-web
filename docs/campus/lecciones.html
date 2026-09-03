@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis lecciones — Campus INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="stylesheet" href="css/campus.css">
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/campus-core.js"></script>
+<script>
+
+Campus.boot("Mis lecciones", function(c, u){
+  var E = Campus.esc;
+
+  var head = document.createElement("div");
+  head.className = "reveal";
+  head.innerHTML =
+    '<div class="eyebrow">Tu formación</div>' +
+    '<h1 style="font-size:clamp(26px,4vw,36px);line-height:1.12">Mis lecciones</h1>' +
+    '<p class="muted" style="margin-top:10px;max-width:620px">' +
+      'Avanza a tu ritmo. Puedes tomar apuntes en cada lección y volver a ellos cuando quieras.</p>';
+  c.appendChild(head);
+
+  var zone = document.createElement("div");
+  zone.style.marginTop = "26px";
+  zone.innerHTML = '<div class="card"><p class="muted tiny">Cargando tus lecciones…</p></div>';
+  c.appendChild(zone);
+
+  function render(){
+    Promise.all([Campus.DB.catalog(), Campus.DB.progress(), Campus.DB.list("notas_leccion",{})])
+    .then(function(r){
+      var courses = r[0]||[], prog = r[1]||[], notas = r[2]||[];
+      var done = {}; prog.forEach(function(p){ done[p.lesson_id] = true; });
+      var nota = {}; notas.forEach(function(n){ nota[n.lesson_id] = n; });
+
+      if (!courses.length){
+        zone.innerHTML = '<div class="card" style="text-align:center;padding:42px 24px">' +
+          '<b>Aún no tienes lecciones asignadas</b>' +
+          '<p class="muted" style="margin-top:8px;font-size:15px">Cuando te inscribas a una etapa, aparecerán aquí.</p>' +
+          '<a class="btn-p btn-sm" style="margin-top:18px" href="../formacion.html">Ver la formación</a></div>';
+        return;
+      }
+
+      var h = "";
+      courses.forEach(function(co){
+        var ls = co.lessons || [];
+        var nd = ls.filter(function(l){ return done[l.id]; }).length;
+        var pct = ls.length ? Math.round(nd/ls.length*100) : 0;
+
+        h += '<div class="card reveal" style="margin-bottom:22px">';
+        h += '<div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start">';
+        h += '<div style="flex:1;min-width:220px">' +
+             '<div class="eyebrow">Etapa ' + (co.etapa||1) + '</div>' +
+             '<h2 style="font-size:20px;margin-top:5px">' + E(co.title) + '</h2>' +
+             (co.description ? '<p class="muted tiny" style="margin-top:6px">' + E(co.description) + '</p>' : '') +
+             '</div>';
+        h += '<div class="tiny soft" style="white-space:nowrap">' + nd + ' de ' + ls.length + ' completadas</div>';
+        h += '</div>';
+        h += '<div class="bar" style="margin-top:16px"><i style="width:' + pct + '%"></i></div>';
+        h += '</div>';
+
+        ls.forEach(function(l, i){
+          var isDone = !!done[l.id];
+          var n = nota[l.id];
+          h += '<div class="card reveal lec" style="margin-bottom:12px' + (isDone ? ';border-color:rgba(216,180,90,.34)' : '') + '">';
+          h += '<div style="display:flex;gap:15px;align-items:flex-start">';
+          h += '<button class="tick' + (isDone?" on":"") + '" data-l="' + l.id + '" title="' +
+               (isDone ? "Marcar como no vista" : "Marcar como completada") + '">' + (isDone ? "✓" : (i+1)) + '</button>';
+          h += '<div style="flex:1">';
+          h += '<b style="font-size:16px">' + E(l.title) + '</b>';
+          if (l.content) h += '<p class="muted" style="margin-top:7px;font-size:15px">' + E(l.content) + '</p>';
+          if (l.video_url){
+            h += '<div style="margin-top:14px"><a class="btn-p btn-sm" href="' + E(l.video_url) + '" target="_blank" rel="noopener">▶ Ver la lección</a></div>';
+          } else {
+            h += '<p class="tiny soft" style="margin-top:12px">El video de esta lección aún no está disponible.</p>';
+          }
+          h += '<div style="margin-top:14px">' +
+               '<button class="btn-o btn-sm nt-open" data-l="' + l.id + '" data-t="' + E(l.title) + '">' +
+               (n && n.contenido ? "✎ Ver mis apuntes" : "+ Tomar apuntes") + '</button></div>';
+          if (n && n.contenido){
+            h += '<div class="notebox">' + E(n.contenido).replace(/\n/g,"<br>") + '</div>';
+          }
+          h += '</div></div></div>';
+        });
+      });
+
+      zone.innerHTML = h;
+      Campus.reveal(c);
+
+      zone.querySelectorAll(".tick").forEach(function(b){
+        b.addEventListener("click", function(){
+          var id = b.dataset.l, was = b.classList.contains("on");
+          Campus.DB.toggleProgress(id, !was).then(function(){
+            Campus.toast(was ? "Marcada como pendiente" : "¡Lección completada!");
+            render();
+          }).catch(function(e){ console.error(e); Campus.toast("No se pudo guardar."); });
+        });
+      });
+      zone.querySelectorAll(".nt-open").forEach(function(b){
+        b.addEventListener("click", function(){
+          notaEditor(b.dataset.l, b.dataset.t, nota[b.dataset.l]);
+        });
+      });
+    }).catch(function(e){
+      console.error(e);
+      zone.innerHTML = '<div class="card"><p class="muted">No pudimos cargar tus lecciones. ' +
+        'Si acabas de conectar Supabase, revisa que hayas ejecutado <code>schema.sql</code> y <code>schema-v2.sql</code>.</p></div>';
+    });
+  }
+
+  function notaEditor(lesson_id, titulo, rec){
+    rec = rec || {};
+    var back = document.createElement("div"); back.className="sheet-back";
+    var sh = document.createElement("div");   sh.className="sheet";
+    sh.innerHTML =
+      '<div class="sheet-head"><div><div class="eyebrow">Apuntes</div>' +
+      '<h2 style="font-size:20px;margin-top:4px">' + Campus.esc(titulo) + '</h2></div>' +
+      '<button class="btn-o btn-sm sh-x">Cerrar</button></div>' +
+      '<div class="sheet-body">' +
+        '<p class="muted tiny" style="margin-bottom:14px">Lo que escribas aquí es solo tuyo. Se guarda automáticamente.</p>' +
+        '<textarea class="fi ft" id="n-txt" rows="16" placeholder="¿Qué te resonó? ¿Qué se movió? ¿Qué quieres recordar de esta lección?">' +
+        Campus.esc(rec.contenido||"") + '</textarea>' +
+      '</div>' +
+      '<div class="sheet-foot"><span class="tiny soft" id="n-st">Sin cambios</span>' +
+      '<button class="btn-p btn-sm sh-save">Guardar y cerrar</button></div>';
+
+    document.body.appendChild(back); document.body.appendChild(sh);
+    requestAnimationFrame(function(){ back.classList.add("on"); sh.classList.add("on"); });
+
+    var st = sh.querySelector("#n-st"), timer=null, dirty=false;
+    function save(closeAfter){
+      var row = { lesson_id: lesson_id, contenido: sh.querySelector("#n-txt").value };
+      if (rec.id) row.id = rec.id;
+      st.textContent = "Guardando…";
+      return Campus.DB.save("notas_leccion", row).then(function(s){
+        if (s && s.id) rec.id = s.id;
+        dirty = false; st.textContent = "Guardado ✓";
+        if (closeAfter){ close(); render(); }
+      }).catch(function(e){ console.error(e); st.textContent="No se pudo guardar"; });
+    }
+    sh.querySelector("#n-txt").addEventListener("input", function(){
+      dirty = true; st.textContent = "Escribiendo…";
+      clearTimeout(timer); timer = setTimeout(function(){ save(false); }, 1200);
+    });
+    function close(){
+      back.classList.remove("on"); sh.classList.remove("on");
+      setTimeout(function(){ back.remove(); sh.remove(); }, 260);
+    }
+    sh.querySelector(".sh-x").addEventListener("click", function(){ dirty ? save(true) : (close(), render()); });
+    back.addEventListener("click", function(){ dirty ? save(true) : (close(), render()); });
+    sh.querySelector(".sh-save").addEventListener("click", function(){ save(true); });
+  }
+
+  render();
+});
+
+</script>
+</body>
+</html>
