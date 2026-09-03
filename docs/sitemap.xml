@@ -30,4 +30,6 @@
   <url><loc>https://www.inisch.com/en/blog/real-love.html</loc><priority>0.5</priority></url>
   <url><loc>https://www.inisch.com/en/privacy.html</loc><priority>0.3</priority></url>
   <url><loc>https://www.inisch.com/en/terms.html</loc><priority>0.3</priority></url>
+  <url><loc>https://www.inisch.com/test.html</loc><priority>0.8</priority></url>
+  <url><loc>https://www.inisch.com/en/quiz.html</loc><priority>0.8</priority></url>
 </urlset>
