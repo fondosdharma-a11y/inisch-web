@@ -1,94 +1,101 @@
 # INISCH — Sitio web + Plataforma de Alumnos
 
-Repositorio de trabajo para el desarrollo del sitio institucional y la plataforma de alumnos de **INISCH** (Instituto Internacional del Sistema Código Holográfico).
-
-## Sitio publicado
+## ✅ SITIO ACTIVO Y FUNCIONANDO
 
 **Español:** https://fondosdharma-a11y.github.io/inisch-web/
 **English:** https://fondosdharma-a11y.github.io/inisch-web/en/
 
-Dominio personalizado configurado del lado de GitHub: `www.inisch.com` (falta apuntar el DNS en Porkbun, ver abajo).
+Las 34 páginas del sitio (ES + EN + campus + sitemap) fueron verificadas y responden correctamente.
+
+---
+
+## ⚠️ IMPORTANTE: por qué inisch.com todavía no funciona
+
+**Causa identificada:** Porkbun tiene activado un servicio de **parking / redirección** en el dominio. Al abrir `www.inisch.com` o `inisch.com`, Porkbun redirige a su propia página promocional (`inisch-com.l.ink` — "A Brand New Domain!"), **ignorando los registros DNS configurados**.
+
+Esto también estaba rompiendo el acceso por `github.io`, porque el archivo `CNAME` hacía que GitHub redirigiera todo el tráfico al dominio secuestrado. Por eso se removió el CNAME temporalmente y el sitio volvió a estar accesible.
+
+### Cómo arreglarlo (acción del usuario en Porkbun)
+
+1. Entra a **porkbun.com** → tu dominio **inisch.com**
+2. Busca y **DESACTIVA** cualquiera de estas opciones si está encendida:
+   - **URL Forwarding** / **Domain Forwarding** / **Redirect**
+   - **Parking** / **Parked page** / **Coming Soon page**
+   - Cualquier entrada de tipo **ALIAS** o **URL Redirect** en los DNS Records apuntando a `l.ink` o a Porkbun
+3. Verifica que en **DNS Records** solo queden estos 5 registros:
+
+| Type | Host | Answer |
+|---|---|---|
+| CNAME | `www` | `fondosdharma-a11y.github.io` |
+| A | (vacío) | 185.199.108.153 |
+| A | (vacío) | 185.199.109.153 |
+| A | (vacío) | 185.199.110.153 |
+| A | (vacío) | 185.199.111.153 |
+
+4. Cuando el parking esté desactivado y los registros correctos, avisa para volver a activar el dominio personalizado en GitHub Pages (volver a crear `docs/CNAME` con `www.inisch.com` y activar Enforce HTTPS).
+
+---
 
 ## Estructura
 
 ```
 /internal-docs
   plan-maestro-inisch.md           -> Plan y decisiones del proyecto
-  guiones-video-etapa1.md          -> Guiones listos para grabar los 6 videos de la Etapa 1
-/database/schema.sql               -> Esquema completo de base de datos para Supabase
+  guiones-video-etapa1.md          -> Guiones para grabar los 6 videos de la Etapa 1
+/database/schema.sql               -> Esquema de base de datos para Supabase
 /supabase/functions/
   /stripe-webhook                  -> Activa el acceso del alumno al pagar en Stripe
   /generate-certificate            -> Genera el PDF de constancia al completar una etapa
   /sales-chat                      -> Agente de IA de ventas/admisiones (Claude)
-/docs                              -> Sitio real publicado por GitHub Pages
+/docs                              -> Sitio publicado por GitHub Pages
   index, formacion, nosotros, acompanamiento, numerologia, experiencias,
   certificaciones, faq, contacto, privacidad, terminos, blog/  -> Sitio en espanol
-  /docs/en/                        -> SITIO COMPLETO EN INGLES (15 paginas, misma estructura)
-  robots.txt, sitemap.xml, CNAME   -> SEO y dominio personalizado
-  /docs/js/chat-widget.js          -> Widget del chat de IA (activo en ambos idiomas)
-  /docs/campus/                    -> LA PLATAFORMA DE ALUMNOS (login, dashboard, certificados) — compartida entre idiomas
-/assets                            -> Logotipo e imagenes de marca (pendiente subir, ver abajo)
+  /docs/en/                        -> Sitio completo en ingles (15 paginas)
+  /docs/campus/                    -> Plataforma de alumnos (login, dashboard, certificados)
+  robots.txt, sitemap.xml          -> SEO (28 URLs indexadas)
+/assets                            -> Logotipo e imagenes de marca (PENDIENTE subir)
 ```
 
 ## Idiomas
 
-El sitio existe completo en **español** (`/docs/*.html`) e **inglés** (`/docs/en/*.html`), con un selector "EN"/"ES" en la barra de navegación de cada página que enlaza a su equivalente exacto en el otro idioma. Ambos idiomas comparten:
-
-- La misma hoja de estilos y modo claro/oscuro (`/docs/css/main.css`)
-- El mismo widget de chat de IA
-- El mismo Campus de Alumnos (no duplicado; el botón "Student Portal"/"Campus de alumnos" lleva al mismo login sin importar el idioma de origen)
-
-Páginas en inglés: `index, program, about, guidance, numerology, experiences, certifications, faq, contact, privacy, terms, blog/index, blog/conscious-observer, blog/forgiveness-transformation, blog/real-love`.
+Sitio completo en **español** e **inglés**, con selector EN/ES en cada página que enlaza a su equivalente exacto. Ambos comparten CSS, modo claro/oscuro, widget de chat y el mismo Campus de Alumnos.
 
 ## Modo claro / oscuro
 
-Todas las páginas (ambos idiomas + campus) tienen botón de tema: **claro** = "Código Ancestral", **oscuro** = "Holograma Vivo".
+Botón de tema en todas las páginas: **claro** = "Código Ancestral" (marfil, teal + oro), **oscuro** = "Holograma Vivo" (teal oscuro).
 
-## 🚀 Activar el Campus de Alumnos
+## Estado actual
+
+- [x] Sitio institucional completo ES + EN (34 rutas verificadas funcionando)
+- [x] Publicado y accesible en GitHub Pages con HTTPS
+- [x] Modo claro/oscuro en todo el sitio
+- [x] Blog con 3 artículos en ambos idiomas
+- [x] Campus construido (login, progreso, certificado PDF automático)
+- [x] Agente de IA de ventas construido (widget + Edge Function)
+- [x] SEO técnico (robots.txt, sitemap.xml)
+- [x] Guiones de los 6 videos de la Etapa 1
+- [ ] **Desactivar el parking/forwarding de Porkbun** (ver arriba — bloquea el dominio propio)
+- [ ] Subir 2 imágenes de marca a `/assets`
+- [ ] Crear proyecto de Supabase y pegar llaves en `docs/campus/js/supabase-config.js`
+- [ ] Grabar los 6 videos de la Etapa 1
+- [ ] Desplegar las 3 Edge Functions (requiere Supabase CLI)
+- [ ] Revisar Aviso de Privacidad / Términos con un abogado
+
+## ⚠️ Pendiente: subir imágenes de marca a `/assets`
+
+Link directo: https://github.com/fondosdharma-a11y/inisch-web/upload/main/assets
+
+Sube estos 2 archivos con estos nombres exactos:
+- `LOGO_INISCH_NUEVO_png_copia__1_.png`
+- `Screenshot_2026-09-02_at_1_44_09_PM.png`
+
+## Activar el Campus de Alumnos
 
 1. Crea proyecto gratuito en https://supabase.com
 2. Corre `/database/schema.sql` en el SQL Editor
 3. Crea bucket público `certificates` en Storage
-4. Pega tus llaves en `docs/campus/js/supabase-config.js`
-
-## 🤖 Activar el chat de IA
-
-Despliega `supabase/functions/sales-chat` con tu ANTHROPIC_API_KEY, y agrega `window.INISCH_CHAT_FUNCTION_URL = 'tu-url';` antes del script del widget (avisame y lo hago en las 15+13 = 28 páginas de una vez).
-
-## Estado actual
-
-- [x] Dominio comprado y configurado del lado de GitHub Pages
-- [x] Sitio institucional completo en español e inglés (28 páginas en total)
-- [x] Selector de idioma EN/ES en todas las páginas
-- [x] Modo claro/oscuro en todo el sitio
-- [x] Blog con 3 artículos publicados en ambos idiomas
-- [x] Campus construido: login, registro, progreso, certificado PDF automático (compartido entre idiomas)
-- [x] Agente de IA de ventas construido (widget + Edge Function)
-- [x] SEO técnico (robots.txt, sitemap.xml con las 28 URLs)
-- [x] Guiones de los 6 videos de la Etapa 1 listos para grabar
-- [ ] Apuntar el DNS de INISCH.com en Porkbun (ver abajo)
-- [ ] Subir 2 imágenes de marca a `/assets` (ver abajo)
-- [ ] Crear proyecto de Supabase y completar la conexión (gratis, requiere el usuario)
-- [ ] Grabar los 6 videos de la Etapa 1
-- [ ] Desplegar las 3 Edge Functions (requiere Supabase CLI)
-- [ ] Revisar Aviso de Privacidad / Términos (ambos idiomas) con un abogado
-
-## ⚠️ Pendiente: subir imágenes de marca a `/assets`
-
-Sube estos 2 archivos (Add file -> Upload files), con estos nombres exactos:
-- `assets/LOGO_INISCH_NUEVO_png_copia__1_.png`
-- `assets/Screenshot_2026-09-02_at_1_44_09_PM.png`
-
-## Conectar el dominio INISCH.com (requiere acción en Porkbun)
-
-1. Registro **CNAME**: `www` -> `fondosdharma-a11y.github.io`
-2. (Opcional) Registros **A** en la raíz -> 185.199.108.153, 185.199.109.153, 185.199.110.153, 185.199.111.153
-3. Esperar propagación DNS y activar "Enforce HTTPS" en GitHub.
+4. Pega Project URL + anon key en `docs/campus/js/supabase-config.js`
 
 ## Cómo ver el sitio localmente
 
-Descarga el repositorio ("Code -> Download ZIP") y abre `docs/index.html` (español) o `docs/en/index.html` (inglés) en tu navegador.
-
-## Próximos pasos
-
-Ver `/internal-docs/plan-maestro-inisch.md` para el detalle completo y la hoja de ruta por fases.
+Descarga el repositorio ("Code -> Download ZIP") y abre `docs/index.html` (español) o `docs/en/index.html` (inglés).
