@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Holographic Numerology Calculator &mdash; INISCH</title>
+<meta name="description" content="Calculate your Life Path number, Personal Year and Expression number for free, based on Holographic Numerology.">
+<script>(function(){var t=localStorage.getItem('inisch-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="stylesheet" href="../css/main.css">
+<style>
+  .calc-wrap{ max-width:660px; margin:0 auto; padding:50px 32px 90px; }
+  .calc-card{ border:1px solid var(--line-gold); border-radius:6px; padding:36px; background:var(--bg-2); }
+  .calc-field{ margin-bottom:20px; }
+  .calc-field label{ display:block; font-size:14px; color:var(--ink-dim); margin-bottom:7px; }
+  .calc-field input{ width:100%; padding:13px 15px; border:1px solid var(--line-gold); border-radius:4px;
+    background:var(--bg); color:var(--ink); font-family:inherit; font-size:16px; }
+  .calc-field input:focus{ outline:none; border-color:var(--teal); }
+  .num-badge{ width:96px; height:96px; border-radius:50%; border:2px solid var(--gold);
+    display:flex; align-items:center; justify-content:center; font-size:42px; color:var(--teal-deep);
+    font-family:'Cormorant Garamond',serif; margin:0 auto 16px; background:var(--bg); }
+  [data-theme="dark"] .num-badge{ font-family:'Space Grotesk',sans-serif; color:var(--ink); }
+  .res-block{ border-top:1px solid var(--line); padding:30px 0; text-align:center; }
+  .res-block:first-of-type{ border-top:none; }
+  .res-k{ font-size:13.5px; color:var(--gold); letter-spacing:.08em; margin-bottom:8px; }
+  .res-t{ font-size:24px; margin-bottom:10px; }
+  .res-d{ color:var(--ink-dim); font-size:15.5px; text-align:left; }
+  @media(max-width:600px){ .calc-card{ padding:26px 20px; } }
+</style>
+</head>
+<body>
+<header><nav>
+  <a href="index.html" class="nav-logo"></a>
+  <div class="navlinks">
+    <a href="about.html">About</a>
+    <a href="program.html">Program</a>
+    <a href="guidance.html">Guidance</a>
+    <a href="numerology.html" class="active">Numerology</a>
+    <a href="experiences.html">Experiences</a>
+    <a href="companies.html">Companies</a>
+    <a href="quiz.html">Quiz</a>
+    <a href="contact.html">Contact</a>
+  </div>
+  <button class="theme-toggle"></button>
+  <a href="../campus/login.html" class="btn-campus">Student Portal</a>
+  <button class="navtoggle">&#9776;</button>
+</nav></header>
+
+<div class="page-hero">
+  <div class="wrap">
+    <div class="breadcrumb"><a href="index.html">Home</a> / <a href="numerology.html">Numerology</a> / Calculator</div>
+    <div class="eyebrow" style="color:var(--gold); margin-bottom:10px;">Free</div>
+    <h1>Calculate your numeric code</h1>
+    <p class="lead">Your birth date and name carry frequencies that, in Holographic Numerology, work as coordinates: they don't tell you what will happen, but from where you are interpreting what happens.</p>
+  </div>
+</div>
+
+<div class="calc-wrap">
+  <div class="calc-card">
+    <div class="calc-field">
+      <label for="fecha">Your date of birth</label>
+      <input type="date" id="fecha">
+    </div>
+    <div class="calc-field">
+      <label for="nombre">Your full birth name (optional)</label>
+      <input type="text" id="nombre" placeholder="As it appears on your birth certificate" autocomplete="off">
+    </div>
+    <button class="btn-teal" style="width:100%; border:none; cursor:pointer;" onclick="calcular()">See my code</button>
+    <p class="note" style="margin-top:16px;">Nothing you type is sent or stored. The calculation happens entirely in your browser.</p>
+  </div>
+  <div id="resultado" style="display:none; margin-top:30px;"></div>
+</div>
+
+<footer>
+  <div class="foot-top">
+    <div class="foot-logo"><img src="../assets/mandala.png" alt="INISCH"><span class="fl-txt">INISCH</span></div>
+    <div class="foot-grid">
+      <div class="foot-col"><h4>Program</h4><a href="program.html#stage1">Stage 1</a><a href="program.html#stage2">Stage 2</a><a href="program.html#stage3">Stage 3</a></div>
+      <div class="foot-col"><h4>Institute</h4><a href="about.html">About</a><a href="certifications.html">Certifications</a><a href="companies.html">Companies</a><a href="blog/index.html">Blog</a></div>
+      <div class="foot-col"><h4>Legal</h4><a href="privacy.html">Privacy Notice</a><a href="terms.html">Terms</a></div>
+      <div class="foot-col"><h4>Contact</h4><a href="https://wa.me/523314701563" target="_blank">WhatsApp</a></div>
+    </div>
+  </div>
+  <div class="foot-bottom">International Institute of the Holographic Code System &mdash; INISCH</div>
+</footer>
+
+<script>
+var MEANINGS = {
+  1:{t:"The Initiator",k:"Independence \u00b7 Leadership \u00b7 Beginning",d:"A frequency of opening and beginning. It often shows up as a need for autonomy and for making one's own path. The challenge appears when independence turns into isolation, or when asking for help feels impossible."},
+  2:{t:"The Mediator",k:"Sensitivity \u00b7 Cooperation \u00b7 Listening",d:"A receptive frequency, linked to the feminine energy described in the System: it absorbs, envelops, harmonizes. The challenge usually lies in setting boundaries and not dissolving into others' needs."},
+  3:{t:"The Communicator",k:"Expression \u00b7 Creativity \u00b7 Joy",d:"An expansive frequency tied to word and creation. The challenge appears when expression scatters, or when joy is used to avoid looking at what hurts."},
+  4:{t:"The Builder",k:"Structure \u00b7 Discipline \u00b7 Root",d:"A frequency of form and holding. It relates to the material, to order and security. The challenge is usually rigidity and difficulty letting go of control."},
+  5:{t:"The Explorer",k:"Movement \u00b7 Freedom \u00b7 Change",d:"A frequency of transit and experience. It seeks variety and avoids confinement. The challenge appears when movement becomes flight from what needs to be understood."},
+  6:{t:"The Caregiver",k:"Responsibility \u00b7 Service \u00b7 Family",d:"A frequency tied to home, care and bonds. The challenge appears in codependency and in carrying responsibilities that aren't yours."},
+  7:{t:"The Seeker",k:"Introspection \u00b7 Analysis \u00b7 Silence",d:"A frequency of inquiry and depth, closely aligned with the System's observation work. The challenge is usually excessive withdrawal and distrust."},
+  8:{t:"The Achiever",k:"Power \u00b7 Matter \u00b7 Accomplishment",d:"A frequency of manifestation in the concrete world. The challenge appears when self-worth is measured only by results or possessions."},
+  9:{t:"The Humanitarian",k:"Compassion \u00b7 Completion \u00b7 Giving",d:"A frequency of culmination and wide perspective. Closely tied to the Understanding, Compassion and Kindness that the System defines as Real Love. The challenge is depletion from giving without limit."},
+  11:{t:"Intuitive Master",k:"Intuition \u00b7 High sensitivity \u00b7 Vision",d:"A master number. It intensifies the frequency of 2: very fine perception and marked sensitivity. It often comes with nervous tension until the person learns to hold what they perceive."},
+  22:{t:"Master Builder",k:"Vision \u00b7 Materialization \u00b7 Reach",d:"A master number. It combines the structure of 4 with a wide vision: the capacity to bring large ideas into concrete form. The challenge is self-imposed pressure."},
+  33:{t:"Master Guide",k:"Service \u00b7 Teaching \u00b7 Devotion",d:"A rare master number. It amplifies the 6 towards teaching and accompaniment. The challenge is distinguishing genuine service from sacrifice."}
+};
+function reduce(n, keepMaster){
+  while (n > 9){
+    if (keepMaster && (n === 11 || n === 22 || n === 33)) return n;
+    var s = 0, x = n;
+    while (x > 0){ s += x % 10; x = Math.floor(x/10); }
+    n = s;
+  }
+  return n;
+}
+function digitsSum(str){ var s=0; for (var i=0;i<str.length;i++){ var c=str.charCodeAt(i)-48; if (c>=0&&c<=9) s+=c; } return s; }
+var LETTERS = {A:1,J:1,S:1,B:2,K:2,T:2,C:3,L:3,U:3,D:4,M:4,V:4,E:5,N:5,W:5,F:6,O:6,X:6,G:7,P:7,Y:7,H:8,Q:8,Z:8,I:9,R:9};
+var VOWELS = "AEIOU";
+function nameNumber(name, mode){
+  var s = name.toUpperCase().replace(/[\u00c1\u00c0\u00c4\u00c2]/g,"A").replace(/[\u00c9\u00c8\u00cb\u00ca]/g,"E")
+    .replace(/[\u00cd\u00cc\u00cf\u00ce]/g,"I").replace(/[\u00d3\u00d2\u00d6\u00d4]/g,"O")
+    .replace(/[\u00da\u00d9\u00dc\u00db]/g,"U").replace(/\u00d1/g,"N");
+  var total = 0;
+  for (var i=0;i<s.length;i++){
+    var ch = s[i]; if (!LETTERS[ch]) continue;
+    var isV = VOWELS.indexOf(ch) >= 0;
+    if (mode==="all" || (mode==="vowels"&&isV) || (mode==="cons"&&!isV)) total += LETTERS[ch];
+  }
+  return total ? reduce(total, true) : 0;
+}
+function block(label, n, extra){
+  var m = MEANINGS[n]; if (!m) return "";
+  return '<div class="res-block"><div class="num-badge">'+n+'</div>'+
+    '<div class="res-k">'+label+'</div><div class="res-t">'+m.t+'</div>'+
+    '<div class="res-k" style="color:var(--ink-dim); margin-bottom:14px;">'+m.k+'</div>'+
+    '<div class="res-d">'+m.d+(extra||"")+'</div></div>';
+}
+function calcular(){
+  var f = document.getElementById('fecha').value;
+  if (!f){ alert('Please enter your date of birth to continue.'); return; }
+  var parts = f.split('-');
+  var mo = parseInt(parts[1],10), d = parseInt(parts[2],10);
+  var vida = reduce(digitsSum(parts[0])+digitsSum(parts[1])+digitsSum(parts[2]), true);
+  var hoy = new Date();
+  var passed = (hoy.getMonth()+1 > mo) || ((hoy.getMonth()+1===mo) && hoy.getDate() >= d);
+  var anioRef = passed ? hoy.getFullYear() : hoy.getFullYear()-1;
+  var personal = reduce(reduce(d,false)+reduce(mo,false)+digitsSum(String(anioRef)), false);
+  var nacimiento = reduce(d, true);
+
+  var html = '<div class="calc-card">';
+  html += '<h2 style="font-size:22px; text-align:center; margin-bottom:6px;">Your code</h2>';
+  html += '<p class="note" style="text-align:center; margin-bottom:10px;">A guiding reading. A full consultation integrates many more factors.</p>';
+  html += block("Life Path Number", vida, "<p style='margin-top:12px;'>The base frequency of your matrix: the point from which you interpret your experience. It comes from the full sum of your birth date.</p>");
+  html += block("Birth Day Number", nacimiento, "<p style='margin-top:12px;'>Derived from the day you were born, it colours your Life Path with a particular talent or resource.</p>");
+  html += block("Your Personal Year ("+anioRef+"\u2013"+(anioRef+1)+")", personal, "<p style='margin-top:12px;'>Indicates the cycle you are moving through right now. It changes on each birthday and runs in nine-year cycles.</p>");
+
+  var nombre = document.getElementById('nombre').value.trim();
+  if (nombre.length > 1){
+    var expr = nameNumber(nombre,"all"), alma = nameNumber(nombre,"vowels");
+    if (expr) html += block("Expression Number", expr, "<p style='margin-top:12px;'>Arises from all the letters of your name. It relates to how you present yourself and act outwardly.</p>");
+    if (alma) html += block("Soul Urge Number", alma, "<p style='margin-top:12px;'>Arises only from the vowels of your name. It points to what moves you inwardly, beyond what you show.</p>");
+  }
+
+  html += '<div style="border-top:1px solid var(--line); padding-top:26px; margin-top:10px; text-align:center;">';
+  html += '<p style="color:var(--ink-dim); font-size:15.5px; margin-bottom:20px;">These numbers are an entry point. In a Holographic Numerology consultation they are read together with your childhood programming and your evolutionary cycles \u2014 your full <em>film</em>.</p>';
+  html += '<a href="https://wa.me/523314701563?text='+encodeURIComponent("Hello, I calculated my life path number ("+vida+") on your site and would like to know more about a Holographic Numerology consultation.")+'" target="_blank" class="btn-teal">Book a full consultation</a> ';
+  html += '<a href="quiz.html" class="btn-line">Take the orientation quiz</a></div>';
+  html += '<p class="note" style="margin-top:26px;">Holographic Numerology is a symbolic tool for exploration and self-knowledge. It does not predict the future and does not constitute medical, psychological or financial diagnosis or treatment.</p>';
+  html += '</div>';
+
+  var box = document.getElementById('resultado');
+  box.innerHTML = html; box.style.display='block';
+  box.scrollIntoView({behavior:'smooth', block:'start'});
+}
+</script>
+<script src="../js/theme.js"></script>
+<script src="../js/nav.js"></script>
+<script src="../js/lang.js"></script>
+<script src="../js/chat-widget.js"></script>
+</body>
+</html>
