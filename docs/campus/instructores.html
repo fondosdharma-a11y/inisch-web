@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instructores — Campus INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/campus.css">
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/campus-core.js"></script>
+<script>
+
+Campus.boot("Panel de instructores", function(c, u){
+  var E = Campus.esc;
+
+  var zona = document.createElement("div");
+  zona.innerHTML = '<div class="card"><p class="muted tiny">Verificando tus permisos…</p></div>';
+  c.appendChild(zona);
+
+  if (Campus.DEMO){
+    zona.innerHTML = '<div class="card"><b>Panel de instructores</b>' +
+      '<p class="muted" style="margin-top:8px;font-size:15px">En modo demostración no hay alumnos reales que mostrar. ' +
+      'Conecta Supabase y asigna el rol de instructor a una cuenta para verlo funcionando.</p></div>';
+    return;
+  }
+
+  Campus.esInstructor().then(function(puede){
+    if (!puede){
+      zona.innerHTML = '<div class="card" style="text-align:center;padding:44px 24px">' +
+        '<div style="font-size:30px;opacity:.5;margin-bottom:12px">🔒</div>' +
+        '<b>Esta sección es solo para instructores</b>' +
+        '<p class="muted" style="margin-top:8px;max-width:460px;margin-left:auto;margin-right:auto;font-size:15px">' +
+        'Si eres instructor y ves este mensaje, pide al Instituto que active tu rol.</p>' +
+        '<a class="btn-o btn-sm" style="margin-top:18px" href="dashboard.html">Volver al inicio</a></div>';
+      return;
+    }
+    cargar();
+  });
+
+  function cargar(){
+    Promise.all([
+      supabaseClient.from("profiles").select("id, full_name, ciudad, created_at, role").order("created_at", {ascending:false}),
+      supabaseClient.from("progress").select("student_id, lesson_id"),
+      supabaseClient.from("lessons").select("id, title, order_index").order("order_index"),
+      supabaseClient.from("enrollments").select("student_id, etapa, status")
+    ]).then(function(r){
+      var alumnos = (r[0].data)||[], prog = (r[1].data)||[], lecciones = (r[2].data)||[], insc = (r[3].data)||[];
+      var total = lecciones.length || 1;
+
+      var porAlumno = {};
+      prog.forEach(function(p){ (porAlumno[p.student_id] = porAlumno[p.student_id] || []).push(p.lesson_id); });
+      var inscPor = {};
+      insc.forEach(function(e){ (inscPor[e.student_id] = inscPor[e.student_id] || []).push(e); });
+
+      var soloAlumnos = alumnos.filter(function(a){ return a.role !== "instructor" && a.role !== "admin"; });
+      var conAvance = soloAlumnos.filter(function(a){ return (porAlumno[a.id]||[]).length > 0; }).length;
+      var terminados = soloAlumnos.filter(function(a){ return (porAlumno[a.id]||[]).length >= total; }).length;
+
+      var h = '';
+      h += '<div class="eyebrow">Solo instructores</div>';
+      h += '<h1 style="font-size:clamp(25px,4vw,34px);line-height:1.12;margin:6px 0 8px">Avance de tus alumnos</h1>';
+      h += '<p class="muted" style="margin-bottom:24px;max-width:620px">Aquí ves quién avanza y quién se quedó atrás, para poder acompañarlos a tiempo.</p>';
+
+      h += '<div class="grid g3" style="margin-bottom:24px">';
+      h += tarjeta(soloAlumnos.length, soloAlumnos.length===1?"alumno":"alumnos");
+      h += tarjeta(conAvance, "con avance");
+      h += tarjeta(terminados, terminados===1?"ha terminado":"han terminado");
+      h += '</div>';
+
+      /* ---- aviso de privacidad para el propio instructor ---- */
+      h += '<div class="nudge" style="margin-bottom:24px"><span class="n-ic">🔒</span>' +
+           '<div class="n-txt">Ves el <b>avance en las lecciones</b>. Mi Película, la Bitácora, la Práctica y los apuntes ' +
+           'de tus alumnos son privados y <b>no son accesibles para nadie</b>, ni siquiera para ti. ' +
+           'La base de datos lo impide técnicamente, no solo por acuerdo.</div></div>';
+
+      h += '<div class="buscador"><input class="fld" id="iq" placeholder="Buscar alumno por nombre…" autocomplete="off"></div>';
+      h += '<div id="lista"></div>';
+      zona.innerHTML = h;
+
+      function pintar(filtro){
+        var f = (filtro||"").toLowerCase().trim();
+        var vis = soloAlumnos.filter(function(a){
+          return !f || String(a.full_name||"").toLowerCase().indexOf(f) >= 0;
+        });
+        var s = "";
+        if (!vis.length){ s = '<div class="card"><p class="muted">Sin resultados.</p></div>'; }
+        vis.forEach(function(a){
+          var hechas = (porAlumno[a.id]||[]).length;
+          var pct = Math.round(hechas/total*100);
+          var et = (inscPor[a.id]||[]).map(function(e){ return "Etapa " + e.etapa + " (" + e.status + ")"; }).join(" · ");
+          s += '<div class="card" style="margin-bottom:12px">';
+          s += '<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">';
+          s += '<div class="avatar" style="width:42px;height:42px;font-size:15px">' + E(Campus.initials(a.full_name)) + '</div>';
+          s += '<div style="flex:1;min-width:190px"><b>' + E(a.full_name || "Sin nombre") + '</b>';
+          s += '<p class="tiny soft" style="margin-top:3px">' + (a.ciudad ? E(a.ciudad) + ' · ' : '') +
+               (et || 'Sin inscripción registrada') + '</p></div>';
+          s += '<div style="text-align:right;min-width:110px"><b style="font-family:\'Space Grotesk\',sans-serif;font-size:19px">' +
+               hechas + '/' + total + '</b><p class="tiny soft">lecciones</p></div>';
+          s += '</div>';
+          s += '<div class="bar" style="margin-top:13px"><i style="width:' + pct + '%"></i></div>';
+          s += '</div>';
+        });
+        document.getElementById("lista").innerHTML = s;
+      }
+      pintar("");
+      document.getElementById("iq").addEventListener("input", function(){ pintar(this.value); });
+
+      function tarjeta(n, t){
+        return '<div class="card" style="text-align:center">' +
+          '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:30px;font-weight:600;line-height:1">' + n + '</div>' +
+          '<div class="tiny soft" style="margin-top:4px">' + t + '</div></div>';
+      }
+    }).catch(function(e){
+      console.error(e);
+      zona.innerHTML = '<div class="card"><p class="muted">No pudimos cargar la información. ' +
+        'Revisa que tu cuenta tenga el rol de instructor.</p></div>';
+    });
+  }
+});
+
+</script>
+</body>
+</html>

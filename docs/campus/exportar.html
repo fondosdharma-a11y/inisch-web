@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Película · imprimible — Campus INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/campus.css">
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/campus-core.js"></script>
+<script>
+
+var PREGUNTAS = [
+  ["personalidad","¿Cuál era su personalidad antes de tus 10 años?"],
+  ["funcion","¿Cuál era su función en casa?"],
+  ["dia_normal","¿Cómo era su conducta en un día normal?"],
+  ["fin_semana","¿Y en los fines de semana?"],
+  ["actitud_pareja","¿Cuál era su actitud hacia su pareja?"],
+  ["demostraba_amor","¿Cómo demostraba su amor?"],
+  ["enojo","¿Qué le provocaba enojo?"],
+  ["rinas","¿Cómo eran las riñas y por qué?"],
+  ["quejaba","¿De qué se quejaba?"],
+  ["animo","¿Cuál era su estado de ánimo cotidiano?"],
+  ["juzgaba","¿Recuerdas cómo juzgaba?"],
+  ["comunicativo","¿Era callado(a) o comunicativo(a)?"],
+  ["bondadoso","¿Era bondadoso(a)?"],
+  ["controlaba","¿Solía controlar?"],
+  ["economia","¿Cómo lidiaba con su economía?"],
+  ["lloraba","¿Lo(a) viste llorar? ¿Por qué lo hacía o no lo hacía?"],
+  ["creia","¿En qué creía?"],
+  ["dificiles","¿Cómo reaccionaba en sus momentos difíciles?"],
+  ["angustiaba","¿De qué se angustiaba?"],
+  ["paciente","¿Era paciente o intolerante?"],
+  ["rencoroso","¿Era rencoroso(a)?"],
+  ["miedo","¿A qué le tenía miedo o temor?"],
+  ["episodio","¿Cuál es el episodio que más recuerdas?"]
+];
+var TIPOS = { paterna:"Figura paterna", materna:"Figura materna",
+              otra_figura:"Otra figura", personaje:"Personaje" };
+
+Campus.boot("Mi Película · versión imprimible", function(c, u){
+  var E = Campus.esc;
+
+  var barra = document.createElement("div");
+  barra.className = "no-print";
+  barra.style.cssText = "display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;align-items:center";
+  barra.innerHTML =
+    '<button class="btn-p btn-sm" id="imprimir">Guardar como PDF o imprimir</button>' +
+    '<a class="btn-o btn-sm" href="mi-pelicula.html">Volver a Mi Película</a>' +
+    '<span class="tiny soft" style="flex:1;min-width:220px">En el cuadro de impresión elige <b>Guardar como PDF</b> en el destino.</span>';
+  c.appendChild(barra);
+
+  var zona = document.createElement("div");
+  zona.innerHTML = '<div class="card"><p class="muted tiny">Preparando tu documento…</p></div>';
+  c.appendChild(zona);
+
+  document.getElementById("imprimir").addEventListener("click", function(){ window.print(); });
+
+  Campus.DB.list("mi_pelicula", {}).then(function(rows){
+    rows = rows || [];
+    if (!rows.length){
+      zona.innerHTML = '<div class="card" style="text-align:center;padding:42px 24px">' +
+        '<b>Todavía no hay nada que exportar</b><p class="muted" style="margin-top:8px;font-size:15px">' +
+        'Empieza por registrar la figura paterna o materna.</p>' +
+        '<a class="btn-p btn-sm" style="margin-top:18px" href="mi-pelicula.html">Ir a Mi Película</a></div>';
+      return;
+    }
+    var orden = ["paterna","materna","otra_figura","personaje"];
+    rows.sort(function(a,b){ return orden.indexOf(a.tipo) - orden.indexOf(b.tipo); });
+
+    var hoy = new Date().toISOString().slice(0,10);
+    var h = '<div class="hoja">';
+    h += '<div style="text-align:center;margin-bottom:34px">';
+    h += '<img src="../assets/mandala.png" alt="" style="width:62px;height:62px;margin:0 auto 12px;display:block">';
+    h += '<h1 style="font-family:\'Cormorant Garamond\',serif;font-size:31px;margin-bottom:5px">Mi Película</h1>';
+    h += '<p style="font-size:13px;color:#8497A0;letter-spacing:.12em;text-transform:uppercase">Sistema Código Holográfico</p>';
+    h += '<p style="font-size:14px;color:#5A7078;margin-top:14px">' + E(u.full_name||"") + ' · ' + Campus.fechaLarga(hoy) + '</p>';
+    h += '</div>';
+    h += '<div class="h-linea"></div>';
+    h += '<p style="font-size:14px;color:#5A7078;font-style:italic;margin-bottom:30px">' +
+         'Recuerda la regla de oro: aquí se registra solo lo que viste y escuchaste, ' +
+         'no lo que te hicieron a ti. El proyector no aparece dentro de la película.</p>';
+
+    rows.forEach(function(r){
+      var a = r.respuestas || {};
+      var n = 0; for (var k in a){ if (String(a[k]).trim()) n++; }
+      if (!n && !r.notas && !r.personaje_hoy) return;
+      h += '<div class="h-sec">';
+      h += '<h2 style="font-size:20px;margin-bottom:3px">' + E(r.etiqueta || TIPOS[r.tipo] || r.tipo) + '</h2>';
+      h += '<p style="font-size:12.5px;color:#8497A0;letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px">' +
+           E(TIPOS[r.tipo]||r.tipo) + (r.personaje_hoy ? ' · hoy: ' + E(r.personaje_hoy) : '') + '</p>';
+      PREGUNTAS.forEach(function(q){
+        var v = a[q[0]];
+        if (!v || !String(v).trim()) return;
+        h += '<div class="h-q">' + E(q[1]) + '</div><div class="h-a">' + E(v) + '</div>';
+      });
+      if (r.notas) h += '<div class="h-q">Notas libres</div><div class="h-a">' + E(r.notas) + '</div>';
+      h += '</div>';
+    });
+
+    h += '<div class="h-linea"></div>';
+    h += '<p style="font-size:11.5px;color:#8497A0;line-height:1.6">' +
+         'Documento personal generado desde el campus del Instituto Internacional del Sistema Código Holográfico. ' +
+         'Su contenido es privado y de uso exclusivo de quien lo escribió. ' +
+         'Este material es de carácter educativo y de autoconocimiento; no constituye diagnóstico ni tratamiento psicológico.</p>';
+    h += '</div>';
+    zona.innerHTML = h;
+  }).catch(function(e){
+    console.error(e);
+    zona.innerHTML = '<div class="card"><p class="muted">No pudimos preparar el documento.</p></div>';
+  });
+});
+
+</script>
+</body>
+</html>

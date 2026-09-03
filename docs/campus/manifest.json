@@ -1,0 +1,49 @@
+{
+  "name": "Campus INISCH",
+  "short_name": "INISCH",
+  "description": "Tu espacio de trabajo del Sistema Código Holográfico: lecciones, Mi Película, Bitácora y Práctica.",
+  "start_url": "/campus/dashboard.html",
+  "scope": "/campus/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0A1518",
+  "theme_color": "#0A1518",
+  "lang": "es",
+  "categories": [
+    "education",
+    "lifestyle"
+  ],
+  "icons": [
+    {
+      "src": "../assets/mandala.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../assets/mandala.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "../assets/favicon.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Bitácora",
+      "url": "/campus/bitacora.html"
+    },
+    {
+      "name": "Práctica",
+      "url": "/campus/practica.html"
+    },
+    {
+      "name": "Mis lecciones",
+      "url": "/campus/lecciones.html"
+    }
+  ]
+}
