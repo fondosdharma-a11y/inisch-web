@@ -221,7 +221,7 @@ body.mm-lock{ overflow:hidden; }
 /* ============ BANNER / HERO ============ */
 .hero-banner{ width:100%; margin:0; padding:0; line-height:0; border-bottom:1px solid var(--line-gold); }
 .hero-banner img{ width:100%; height:auto; display:block; }
-[data-theme="dark"] .hero-banner img{ filter:invert(1) hue-rotate(180deg) saturate(1.15) brightness(0.94); }
+
 .foot-logo img{ width:62px; height:62px; border-radius:50%; border:1px solid var(--line-gold); }
 .foot-logo{ display:flex; align-items:center; gap:14px; }
 .foot-logo .fl-txt{ font-family:'Cormorant Garamond',serif; font-size:20px; letter-spacing:.14em; color:var(--teal-deep); }
