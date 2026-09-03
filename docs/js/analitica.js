@@ -24,8 +24,8 @@
      3. Escribe abajo:  GA4 = "G-XXXXXXXXXX"
    ============================================================ */
 
-var PLAUSIBLE = "inisch.com";   // ACTIVO
-var GA4       = "";             // sin usar: elegimos Plausible
+var PLAUSIBLE = "";             // sin usar: elegimos Google Analytics
+var GA4       = "";             // <-- PEGA AQUI TU ID (empieza con G-)
 
 /* ------------------------------------------------------------
    De aqui para abajo no hace falta tocar nada.
