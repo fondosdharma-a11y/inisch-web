@@ -42,10 +42,16 @@ nav{ display:flex; align-items:center; justify-content:space-between; padding:14
 .btn-campus{ background:var(--teal-deep); color:var(--bg); padding:10px 20px; border-radius:2px; font-size:13.5px; white-space:nowrap; }
 .navtoggle{ display:none; background:none; border:none; font-size:24px; color:var(--teal-deep); }
 .theme-toggle{
-  width:38px; height:38px; border-radius:50%; border:1px solid var(--line-gold); background:none;
-  color:var(--teal-deep); font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;
-  flex-shrink:0; transition:background-color .2s ease;
+  display:inline-flex; align-items:center; gap:7px;
+  height:38px; padding:0 14px; border-radius:19px;
+  border:1px solid var(--teal); background:var(--bg-2);
+  color:var(--teal-deep); font-family:inherit; font-size:13px; font-weight:500;
+  letter-spacing:.02em; cursor:pointer; flex-shrink:0; white-space:nowrap;
+  transition:background-color .2s ease, border-color .2s ease, color .2s ease;
 }
+.theme-toggle .tt-icon{ font-size:15px; line-height:1; }
+.theme-toggle .tt-label{ line-height:1; }
+.theme-toggle:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
 .theme-toggle:hover{ background:var(--bg-2); }
 
 /* BUTTONS */
@@ -138,6 +144,8 @@ footer{ padding:56px 32px 40px; border-top:1px solid var(--line-gold); }
 .foot-bottom{ font-size:12.5px; color:var(--ink-dim); text-align:center; padding-top:22px; border-top:1px solid var(--line); max-width:1180px; margin:0 auto; }
 
 @media (max-width:860px){
+  .theme-toggle .tt-label{ display:none; }
+  .theme-toggle{ padding:0; width:38px; justify-content:center; }
   .navlinks{ display:none; } .navtoggle{ display:block; }
   .etapa-grid{ grid-template-columns:1fr; }
   .contrast{ grid-template-columns:1fr; }
