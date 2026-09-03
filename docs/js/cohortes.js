@@ -23,18 +23,17 @@
 
 window.INISCH_COHORTES = [
 
-  // ---- EJEMPLO: borra esta linea y pon tus fechas reales ----
-  // {
-  //   etapa: 1,
-  //   inicio: "2026-10-18",
-  //   fin: "2026-10-19",
-  //   horario: "10:00 a 18:00 h",
-  //   modalidad: "Presencial",
-  //   ciudad: "Guadalajara",
-  //   cupo: 20,
-  //   cierre: "2026-10-10",
-  //   nota: ""
-  // },
+  {
+    etapa: 1,
+    inicio: "2026-10-10",
+    fin: "2026-10-11",
+    horario: "10:00 a 18:00 h",
+    modalidad: "Presencial y en linea",
+    ciudad: "",              // <-- PENDIENTE: escribe la ciudad
+    cupo: null,              // <-- opcional: numero de lugares
+    cierre: null,            // <-- opcional: fecha limite de inscripcion (AAAA-MM-DD)
+    nota: ""
+  },
 
 ];
 
@@ -164,6 +163,60 @@ window.INISCH_COHORTES = [
     }
   }
 
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", pintar);
-  else pintar();
+  /* ------------------------------------------------------------
+     BARRA DE ANUNCIO
+     Aparece arriba del todo con la proxima fecha. Se calcula sola
+     a partir de la lista de arriba: cuando la fecha pasa,
+     desaparece. Si se cierra, no vuelve a molestar ese dia.
+     ------------------------------------------------------------ */
+  function pintarBarra(){
+    if (document.querySelector(".anuncio")) return;
+    var lista = vigentes();
+    if (!lista.length) return;
+
+    var c = lista[0];
+    var d = dias(c._d);
+    if (d > 120) return;                 // demasiado lejos, no vale la pena
+
+    var clave = "inisch-anuncio-" + c.inicio;
+    try { if (sessionStorage.getItem(clave) === "x") return; } catch(e){}
+
+    var n = NOMBRE[c.etapa] || { es:"Programa", en:"Program" };
+    var href = (isEN() ? ENLACE_EN : ENLACE)[c.etapa] || "#";
+    // ajustar la ruta si estamos dentro de una subcarpeta
+    var prof = (location.pathname.replace(/^\/|\/$/g,"").split("/").length - 1);
+    var enSub = /\/(en|blog)\//.test(location.pathname);
+    if (isEN() && location.pathname.indexOf("/en/blog/") >= 0) href = "../" + href;
+    else if (!isEN() && location.pathname.indexOf("/blog/") >= 0) href = "../" + href;
+
+    var cuando;
+    if (d === 0)      cuando = T("es hoy", "is today");
+    else if (d === 1) cuando = T("es ma\u00f1ana", "is tomorrow");
+    else if (d <= 45) cuando = T("en " + d + " d\u00edas", "in " + d + " days");
+    else              cuando = "";
+
+    var b = document.createElement("div");
+    b.className = "anuncio";
+    b.innerHTML =
+      '<div class="an-in">' +
+        '<span class="an-tag">' + T("Pr\u00f3xima fecha", "Next date") + '</span>' +
+        '<span class="an-txt"><b>' + esc(isEN() ? n.en : n.es) + '</b> \u00b7 ' +
+          esc(rango(c._d, c._f)) + (cuando ? ' \u00b7 ' + cuando : '') + '</span>' +
+        '<a class="an-btn" href="' + href + '">' + T("Ver detalles", "See details") + '</a>' +
+        '<button class="an-x" aria-label="' + T("Cerrar","Close") + '">&times;</button>' +
+      '</div>';
+    document.body.insertBefore(b, document.body.firstChild);
+    document.documentElement.classList.add("con-anuncio");
+
+    b.querySelector(".an-x").addEventListener("click", function(){
+      try { sessionStorage.setItem(clave, "x"); } catch(e){}
+      b.remove();
+      document.documentElement.classList.remove("con-anuncio");
+    });
+  }
+
+  function arrancar(){ pintar(); pintarBarra(); }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", arrancar);
+  else arrancar();
 })();
