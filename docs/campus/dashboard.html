@@ -38,7 +38,7 @@ Campus.boot("Inicio", function(c, u){
   zone.innerHTML = '<div class="card"><p class="muted tiny">Cargando tu avance…</p></div>';
   c.appendChild(zone);
 
-  Promise.all([Campus.DB.catalog(), Campus.DB.progress(),
+  Campus.todas([Campus.DB.catalog(), Campus.DB.progress(),
                Campus.DB.list("bitacora",{order:"fecha",desc:true}),
                Campus.DB.list("mi_pelicula",{}),
                Campus.DB.list("practicas",{order:"fecha",desc:true})])
@@ -77,7 +77,7 @@ Campus.boot("Inicio", function(c, u){
       h += '<div class="eyebrow">Continúa donde quedaste</div>';
       h += '<h2 style="font-size:20px;margin-bottom:6px">' + E(next.title) + '</h2>';
       h += '<p class="muted tiny" style="margin-bottom:16px">' + E((next.content||"").slice(0,140)) + '</p>';
-      h += '<a class="btn" href="leccion.html?id=' + encodeURIComponent(next.id) + '">Continuar lección ›</a>';
+      h += '<a class="btn" href="lecciones.html">Continuar lección ›</a>';
     } else if (total) {
       h += '<div class="eyebrow">Completado</div>';
       h += '<h2 style="font-size:20px;margin-bottom:6px">Terminaste todas tus lecciones</h2>';
@@ -106,7 +106,7 @@ Campus.boot("Inicio", function(c, u){
       h += '<div class="card-h"><h3>Tus lecciones</h3><a class="tiny" style="color:var(--gold)" href="lecciones.html">Ver todas ›</a></div>';
       all.slice(0,4).forEach(function(l,i){
         var d = !!doneIds[l.id];
-        h += '<a class="lesson' + (d?" done":"") + '" href="leccion.html?id=' + encodeURIComponent(l.id) + '">';
+        h += '<a class="lesson' + (d?" done":"") + '" href="lecciones.html">';
         h += '<div class="num">' + (d ? "✓" : (i+1)) + '</div>';
         h += '<div class="lt"><b>' + E(l.title) + '</b><span>' + (d?"Completada":"Pendiente") + '</span></div>';
         h += '<span class="soft">›</span></a>';

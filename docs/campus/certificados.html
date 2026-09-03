@@ -47,7 +47,7 @@ Campus.boot("Certificados", function(c, u){
   zone.innerHTML = '<div class="card"><p class="muted tiny">Cargando…</p></div>';
   c.appendChild(zone);
 
-  Promise.all([Campus.DB.catalog(), Campus.DB.progress(),
+  Campus.todas([Campus.DB.catalog(), Campus.DB.progress(),
                Campus.DB.list("bitacora",{}), Campus.DB.list("mi_pelicula",{}),
                Campus.DB.list("practicas",{})])
   .then(function(r){

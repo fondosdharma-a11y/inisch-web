@@ -32,7 +32,7 @@ Campus.boot("Mis lecciones", function(c, u){
   c.appendChild(zone);
 
   function render(){
-    Promise.all([Campus.DB.catalog(), Campus.DB.progress(), Campus.DB.list("notas_leccion",{})])
+    Campus.todas([Campus.DB.catalog(), Campus.DB.progress(), Campus.DB.list("notas_leccion",{})])
     .then(function(r){
       var courses = r[0]||[], prog = r[1]||[], notas = r[2]||[];
       var done = {}; prog.forEach(function(p){ done[p.lesson_id] = true; });

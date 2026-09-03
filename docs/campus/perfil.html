@@ -128,7 +128,7 @@ Campus.boot("Mi perfil", function(c, u){
   /* exportar todo */
   box.querySelector("#p-export").addEventListener("click", function(){
     Campus.toast("Preparando tu archivo…");
-    Promise.all([Campus.DB.list("mi_pelicula",{}), Campus.DB.list("bitacora",{}),
+    Campus.todas([Campus.DB.list("mi_pelicula",{}), Campus.DB.list("bitacora",{}),
                  Campus.DB.list("practicas",{}), Campus.DB.list("notas_leccion",{})])
     .then(function(r){
       var salida = {
