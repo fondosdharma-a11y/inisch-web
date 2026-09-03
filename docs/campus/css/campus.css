@@ -233,32 +233,32 @@ details.q[open]{border-color:var(--line-gold)}
 
 /* --- campos de formulario --- */
 .fl{ display:block; font-size:13px; color:var(--ink-dim); margin-bottom:7px; line-height:1.45; }
-.fi{
+.fld{
   width:100%; padding:12px 14px; border-radius:5px;
   border:1px solid rgba(143,170,176,.26);
   background:rgba(255,255,255,.04); color:var(--ink);
   font-family:inherit; font-size:15px; line-height:1.55;
 }
-.fi:focus{ outline:none; border-color:var(--gold); background:rgba(255,255,255,.07); }
-.fi::placeholder{ color:var(--ink-dim); opacity:.65; }
-.ft{ resize:vertical; min-height:60px; }
+.fld:focus{ outline:none; border-color:var(--gold); background:rgba(255,255,255,.07); }
+.fld::placeholder{ color:var(--ink-dim); opacity:.65; }
+.fld-t{ resize:vertical; min-height:60px; }
 .qi{ margin-bottom:16px; }
 
 /* --- fichas seleccionables --- */
-.chips{ display:flex; flex-wrap:wrap; gap:8px; }
-.chip{
+.pick{ display:flex; flex-wrap:wrap; gap:8px; }
+.pick-o{
   display:inline-block; padding:7px 14px; border-radius:16px;
   border:1px solid rgba(143,170,176,.28);
   background:transparent; color:var(--ink-dim);
   font-family:inherit; font-size:13px; cursor:pointer;
   transition:all .22s ease; white-space:nowrap;
 }
-.chip:hover{ border-color:var(--gold); color:var(--ink); }
-.chip.on{
+.pick-o:hover{ border-color:var(--gold); color:var(--ink); }
+.pick-o.on{
   border-color:var(--gold); color:var(--gold);
   background:rgba(216,180,90,.12); font-weight:500;
 }
-.chip.tiny{ padding:4px 10px; font-size:11.5px; }
+.pick-o.tiny{ padding:4px 10px; font-size:11.5px; }
 
 /* --- panel lateral deslizante --- */
 .sheet-back{
