@@ -70,7 +70,7 @@ Campus.boot("Bitácora", function(c, u){
         h += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">';
         PATRONES.forEach(function(p){
           var n = cnt[p[0]] || 0;
-          h += '<span class="chip' + (n?" on":"") + '">' + E(p[1]) + (n ? ' · ' + n : '') + '</span>';
+          h += '<span class="pick-o' + (n?" on":"") + '">' + E(p[1]) + (n ? ' · ' + n : '') + '</span>';
         });
         h += '</div></div>';
       }
@@ -90,7 +90,7 @@ Campus.boot("Bitácora", function(c, u){
           h += '<div style="flex:1">';
           h += '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px">' +
                '<span class="tiny soft">' + E(fechaLarga(r.fecha)) + '</span>' +
-               (nom ? '<span class="chip on tiny">' + E(nom[1]) + '</span>' : '') +
+               (nom ? '<span class="pick-o on tiny">' + E(nom[1]) + '</span>' : '') +
                '</div>';
           if (r.situacion)   h += '<p style="font-size:15.5px">' + E(r.situacion) + '</p>';
           if (r.emocion)     h += '<p class="muted tiny" style="margin-top:8px"><b>Sentí:</b> ' + E(r.emocion) + '</p>';
@@ -145,26 +145,26 @@ Campus.boot("Bitácora", function(c, u){
       '<button class="btn-o btn-sm sh-x">Cerrar</button></div>';
 
     h += '<div class="sheet-body">';
-    h += '<label class="fl">Fecha</label><input class="fi" type="date" id="b-fecha" value="' + E(String(rec.fecha||hoy).slice(0,10)) + '">';
+    h += '<label class="fl">Fecha</label><input class="fld" type="date" id="b-fecha" value="' + E(String(rec.fecha||hoy).slice(0,10)) + '">';
 
     h += '<label class="fl" style="margin-top:18px">¿Qué pasó?</label>' +
-         '<textarea class="fi ft" id="b-sit" rows="3" placeholder="Describe la situación como si la contaras a alguien más">' + E(rec.situacion||"") + '</textarea>';
+         '<textarea class="fld fld-t" id="b-sit" rows="3" placeholder="Describe la situación como si la contaras a alguien más">' + E(rec.situacion||"") + '</textarea>';
 
     h += '<label class="fl" style="margin-top:18px">¿Qué sentiste?</label>' +
-         '<input class="fi" id="b-emo" placeholder="Ej. enojo, tristeza, ansiedad, vergüenza" value="' + E(rec.emocion||"") + '">';
+         '<input class="fld" id="b-emo" placeholder="Ej. enojo, tristeza, ansiedad, vergüenza" value="' + E(rec.emocion||"") + '">';
 
     h += '<label class="fl" style="margin-top:18px">¿Qué patrón reconoces?</label>';
-    h += '<div class="chips" id="b-pat">';
+    h += '<div class="pick" id="b-pat">';
     PATRONES.forEach(function(p){
-      h += '<button type="button" class="chip' + (rec.patron===p[0]?" on":"") + '" data-v="' + p[0] + '" title="' + E(p[2]) + '">' + E(p[1]) + '</button>';
+      h += '<button type="button" class="pick-o' + (rec.patron===p[0]?" on":"") + '" data-v="' + p[0] + '" title="' + E(p[2]) + '">' + E(p[1]) + '</button>';
     });
     h += '</div>';
 
     h += '<label class="fl" style="margin-top:18px">¿Desde dónde viene esto?</label>' +
-         '<textarea class="fi ft" id="b-dd" rows="3" placeholder="¿A quién de tu infancia le viste o le escuchaste esto? ¿Qué escena se está repitiendo?">' + E(rec.desde_donde||"") + '</textarea>';
+         '<textarea class="fld fld-t" id="b-dd" rows="3" placeholder="¿A quién de tu infancia le viste o le escuchaste esto? ¿Qué escena se está repitiendo?">' + E(rec.desde_donde||"") + '</textarea>';
 
     h += '<label class="fl" style="margin-top:18px">¿Qué comprendiste?</label>' +
-         '<textarea class="fi ft" id="b-comp" rows="3" placeholder="No tiene que ser una conclusión. Basta con lo que alcanzaste a ver.">' + E(rec.comprension||"") + '</textarea>';
+         '<textarea class="fld fld-t" id="b-comp" rows="3" placeholder="No tiene que ser una conclusión. Basta con lo que alcanzaste a ver.">' + E(rec.comprension||"") + '</textarea>';
     h += '</div>';
 
     h += '<div class="sheet-foot"><span class="tiny soft" id="b-status"></span>' +
@@ -175,9 +175,9 @@ Campus.boot("Bitácora", function(c, u){
     requestAnimationFrame(function(){ back.classList.add("on"); sh.classList.add("on"); });
 
     var patron = rec.patron || null;
-    sh.querySelectorAll("#b-pat .chip").forEach(function(b){
+    sh.querySelectorAll("#b-pat .pick-o").forEach(function(b){
       b.addEventListener("click", function(){
-        sh.querySelectorAll("#b-pat .chip").forEach(function(x){ x.classList.remove("on"); });
+        sh.querySelectorAll("#b-pat .pick-o").forEach(function(x){ x.classList.remove("on"); });
         b.classList.add("on"); patron = b.dataset.v;
       });
     });

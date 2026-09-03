@@ -197,11 +197,11 @@ Campus.boot("Mi Película", function(c, u){
 
     h += '<div class="sheet-body">';
     h += '<label class="fl">¿A quién te refieres?</label>' +
-         '<input class="fi" id="f-etq" placeholder="Ej. Mi papá · Mi abuela Carmen · Mi maestra de primaria" value="' + E(rec.etiqueta||"") + '">';
+         '<input class="fld" id="f-etq" placeholder="Ej. Mi papá · Mi abuela Carmen · Mi maestra de primaria" value="' + E(rec.etiqueta||"") + '">';
 
     if (esPersonaje){
       h += '<label class="fl" style="margin-top:16px">¿Quién ocupa hoy ese mismo lugar en tu vida?</label>' +
-           '<input class="fi" id="f-hoy" placeholder="Ej. Mi jefe actual · Mi pareja" value="' + E(rec.personaje_hoy||"") + '">' +
+           '<input class="fld" id="f-hoy" placeholder="Ej. Mi jefe actual · Mi pareja" value="' + E(rec.personaje_hoy||"") + '">' +
            '<p class="muted tiny" style="margin-top:7px">El personaje es el mismo una y otra vez; lo que cambia es el actor que lo interpreta.</p>';
     }
 
@@ -213,12 +213,12 @@ Campus.boot("Mi Película", function(c, u){
       var val = (rec.respuestas || {})[q[0]] || "";
       h += '<div class="qi">' +
            '<label class="fl">' + E(q[1]) + '</label>' +
-           '<textarea class="fi ft" data-q="' + q[0] + '" rows="2">' + E(val) + '</textarea>' +
+           '<textarea class="fld fld-t" data-q="' + q[0] + '" rows="2">' + E(val) + '</textarea>' +
            '</div>';
     });
 
     h += '<label class="fl" style="margin-top:14px">Notas libres</label>' +
-         '<textarea class="fi ft" id="f-notas" rows="3" placeholder="Cualquier cosa que quieras agregar">' + E(rec.notas||"") + '</textarea>';
+         '<textarea class="fld fld-t" id="f-notas" rows="3" placeholder="Cualquier cosa que quieras agregar">' + E(rec.notas||"") + '</textarea>';
     h += '</div>';
 
     h += '<div class="sheet-foot">' +

@@ -45,11 +45,11 @@ Campus.boot("Práctica", function(c, u){
     '<div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;justify-content:space-between">' +
       '<div><b>Temporizador</b>' +
         '<p class="muted tiny" style="margin-top:4px">Elige los minutos, practica, y al terminar registra lo observado.</p>' +
-        '<div class="chips" id="tm-min" style="margin-top:14px">' +
-          '<button class="chip" data-m="3">3 min</button>' +
-          '<button class="chip on" data-m="5">5 min</button>' +
-          '<button class="chip" data-m="10">10 min</button>' +
-          '<button class="chip" data-m="20">20 min</button>' +
+        '<div class="pick" id="tm-min" style="margin-top:14px">' +
+          '<button class="pick-o" data-m="3">3 min</button>' +
+          '<button class="pick-o on" data-m="5">5 min</button>' +
+          '<button class="pick-o" data-m="10">10 min</button>' +
+          '<button class="pick-o" data-m="20">20 min</button>' +
         '</div></div>' +
       '<div style="text-align:center">' +
         '<div id="tm-disp" style="font-family:\'Space Grotesk\',sans-serif;font-size:46px;line-height:1;font-weight:600">05:00</div>' +
@@ -66,10 +66,10 @@ Campus.boot("Práctica", function(c, u){
     var m = Math.floor(left/60), s = left%60;
     disp.textContent = (m<10?"0":"")+m + ":" + (s<10?"0":"")+s;
   }
-  timer.querySelectorAll("#tm-min .chip").forEach(function(b){
+  timer.querySelectorAll("#tm-min .pick-o").forEach(function(b){
     b.addEventListener("click", function(){
       if (running) return;
-      timer.querySelectorAll("#tm-min .chip").forEach(function(x){ x.classList.remove("on"); });
+      timer.querySelectorAll("#tm-min .pick-o").forEach(function(x){ x.classList.remove("on"); });
       b.classList.add("on");
       mins = parseInt(b.dataset.m,10); left = mins*60; paint();
     });
@@ -155,8 +155,8 @@ Campus.boot("Práctica", function(c, u){
           h += '<div style="flex:1"><div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">' +
                '<span style="font-size:17px;opacity:.8">' + T.ic + '</span>' +
                '<b style="font-size:15px">' + E(T.t) + '</b>' +
-               (r.minutos ? '<span class="chip on tiny">' + r.minutos + ' min</span>' : '') +
-               (r.sentido ? '<span class="chip tiny">' + E(r.sentido) + '</span>' : '') + '</div>' +
+               (r.minutos ? '<span class="pick-o on tiny">' + r.minutos + ' min</span>' : '') +
+               (r.sentido ? '<span class="pick-o tiny">' + E(r.sentido) + '</span>' : '') + '</div>' +
                '<p class="tiny soft" style="margin-top:7px">' + E(String(r.fecha||"").slice(0,10)) + '</p>' +
                (r.observacion ? '<p class="muted" style="margin-top:9px;font-size:15px">' + E(r.observacion) + '</p>' : '') +
                '</div>';
@@ -194,22 +194,22 @@ Campus.boot("Práctica", function(c, u){
       '<h2 style="font-size:22px;margin-top:4px">Registrar práctica</h2></div>' +
       '<button class="btn-o btn-sm sh-x">Cerrar</button></div>';
     h += '<div class="sheet-body">';
-    h += '<label class="fl">¿Qué practicaste?</label><div class="chips" id="p-tipo">';
+    h += '<label class="fl">¿Qué practicaste?</label><div class="pick" id="p-tipo">';
     Object.keys(TIPOS).forEach(function(k, i){
-      h += '<button type="button" class="chip' + (i===0?" on":"") + '" data-v="' + k + '">' +
+      h += '<button type="button" class="pick-o' + (i===0?" on":"") + '" data-v="' + k + '">' +
            TIPOS[k].ic + ' ' + E(TIPOS[k].t) + '</button>';
     });
     h += '</div><p class="muted tiny" id="p-desc" style="margin-top:9px">' + E(TIPOS.atencion_fina.d) + '</p>';
     h += '<div id="p-sent-wrap"><label class="fl" style="margin-top:18px">¿Con qué sentido trabajaste?</label>' +
-         '<div class="chips" id="p-sent">';
-    SENTIDOS.forEach(function(s){ h += '<button type="button" class="chip" data-v="' + s + '">' + E(s) + '</button>'; });
+         '<div class="pick" id="p-sent">';
+    SENTIDOS.forEach(function(s){ h += '<button type="button" class="pick-o" data-v="' + s + '">' + E(s) + '</button>'; });
     h += '</div></div>';
     h += '<label class="fl" style="margin-top:18px">Minutos</label>' +
-         '<input class="fi" type="number" id="p-min" min="1" max="600" value="' + (rec.minutos||5) + '">';
+         '<input class="fld" type="number" id="p-min" min="1" max="600" value="' + (rec.minutos||5) + '">';
     h += '<label class="fl" style="margin-top:18px">Fecha</label>' +
-         '<input class="fi" type="date" id="p-fecha" value="' + hoy + '">';
+         '<input class="fld" type="date" id="p-fecha" value="' + hoy + '">';
     h += '<label class="fl" style="margin-top:18px">¿Qué observaste?</label>' +
-         '<textarea class="fi ft" id="p-obs" rows="4" placeholder="Sin buscar un resultado. Solo lo que notaste: en el cuerpo, en la mente, en la respiración."></textarea>';
+         '<textarea class="fld fld-t" id="p-obs" rows="4" placeholder="Sin buscar un resultado. Solo lo que notaste: en el cuerpo, en la mente, en la respiración."></textarea>';
     h += '</div>';
     h += '<div class="sheet-foot"><span class="tiny soft"></span>' +
          '<button class="btn-p btn-sm sh-save">Guardar</button></div>';
@@ -222,17 +222,17 @@ Campus.boot("Práctica", function(c, u){
     function syncSent(){
       sh.querySelector("#p-sent-wrap").style.display = (tipo==="atencion_fina") ? "" : "none";
     }
-    sh.querySelectorAll("#p-tipo .chip").forEach(function(b){
+    sh.querySelectorAll("#p-tipo .pick-o").forEach(function(b){
       b.addEventListener("click", function(){
-        sh.querySelectorAll("#p-tipo .chip").forEach(function(x){ x.classList.remove("on"); });
+        sh.querySelectorAll("#p-tipo .pick-o").forEach(function(x){ x.classList.remove("on"); });
         b.classList.add("on"); tipo = b.dataset.v;
         sh.querySelector("#p-desc").textContent = TIPOS[tipo].d;
         syncSent();
       });
     });
-    sh.querySelectorAll("#p-sent .chip").forEach(function(b){
+    sh.querySelectorAll("#p-sent .pick-o").forEach(function(b){
       b.addEventListener("click", function(){
-        sh.querySelectorAll("#p-sent .chip").forEach(function(x){ x.classList.remove("on"); });
+        sh.querySelectorAll("#p-sent .pick-o").forEach(function(x){ x.classList.remove("on"); });
         b.classList.add("on"); sentido = b.dataset.v;
       });
     });

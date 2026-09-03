@@ -42,12 +42,12 @@ Campus.boot("Mi perfil", function(c, u){
   h += '<div class="card reveal" style="margin-bottom:22px">';
   h += '<b>Datos personales</b>';
   h += '<p class="muted tiny" style="margin-top:5px;margin-bottom:18px">Sirven para tu constancia y para tu lectura de Numerología.</p>';
-  h += '<label class="fl">Nombre completo</label><input class="fi" id="p-nom" value="' + E(u.full_name||"") + '">';
+  h += '<label class="fl">Nombre completo</label><input class="fld" id="p-nom" value="' + E(u.full_name||"") + '">';
   h += '<label class="fl" style="margin-top:16px">Nombre tal como quieres que aparezca en tus certificados</label>' +
-       '<input class="fi" id="p-cert" placeholder="Si lo dejas vacío usamos tu nombre completo">';
+       '<input class="fld" id="p-cert" placeholder="Si lo dejas vacío usamos tu nombre completo">';
   h += '<p class="muted tiny" style="margin-top:7px">Revísalo con cuidado: los certificados oficiales no se pueden corregir después sin volver a tramitarlos.</p>';
-  h += '<label class="fl" style="margin-top:16px">Ciudad</label><input class="fi" id="p-ciu" placeholder="Ej. Guadalajara, Jalisco">';
-  h += '<label class="fl" style="margin-top:16px">Fecha de nacimiento</label><input class="fi" type="date" id="p-fn">';
+  h += '<label class="fl" style="margin-top:16px">Ciudad</label><input class="fld" id="p-ciu" placeholder="Ej. Guadalajara, Jalisco">';
+  h += '<label class="fl" style="margin-top:16px">Fecha de nacimiento</label><input class="fld" type="date" id="p-fn">';
   h += '<div style="margin-top:20px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">' +
        '<button class="btn-p btn-sm" id="p-save">Guardar cambios</button>' +
        '<span class="tiny soft" id="p-st"></span></div>';
