@@ -45,13 +45,46 @@
 
   function resolveUser(cb){
     if (DEMO){ USER = demoUser(); return cb(USER); }
+
+    function armar(s){
+      var m = s.user.user_metadata || {};
+      USER = {
+        id: s.user.id,
+        email: s.user.email,
+        // Google usa 'name', X usa 'user_name'; no solo 'full_name'
+        full_name: m.full_name || m.name || m.user_name || m.preferred_username || s.user.email,
+        avatar: m.avatar_url || m.picture || null,
+        demo: false
+      };
+      cb(USER);
+    }
+
     supabaseClient.auth.getSession().then(function(r){
       var s = r && r.data && r.data.session;
       if(!s){ USER = null; return cb(null); }
-      var m = s.user.user_metadata || {};
-      USER = { id:s.user.id, email:s.user.email, full_name: m.full_name || s.user.email, demo:false };
-      cb(USER);
+      // Si el token esta por vencer (o acaba de llegar de un proveedor
+      // social), renovarlo ANTES de lanzar las consultas. Sin esto, una de
+      // las peticiones en paralelo puede salir con un token viejo y dar 401.
+      var ahora = Math.floor(Date.now()/1000);
+      if (s.expires_at && (s.expires_at - ahora) < 120){
+        return supabaseClient.auth.refreshSession().then(function(r2){
+          var s2 = (r2 && r2.data && r2.data.session) || s;
+          armar(s2);
+        }).catch(function(){ armar(s); });
+      }
+      armar(s);
     }).catch(function(){ USER=null; cb(null); });
+  }
+
+  /* Ejecuta varias promesas sin que una sola falla tumbe la pantalla.
+     Devuelve el valor por defecto de la que falle. */
+  function todas(lista, pordefecto){
+    return Promise.all(lista.map(function(p, i){
+      return Promise.resolve(p).catch(function(e){
+        console.warn("Consulta fallida (" + i + "):", e);
+        return (pordefecto && pordefecto[i] !== undefined) ? pordefecto[i] : [];
+      });
+    }));
   }
 
   function signOut(){
@@ -279,7 +312,7 @@
   }
 
   window.Campus = {
-    DEMO: DEMO, boot: boot, DB: DB, toast: toast, esc: esc, el: el,
+    DEMO: DEMO, boot: boot, DB: DB, todas: todas, toast: toast, esc: esc, el: el,
     reveal: reveal, ring: ring, signOut: signOut, initials: initials,
     user: function(){ return USER; }
   };
