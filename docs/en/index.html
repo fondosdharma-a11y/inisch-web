@@ -4,45 +4,100 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>INISCH — International Institute of the Holographic Code System</title>
-<meta name="description" content="Training, guidance and experiences for self-knowledge. Holographic Code System, with optional official SEP-CONOCER certification.">
+<meta name="description" content="Training, guidance and experiences for self-knowledge. The Holographic Code System, with optional official SEP-CONOCER certification.">
+<meta property="og:title" content="INISCH — International Institute of the Holographic Code System">
+<meta property="og:description" content="Come back to yourself. Understand your story. Expand the way you live.">
+<meta property="og:type" content="website">
 <script>(function(){var t=localStorage.getItem('inisch-theme')||'light';document.documentElement.setAttribute('data-theme',t);})();</script>
 <link rel="stylesheet" href="../css/main.css">
 <style>
-  .masthead{ width:100%; height:230px; overflow:hidden; border-bottom:1px solid var(--line-gold); }
-  .masthead img{ width:100%; height:100%; object-fit:cover; object-position:center 40%; }
-  .hero{ padding:90px 32px 80px; text-align:center; }
-  .eyebrow{ font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--teal); font-size:18px; margin-bottom:22px; }
-  h1.hero-title{ font-size:clamp(38px,6vw,66px); line-height:1.12; max-width:780px; margin:0 auto 26px; }
+  /* HERO con emblema */
+  .hero{ padding:70px 32px 80px; text-align:center; position:relative; overflow:hidden; }
+  .hero-emblem{ width:150px; height:150px; margin:0 auto 28px; border-radius:50%; background-image:url('../../assets/logo-inisch.png'); background-size:190% auto; background-position:center 7%; background-repeat:no-repeat; border:1px solid var(--line-gold); }
+  [data-theme="dark"] .hero-emblem{ filter: drop-shadow(0 0 40px rgba(111,178,196,0.3)); }
+  .eyebrow{ font-family:'Cormorant Garamond', serif; font-style:italic; color:var(--teal); font-size:17px; margin-bottom:20px; }
+  [data-theme="dark"] .eyebrow{ font-style:normal; }
+  h1.hero-title{ font-size:clamp(36px,5.6vw,60px); line-height:1.12; max-width:800px; margin:0 auto 24px; }
   h1.hero-title em{ font-style:italic; color:var(--gold); }
   [data-theme="dark"] h1.hero-title em{ font-style:normal; }
-  .hero-sub{ max-width:540px; margin:0 auto 40px; color:var(--ink-dim); font-size:16.5px; }
-  .hero-cta{ display:flex; gap:18px; justify-content:center; flex-wrap:wrap; }
-  .sistema-grid{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:70px; align-items:center; }
-  .sistema-mark{ width:100%; aspect-ratio:1; border-radius:50%; overflow:hidden; background-image:url('../../assets/logo-inisch.png'); background-size:180% auto; background-position:center 8%; border:1px solid var(--line-gold); }
-  .prog-item{ display:grid; grid-template-columns:64px 1fr 190px; gap:26px; align-items:center; padding:32px 0; border-top:1px solid var(--line); }
+  .hero-sub{ max-width:560px; margin:0 auto 36px; color:var(--ink-dim); font-size:17px; }
+  .hero-cta{ display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+  .hero-badges{ display:flex; gap:30px; justify-content:center; flex-wrap:wrap; margin-top:44px; padding-top:30px; border-top:1px solid var(--line); max-width:640px; margin-left:auto; margin-right:auto; }
+  .hero-badge{ font-size:13px; color:var(--ink-dim); }
+  .hero-badge b{ display:block; font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--teal-deep); font-weight:600; }
+  [data-theme="dark"] .hero-badge b{ font-family:'Space Grotesk',sans-serif; }
+
+  /* SISTEMA */
+  .sistema-grid{ display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center; }
+  .pillars{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); margin-top:24px; }
+  .pillar{ background:var(--bg); padding:20px; }
+  .pillar h4{ font-family:'Cormorant Garamond',serif; font-size:17px; color:var(--teal-deep); margin-bottom:4px; }
+  [data-theme="dark"] .pillar h4{ font-family:'Space Grotesk',sans-serif; }
+  .pillar p{ font-size:13px; color:var(--ink-dim); }
+
+  /* PARA QUIEN ES */
+  .who-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:1px; background:var(--line); border:1px solid var(--line); }
+  .who{ background:var(--bg); padding:30px 26px; }
+  .who .num{ font-family:'Cormorant Garamond',serif; font-style:italic; color:var(--gold); font-size:15px; margin-bottom:10px; }
+  [data-theme="dark"] .who .num{ font-family:'Space Grotesk',sans-serif; font-style:normal; }
+  .who h3{ font-size:18px; margin-bottom:8px; }
+  .who p{ font-size:14px; color:var(--ink-dim); }
+
+  /* RESULTADOS */
+  .results-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:36px; }
+  .result h3{ font-size:19px; margin-bottom:8px; }
+  .result p{ font-size:14.5px; color:var(--ink-dim); }
+  .result .line{ width:32px; height:2px; background:var(--gold); margin-bottom:14px; }
+
+  /* SERVICIOS DESTACADOS */
+  .feature-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); }
+  .feature{ background:var(--bg); padding:40px 34px; display:flex; flex-direction:column; }
+  .feature .tag{ font-family:'Cormorant Garamond',serif; font-style:italic; color:var(--gold); font-size:14px; margin-bottom:10px; }
+  [data-theme="dark"] .feature .tag{ font-family:'Space Grotesk',sans-serif; font-style:normal; }
+  .feature h3{ font-size:24px; margin-bottom:12px; }
+  .feature > p{ color:var(--ink-dim); font-size:14.5px; margin-bottom:18px; }
+  .feature ul{ list-style:none; margin-bottom:24px; }
+  .feature ul li{ font-size:14px; color:var(--ink-dim); padding:7px 0 7px 20px; position:relative; border-top:1px solid var(--line); }
+  .feature ul li:first-child{ border-top:none; }
+  .feature ul li::before{ content:'\2014'; position:absolute; left:0; color:var(--gold); }
+  .feature .spacer{ flex:1; }
+
+  /* PROGRAMAS LISTA */
+  .prog-item{ display:grid; grid-template-columns:56px 1fr 180px; gap:22px; align-items:center; padding:26px 0; border-top:1px solid var(--line); }
   .prog-list .prog-item:last-child{ border-bottom:1px solid var(--line); }
-  .prog-num{ font-family:'Cormorant Garamond', serif; font-size:28px; color:var(--gold); font-style:italic; }
-  .prog-item h3{ font-size:22px; color:var(--teal-deep); margin-bottom:6px; font-weight:600; }
-  .prog-item p{ color:var(--ink-dim); font-size:14.5px; max-width:520px; }
-  .prog-tag{ text-align:right; color:var(--teal); font-size:13px; font-style:italic; font-family:'Cormorant Garamond',serif; }
-  .cert-row{ display:flex; justify-content:center; gap:56px; flex-wrap:wrap; }
+  .prog-num{ font-family:'Cormorant Garamond', serif; font-size:24px; color:var(--gold); font-style:italic; }
+  [data-theme="dark"] .prog-num{ font-family:'Space Grotesk',sans-serif; font-style:normal; }
+  .prog-item h3{ font-size:19px; color:var(--teal-deep); margin-bottom:4px; font-weight:600; }
+  .prog-item p{ color:var(--ink-dim); font-size:14px; max-width:520px; }
+  .prog-tag{ text-align:right; color:var(--teal); font-size:12.5px; font-style:italic; font-family:'Cormorant Garamond',serif; }
+  [data-theme="dark"] .prog-tag{ font-family:'Space Grotesk',sans-serif; font-style:normal; }
+
+  .cert-row{ display:flex; justify-content:center; gap:50px; flex-wrap:wrap; }
   .cert-item{ max-width:200px; text-align:center; }
-  .cert-item .cw{ font-family:'Cormorant Garamond', serif; font-size:19px; color:var(--teal-deep); font-weight:600; margin-bottom:8px; }
+  .cert-item .cw{ font-family:'Cormorant Garamond', serif; font-size:18px; color:var(--teal-deep); font-weight:600; margin-bottom:8px; }
+  [data-theme="dark"] .cert-item .cw{ font-family:'Space Grotesk',sans-serif; }
   .cert-item p{ font-size:13.5px; color:var(--ink-dim); }
-  @media (max-width:860px){ .sistema-grid{grid-template-columns:1fr; gap:44px;} .sistema-mark{max-width:260px; margin:0 auto;} .prog-item{grid-template-columns:1fr; gap:8px;} .prog-tag{text-align:left;} .masthead{height:150px;} }
+
+  @media (max-width:860px){
+    .sistema-grid{grid-template-columns:1fr; gap:40px;}
+    .feature-grid{grid-template-columns:1fr;}
+    .prog-item{grid-template-columns:1fr; gap:6px;}
+    .prog-tag{text-align:left;}
+    .pillars{grid-template-columns:1fr;}
+  }
 </style>
 </head>
 <body>
 <header><nav>
   <a href="index.html" class="nav-logo"></a>
   <div class="navlinks">
-    <a href="about.html">About</a>
+    <a href="about.html">The System</a>
     <a href="program.html">Program</a>
     <a href="guidance.html">Guidance</a>
     <a href="numerology.html">Numerology</a>
     <a href="experiences.html">Experiences</a>
     <a href="certifications.html">Certifications</a>
-    <a href="blog/index.html">Blog</a>
+    <a href="faq.html">FAQ</a>
     <a href="contact.html">Contact</a>
     <a href="../index.html" style="font-weight:600;">ES</a>
   </div>
@@ -51,25 +106,38 @@
   <button class="navtoggle">☰</button>
 </nav></header>
 
-
 <section class="hero">
+  <div class="hero-emblem"></div>
   <div class="eyebrow">International Institute of the Holographic Code System</div>
   <h1 class="hero-title">Come back to yourself. Understand your story. <em>Expand</em> the way you live.</h1>
-  <p class="hero-sub">Training, guidance and experiences for those who feel called to know themselves deeply and transform their reality from the inside out.</p>
+  <p class="hero-sub">The outer environment is a reflection of the inner world. Learn to observe that reflection consciously and transform your reality at its root.</p>
   <div class="hero-cta">
     <a href="program.html" class="btn-teal">Explore the Program</a>
-    <a href="contact.html" class="btn-line">Talk to a Specialist</a>
+    <a href="https://wa.me/523314701563" target="_blank" class="btn-line">Talk to a Specialist</a>
+  </div>
+  <div class="hero-badges">
+    <div class="hero-badge"><b>3</b>Training stages</div>
+    <div class="hero-badge"><b>264</b>Hours of content</div>
+    <div class="hero-badge"><b>SEP</b>Optional certification</div>
+    <div class="hero-badge"><b>120+</b>Countries of validity</div>
   </div>
 </section>
 
-<section style="background:var(--bg-2); border-top:1px solid var(--line);" id="system">
+<section class="alt" id="sistema">
   <div class="wrap sistema-grid">
-    <div class="sistema-mark"></div>
     <div>
-      <h2 style="font-size:clamp(28px,3.4vw,40px); margin-bottom:22px; line-height:1.2;">The Universe is a hologram. Everything that exists is also inside you.</h2>
-      <p style="color:var(--ink-dim); font-size:16px; margin-bottom:16px; max-width:480px;">The Holographic Code System logically and demonstrably integrates exact sciences, psychological currents and ancestral wisdom: Quantum Physics, Metaphysics, Lacanian Psychology, Jungian Psychology and Hermetic Laws.</p>
-      <p style="color:var(--ink-dim); font-size:16px; margin-bottom:16px; max-width:480px;">A path created by our guide, Isabel Elizalde, to stop perceiving yourself as a victim of circumstances and take on the role of conscious observer of your own reality. Each level begins with a process of deep personal immersion before taking the step toward professional practice.</p>
+      <div class="eyebrow">The System</div>
+      <h2 style="font-size:clamp(26px,3.2vw,36px); margin-bottom:18px; line-height:1.2;">The Universe is a hologram. Everything that exists is also inside you.</h2>
+      <p style="color:var(--ink-dim); font-size:15.5px; margin-bottom:14px;">The System Código Holográfico integra de manera lógica y demostrable ciencias exactas, corrientes psicológicas y sabiduría ancestral: Física Cuántica, Metafísica, Psicología Lacaniana, Psicología Junguiana y Leyes Herméticas.</p>
+      <p style="color:var(--ink-dim); font-size:15.5px;">Created by our guide, Isabel Elizalde, to stop perceiving yourself as a victim of circumstances and take on the role of conscious observer of your own reality.</p>
       <p class="quote">"No one can guide another to where they have not gone themselves."</p>
+      <a href="about.html" class="btn-line" style="margin-top:10px;">Discover the origin of the System</a>
+    </div>
+    <div class="pillars">
+      <div class="pillar"><h4>Observation</h4><p>Recognize the automatic patterns that sustain your experience.</p></div>
+      <div class="pillar"><h4>Understanding</h4><p>Understand the "where from" of what you live, without judgment.</p></div>
+      <div class="pillar"><h4>Liberation</h4><p>Release expectations, attachments and codependencies.</p></div>
+      <div class="pillar"><h4>Transformation</h4><p>Change your relationship with yourself and with life.</p></div>
     </div>
   </div>
 </section>
@@ -77,38 +145,128 @@
 <section>
   <div class="wrap">
     <div class="section-head">
-      <h2>One path. Different experiences. One direction.</h2>
-      <p>Seven ways to go deeper into self-knowledge, wherever you are in your process.</p>
+      <div class="eyebrow">Who it's for</div>
+      <h2>Do you recognize yourself in any of these moments?</h2>
+      <p>The System Código Holográfico acompaña procesos muy distintos, en etapas muy distintas.</p>
     </div>
-    <div class="prog-list">
-      <div class="prog-item"><div class="prog-num">I</div><div><h3><a href="program.html">Specialist Training in Self-Knowledge</a></h3><p>A comprehensive 3-stage program, with optional SEP-CONOCER certification, to guide self-knowledge processes in others.</p></div><div class="prog-tag">Official certification</div></div>
-      <div class="prog-item"><div class="prog-num">II</div><div><h3><a href="guidance.html">Specialized Guidance</a></h3><p>Individual consultations with Self-Knowledge Specialists: spaces for listening, reflection and understanding.</p></div><div class="prog-tag">1:1 Session</div></div>
-      <div class="prog-item"><div class="prog-num">III</div><div><h3><a href="experiences.html#rituals">Rituals and Transformative Experiences</a></h3><p>Experiential spaces that integrate symbolism, introspection and practices of inner connection.</p></div><div class="prog-tag">In-person</div></div>
-      <div class="prog-item"><div class="prog-num">IV</div><div><h3><a href="numerology.html">Holographic Numerology</a></h3><p>Workshops and consultations to identify patterns, talents, challenges and cycles of personal purpose.</p></div><div class="prog-tag">Workshops · Consultations</div></div>
-      <div class="prog-item"><div class="prog-num">V</div><div><h3><a href="experiences.html#circles">Women's Circles</a></h3><p>Spaces for encounter that foster listening and connection with the individual and collective dimension of the feminine.</p></div><div class="prog-tag">Group</div></div>
-      <div class="prog-item"><div class="prog-num">VI</div><div><h3><a href="experiences.html#immersion">Sound Immersion — Fine Attention</a></h3><p>An experience of perception and presence where sound deepens observation. Observe, feel, allow.</p></div><div class="prog-tag">Experiential</div></div>
-      <div class="prog-item"><div class="prog-num">VII</div><div><h3><a href="experiences.html#travels">Experience and Expansion Travels</a></h3><p>National and international trips that integrate spirituality, culture, knowledge and inner exploration.</p></div><div class="prog-tag">Domestic · International</div></div>
+    <div class="who-grid">
+      <div class="who">
+        <div class="num">I</div>
+        <h3>Someone going through a crisis</h3>
+        <p>You want to understand why certain situations repeat in your life and how to break the cycle.</p>
+      </div>
+      <div class="who">
+        <div class="num">II</div>
+        <h3>Someone seeking depth</h3>
+        <p>You sense there's more beyond what you already know about yourself, and you want to explore it with structure.</p>
+      </div>
+      <div class="who">
+        <div class="num">III</div>
+        <h3>Therapists and facilitators</h3>
+        <p>You already guide others and want to integrate a solid methodology, with backing and certification.</p>
+      </div>
+      <div class="who">
+        <div class="num">IV</div>
+        <h3>Someone who wants to teach</h3>
+        <p>You want to train others and build your own professional project under a validated methodology.</p>
+      </div>
     </div>
   </div>
 </section>
 
 <section class="alt">
-  <div class="wrap" style="text-align:center;">
-    <h2 style="font-size:clamp(26px,3vw,34px); margin-bottom:18px;">Institutional backing and official validity</h2>
-    <p style="color:var(--ink-dim); max-width:560px; margin:0 auto 54px; font-size:16px;">Upon graduating, you have the full backing of INISCH — and can opt for certifications with legal recognition. <a href="certifications.html" style="color:var(--teal); text-decoration:underline;">See full detail</a>.</p>
-    <div class="cert-row">
-      <div class="cert-item"><div class="cw">SEP · CONOCER</div><p>Competency Standard EC1375, credential verifiable at RENAP (Mexico).</p></div>
-      <div class="cert-item"><div class="cw">Hague Apostille</div><p>International legal validity in more than 120 countries.</p></div>
-      <div class="cert-item"><div class="cw">STPS · DC-3</div><p>Registration as an External Training Agent, for instructors (Mexico).</p></div>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Outcomes</div>
+      <h2>What transforms in the process</h2>
+      <p>We don't promise magical results. We offer deep understanding and concrete tools.</p>
+    </div>
+    <div class="results-grid">
+      <div class="result"><div class="line"></div><h3>Clarity about your patterns</h3><p>You identify the roots of suffering by recognizing patterns of thought, emotion and behavior.</p></div>
+      <div class="result"><div class="line"></div><h3>Emotional autonomy</h3><p>You consciously manage expectations, attachments and codependency dynamics.</p></div>
+      <div class="result"><div class="line"></div><h3>Forgiveness as liberation</h3><p>You integrate forgiveness as a process of understanding and transformation, not as a moral obligation.</p></div>
+      <div class="result"><div class="line"></div><h3>A new way of loving</h3><p>You transform your perception through Real Love: understanding, compassion and kindness.</p></div>
     </div>
   </div>
 </section>
 
-<div class="wrap" style="padding:80px 32px;">
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Where to begin</div>
+      <h2>Two main paths</h2>
+      <p>Depending on whether you want to live the process, or also learn to guide others.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature">
+        <div class="tag">Entry point</div>
+        <h3>Stage 1: Awakening</h3>
+        <p>Two intensive days to stop seeing yourself as a victim of circumstances and understand the origin of your life patterns.</p>
+        <ul>
+          <li>16 hours · 2 days</li>
+          <li>In-person and online</li>
+          <li>No prerequisites</li>
+          <li>Open to the general public</li>
+        </ul>
+        <div class="spacer"></div>
+        <a href="program.html#stage1" class="btn-teal" style="text-align:center;">See Stage 1</a>
+      </div>
+      <div class="feature">
+        <div class="tag">Professional training</div>
+        <h3>Certified Specialist</h3>
+        <p>Eight months of training to live the process deeply and learn to guide others with methodology, practice and supervision.</p>
+        <ul>
+          <li>128 hours · 8 months</li>
+          <li>Weekly online sessions</li>
+          <li>Intensive in-person practice</li>
+          <li>Optional SEP-CONOCER certification</li>
+        </ul>
+        <div class="spacer"></div>
+        <a href="program.html#stage2" class="btn-teal" style="text-align:center;">See Stage 2</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Everything we offer</div>
+      <h2>One path. Different experiences. One direction.</h2>
+    </div>
+    <div class="prog-list">
+      <div class="prog-item"><div class="prog-num">I</div><div><h3><a href="program.html">Specialist Training</a></h3><p>A comprehensive 3-stage program, with optional SEP-CONOCER certification.</p></div><div class="prog-tag">Official certification</div></div>
+      <div class="prog-item"><div class="prog-num">II</div><div><h3><a href="guidance.html">Specialized Guidance</a></h3><p>Individual consultations: spaces for listening, reflection and understanding.</p></div><div class="prog-tag">1:1 Session</div></div>
+      <div class="prog-item"><div class="prog-num">III</div><div><h3><a href="experiences.html#rituals">Rituals and Experiences</a></h3><p>Symbolism, introspection and practices of inner connection.</p></div><div class="prog-tag">In-person</div></div>
+      <div class="prog-item"><div class="prog-num">IV</div><div><h3><a href="numerology.html">Holographic Numerology</a></h3><p>Patterns, talents, challenges and cycles of personal purpose.</p></div><div class="prog-tag">Workshops · Consultations</div></div>
+      <div class="prog-item"><div class="prog-num">V</div><div><h3><a href="experiences.html#circles">Women's Circles</a></h3><p>Encounter from the individual and collective dimension of the feminine.</p></div><div class="prog-tag">Group</div></div>
+      <div class="prog-item"><div class="prog-num">VI</div><div><h3><a href="experiences.html#immersion">Sound Immersion</a></h3><p>Fine attention: observe, feel and allow through sound.</p></div><div class="prog-tag">Experiential</div></div>
+      <div class="prog-item"><div class="prog-num">VII</div><div><h3><a href="experiences.html#travels">Expansion Travels</a></h3><p>Spirituality, culture and inner exploration, domestic and international.</p></div><div class="prog-tag">Travels</div></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap" style="text-align:center;">
+    <div class="eyebrow">Backing</div>
+    <h2 style="font-size:clamp(24px,3vw,32px); margin-bottom:16px;">Institutional and official validity</h2>
+    <p style="color:var(--ink-dim); max-width:540px; margin:0 auto 46px; font-size:15.5px;">Upon graduating you have the full backing of INISCH, and can opt for certifications with legal recognition. <a href="certifications.html" style="color:var(--teal); text-decoration:underline;">See details</a>.</p>
+    <div class="cert-row">
+      <div class="cert-item"><div class="cw">SEP · CONOCER</div><p>Competency Standard EC1375, credential verifiable at RENAP (Mexico).</p></div>
+      <div class="cert-item"><div class="cw">Hague Apostille</div><p>Legal validity in over 120 countries.</p></div>
+      <div class="cert-item"><div class="cw">STPS · DC-3</div><p>Registration as an External Training Agent.</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap" style="padding:20px 32px 90px;">
   <div class="cta-final">
-    <h2>Your training is already waiting for you in the campus.</h2>
-    <p>Access your online classes, live sessions, materials and your progress by stage.</p>
-    <a href="../campus/login.html" class="btn-teal">Enter the Student Portal</a>
+    <h2>Self-knowledge is not a destination, it's a process.</h2>
+    <p>Write to us and we'll help you identify where to start based on where you are now.</p>
+    <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+      <a href="https://wa.me/523314701563" target="_blank" class="btn-teal">Chat on WhatsApp</a>
+      <a href="faq.html" class="btn-line">See FAQ</a>
+    </div>
   </div>
 </div>
 
@@ -117,9 +275,10 @@
     <div class="foot-logo"><img src="../../assets/logo-inisch.png" alt="INISCH"></div>
     <div class="foot-grid">
       <div class="foot-col"><h4>Program</h4><a href="program.html#stage1">Stage 1 · Awakening</a><a href="program.html#stage2">Stage 2 · Mastery</a><a href="program.html#stage3">Stage 3 · Instructors</a></div>
-      <div class="foot-col"><h4>Institute</h4><a href="about.html">About</a><a href="certifications.html">Certifications</a><a href="faq.html">FAQ</a><a href="blog/index.html">Blog</a></div>
+      <div class="foot-col"><h4>Experiences</h4><a href="numerology.html">Holographic Numerology</a><a href="experiences.html#circles">Women's Circles</a><a href="experiences.html#travels">Expansion Travels</a></div>
+      <div class="foot-col"><h4>Institute</h4><a href="about.html">About</a><a href="certifications.html">Certifications</a><a href="faq.html">FAQ</a><a href="blog/index.html">Blog</a><a href="contact.html">Contact</a></div>
       <div class="foot-col"><h4>Legal</h4><a href="privacy.html">Privacy Notice</a><a href="terms.html">Terms &amp; Conditions</a></div>
-      <div class="foot-col"><h4>Contact</h4><a href="https://wa.me/523314701563" target="_blank">WhatsApp +52 33 1470 1563</a><a href="../campus/login.html">Student Portal</a></div>
+      <div class="foot-col"><h4>Contact</h4><a href="https://wa.me/523314701563" target="_blank">WhatsApp +52 33 1470 1563</a><a href="../campus/login.html">Student Portal</a><a href="en/index.html">Sitio en español</a></div>
     </div>
   </div>
   <div class="foot-bottom">International Institute of the Holographic Code System — INISCH</div>
