@@ -11,7 +11,8 @@
 // ============================================================
 
 (function () {
-  var FUNCTION_URL = window.INISCH_CHAT_FUNCTION_URL || null;
+  var FUNCTION_URL = window.INISCH_CHAT_FUNCTION_URL ||
+                     "https://ygzpxtwozqfrncvqrgqo.functions.supabase.co/sales-chat";
   var history = [];
 
   var bubble = document.createElement('button');
@@ -89,6 +90,7 @@
         body: JSON.stringify({ message: text, history: history }),
       });
       var data = await resp.json();
+      if (data && (data.apoyo || data.consulta)) { setTimeout(function(){ window.INISCH_ofrecerConsulta(!!data.apoyo); }, 400); }
       thinkingEl.remove();
       if (!resp.ok) {
         addMessage(data.error || 'Ocurrio un error. Escribenos por WhatsApp: +52 33 1470 1563.', 'bot');
@@ -110,4 +112,23 @@
     document.body.appendChild(bubble);
     document.body.appendChild(panel);
   });
+
+  /* Si el agente detecta que la persona necesita apoyo, ofrecemos
+     la consulta con Isabel en lugar de seguir vendiendo un curso. */
+  function ofrecerConsulta(urgente){
+    try{
+      var caja = document.querySelector(".cw-msgs") || document.querySelector(".cw-body");
+      if(!caja) return;
+      var d = document.createElement("div");
+      d.style.cssText = "margin:12px 0;padding:14px 16px;border-radius:10px;border:1px solid rgba(216,180,90,.45);background:rgba(216,180,90,.10);font-size:14px;line-height:1.55";
+      d.innerHTML = (urgente
+        ? "<b>Antes que nada, tu bienestar.</b><br>Si estás pasando por un momento crítico, en México puedes llamar a la <b>Línea de la Vida: 800 911 2000</b>, las 24 horas.<br><br>"
+        : "") +
+        "Si quieres un espacio uno a uno, Isabel ofrece consultas de una hora." +
+        '<br><a href="/consulta.html" style="display:inline-block;margin-top:10px;padding:8px 16px;border-radius:14px;border:1px solid var(--gold,#C6A03B);color:var(--gold,#C6A03B);text-decoration:none">Ver agenda</a>';
+      caja.appendChild(d);
+      caja.scrollTop = caja.scrollHeight;
+    }catch(e){}
+  }
+  window.INISCH_ofrecerConsulta = ofrecerConsulta;
 })();

@@ -24,6 +24,7 @@
     'empresas.html'                   : 'en/companies.html',
     'guia-gratuita.html'              : 'en/free-guide.html',
     'faq.html'                        : 'en/faq.html',
+    'consulta.html'                   : 'en/consultation.html',
     'contacto.html'                   : 'en/contact.html',
     'privacidad.html'                 : 'en/privacy.html',
     'terminos.html'                   : 'en/terms.html',
