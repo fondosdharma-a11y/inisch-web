@@ -36,7 +36,10 @@ img{ max-width:100%; display:block; }
 header{ position:sticky; top:0; z-index:50; background:rgba(247,242,231,0.94); backdrop-filter:blur(10px); border-bottom:1px solid var(--line-gold); transition:background-color .25s ease;}
 [data-theme="dark"] header{ background:rgba(13,26,30,0.86); }
 nav{ display:flex; align-items:center; justify-content:space-between; padding:14px 32px; max-width:1180px; margin:0 auto; gap:16px;}
-.nav-logo{ width:46px; height:46px; border-radius:50%; overflow:hidden; background-image:url('../assets/mandala.png'); background-size:cover; background-position:center; background-repeat:no-repeat; border:1px solid var(--line-gold); flex-shrink:0; }
+.nav-logo{ width:48px; height:48px; border-radius:50%; overflow:hidden;
+  background-image:url('../assets/mandala.png');
+  background-size:100% 100%; background-position:center; background-repeat:no-repeat;
+  background-color:#fff; border:1px solid var(--line-gold); flex-shrink:0; }
 .navlinks{ display:flex; gap:26px; font-size:14px; color:var(--ink-dim); flex-wrap:wrap; }
 .navlinks a:hover, .navlinks a.active{ color:var(--teal); }
 .btn-campus{ background:var(--teal-deep); color:var(--bg); padding:10px 20px; border-radius:2px; font-size:13.5px; white-space:nowrap; }
@@ -845,3 +848,12 @@ hr, .rule{ border:none; height:1px; background:linear-gradient(90deg, transparen
   border:1px solid var(--line-gold); color:var(--gold);
   background:rgba(198,160,59,.10); white-space:nowrap;
 }
+
+
+/* ============ LOGO: ajuste fino ============ */
+.foot-logo img{
+  width:64px !important; height:64px !important; border-radius:50%;
+  object-fit:cover; background:#fff; border:1px solid var(--line-gold);
+}
+.foot-logo{ display:flex; align-items:center; gap:14px; }
+.cert-mandala, .page-hero::after{ }
