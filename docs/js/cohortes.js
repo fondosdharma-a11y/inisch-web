@@ -31,7 +31,7 @@ window.INISCH_COHORTES = [
     modalidad: "Presencial y en linea",
     ciudad: "",              // <-- PENDIENTE: escribe la ciudad
     cupo: null,              // <-- opcional: numero de lugares
-    cierre: null,            // <-- opcional: fecha limite de inscripcion (AAAA-MM-DD)
+    cierre: "2026-10-03",    // fecha limite de inscripcion
     nota: ""
   },
 
