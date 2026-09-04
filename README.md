@@ -21,11 +21,11 @@
 ```
 /internal-docs
   plan-maestro-inisch.md           -> Plan y decisiones del proyecto
-  guiones-video-etapa1.md          -> Guiones para grabar los 6 videos de la Etapa 1
+  guiones-video-etapa1.md          -> Guiones para grabar los 6 videos de la Taller Intensivo
 /database/schema.sql               -> Esquema de base de datos para Supabase
 /supabase/functions/
   /stripe-webhook                  -> Activa el acceso del alumno al pagar en Stripe
-  /generate-certificate            -> Genera el PDF de constancia al completar una etapa
+  /generate-certificate            -> Genera el PDF de constancia al completar un programa
   /sales-chat                      -> Agente de IA de ventas/admisiones (Claude)
 /docs                              -> Sitio publicado por GitHub Pages
   CNAME                            -> www.inisch.com
@@ -54,10 +54,10 @@ Botón de tema en todas las páginas: **claro** = "Código Ancestral" (marfil, t
 - [x] Campus construido (login, progreso, certificado PDF automático)
 - [x] Agente de IA de ventas construido (widget + Edge Function)
 - [x] SEO técnico (robots.txt, sitemap.xml)
-- [x] Guiones de los 6 videos de la Etapa 1
+- [x] Guiones de los 6 videos de la Taller Intensivo
 - [ ] Subir 2 imágenes de marca a `/assets` — el logo y el banner aún no se ven en el sitio
 - [ ] Crear proyecto de Supabase y pegar llaves en `docs/campus/js/supabase-config.js`
-- [ ] Grabar los 6 videos de la Etapa 1
+- [ ] Grabar los 6 videos de la Taller Intensivo
 - [ ] Desplegar las 3 Edge Functions (requiere Supabase CLI)
 - [ ] Revisar Aviso de Privacidad / Términos con un abogado
 

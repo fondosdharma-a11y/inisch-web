@@ -33,7 +33,7 @@ Esto desbloquea: campus de alumnos, formulario de contacto real, captura de corr
 ### Paso 2. Mandarme testimonios reales (≈30 min de tu tiempo)
 Es lo que **más convierte** en este mercado y lo único que no puedo inventar.
 
-1. Escoge de 3 a 6 personas que hayan terminado la Etapa 1 o 2 y hayan tenido buena experiencia.
+1. Escoge de 3 a 6 personas que hayan terminado la Taller Intensivo o 2 y hayan tenido buena experiencia.
 2. Escríbeles pidiéndoles autorización. Puedes usar este texto:
 
 > *"Hola [nombre]. Estamos estrenando el sitio del Instituto y me encantaría incluir tu experiencia. ¿Me regalarías 3 o 4 líneas contando cómo llegaste y qué se movió en ti? Si te animas a grabarlo en video de 30 a 60 segundos, mejor todavía. Necesito tu permiso para publicarlo con tu nombre y foto — dime cómo prefieres aparecer."*
@@ -49,9 +49,9 @@ Es lo que **más convierte** en este mercado y lo único que no puedo inventar.
 Hoy el sitio no dice cuándo empieza nada. Eso mata conversiones: la gente se interesa y no encuentra por dónde entrar.
 
 Decide y mándame:
-- Próxima **Etapa 1**: fecha, horario, modalidad (presencial/en línea), ciudad, cupo.
-- Próxima **Etapa 2**: fecha de inicio.
-- Próxima **Etapa 3**: fecha de inicio.
+- Próxima **Taller Intensivo**: fecha, horario, modalidad (presencial/en línea), ciudad, cupo.
+- Próxima **Diplomado**: fecha de inicio.
+- Próxima **Certificación como Instructor**: fecha de inicio.
 - ¿Hay fecha límite de inscripción?
 
 ---
@@ -77,8 +77,8 @@ Busca un abogado con experiencia en comercio electrónico o protección de datos
 
 ### Paso 5. Llenar la política de cancelación (≈20 min)
 Abre `internal-docs/politica-cancelacion-BORRADOR.md`. Tiene **6 decisiones con casillas** que solo tú puedes tomar:
-1. ¿Se reembolsa la Etapa 1 y bajo qué condiciones?
-2. ¿La inscripción de Etapas 2 y 3 es reembolsable?
+1. ¿Se reembolsa la Taller Intensivo y bajo qué condiciones?
+2. ¿La inscripción de Programas 2 y 3 es reembolsable?
 3. ¿Qué pasa si alguien abandona a medio programa?
 4. **¿Cuánto tiempo dura el acceso a las clases grabadas?** ← hoy no está definido en ningún lado
 5. Confirmar el trato de los costos de SEP-CONOCER
@@ -120,7 +120,7 @@ Hoy el botón "Inscribirme" manda a WhatsApp. Funciona, pero pierdes a quien qui
 
 1. Crea cuenta en **stripe.com** con los datos fiscales de INISCH.
 2. Completa la verificación de identidad (te pedirán RFC y datos bancarios).
-3. Crea los productos con los precios reales: Etapa 1, Etapa 2 (inscripción + mensualidad), Etapa 3, curso DC-3.
+3. Crea los productos con los precios reales: Taller Intensivo, Diplomado (inscripción + mensualidad), Certificación como Instructor, curso DC-3.
 4. Copia la **clave publicable** (`pk_live_...`) y mándamela.
 5. La **clave secreta** (`sk_live_...`) **NO me la mandes**: se configura directo en Supabase.
 
@@ -139,7 +139,7 @@ Para que INISCH aparezca en Google Maps y en búsquedas locales.
 
 ---
 
-### Paso 10. Grabar los 6 videos de la Etapa 1 (≈1 día)
+### Paso 10. Grabar los 6 videos de la Taller Intensivo (≈1 día)
 Los guiones ya están escritos en `internal-docs/guiones-video-etapa1.md`.
 
 1. Grábalos con buena luz y buen audio (**el audio importa más que la imagen** — un micrófono de solapa de $500 pesos hace más diferencia que una cámara cara).

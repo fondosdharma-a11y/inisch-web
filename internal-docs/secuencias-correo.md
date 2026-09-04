@@ -17,10 +17,10 @@ Cuerpo: Desarrollar el *"¿desde dónde viene este pensamiento?"*. Cerrar invita
 
 **A3 — Día 5**
 Asunto: Por qué el mismo tipo de persona se repite en tu vida
-Cuerpo: El concepto de personaje/actor. Enlace al artículo del blog. Mención suave de la Etapa 1 al final.
+Cuerpo: El concepto de personaje/actor. Enlace al artículo del blog. Mención suave de la Taller Intensivo al final.
 
 **A4 — Día 9**
-Asunto: Lo que pasa en los dos días de la Etapa 1
+Asunto: Lo que pasa en los dos días de la Taller Intensivo
 Cuerpo: Qué se trabaja, para quién es, qué no es (no es terapia). Fecha de la próxima cohorte + WhatsApp.
 
 ---
@@ -33,7 +33,7 @@ Cuerpo: Repetir el resultado y por qué. Un enlace al programa recomendado.
 
 **B2 — Día 3**
 Asunto: Una duda que aparece siempre
-Cuerpo: Responder la objeción más común según el resultado (precio si fue Etapa 2, "¿esto es para mí sin experiencia previa?" si fue Etapa 1).
+Cuerpo: Responder la objeción más común según el resultado (precio si fue Diplomado, "¿esto es para mí sin experiencia previa?" si fue Taller Intensivo).
 
 **B3 — Día 7**
 Asunto: ¿Seguimos?
@@ -53,7 +53,7 @@ Cuerpo: Aclarar el esquema de pagos. Recordar que quedan lugares limitados **sol
 
 ---
 
-## Secuencia D · Terminó la Etapa 1 (4 correos)
+## Secuencia D · Terminó la Taller Intensivo (4 correos)
 
 **D1 — Día 1**
 Asunto: Lo que sigue después de estos dos días
@@ -65,7 +65,7 @@ Cuerpo: Práctica de atención fina. Sin venta.
 
 **D3 — Día 21**
 Asunto: ¿Y si además pudieras acompañar a otros?
-Cuerpo: Primera mención real de la Etapa 2. Explicar que primero se vive el proceso y después se aprende a facilitarlo.
+Cuerpo: Primera mención real de la Diplomado. Explicar que primero se vive el proceso y después se aprende a facilitarlo.
 
 **D4 — Día 35**
 Asunto: La certificación SEP-CONOCER, explicada sin adornos

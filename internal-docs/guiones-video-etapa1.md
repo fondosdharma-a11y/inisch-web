@@ -1,4 +1,4 @@
-# Guiones de Video — Etapa 1: Iniciación, El Despertar
+# Guiones de Video — Taller Intensivo: Iniciación, El Despertar
 
 *Documento de trabajo interno para producción de contenido. Cada guion corresponde a una leccion ya cargada en la base de datos (`database/schema.sql`). Duracion sugerida: 8-15 minutos por video. Grabar en YouTube o Vimeo en modo "no listado" y pegar el link en la tabla `lessons` (columna `video_url`) desde el Table Editor de Supabase.*
 
@@ -13,7 +13,7 @@
 - Que es el Sistema Codigo Holografico: integra Fisica Cuantica, Metafisica, Psicologia Lacaniana, Psicologia Junguiana y Leyes Hermeticas.
 - La premisa central: el entorno exterior es un reflejo del mundo interno.
 - La frase guía: "Nadie puede guiar a otro a donde no ha llegado primero."
-- Que esperar de la Etapa 1: 16 horas, 2 dias, resultado esperado (comprension amplia de si mismo).
+- Que esperar de la Taller Intensivo: 16 horas, 2 dias, resultado esperado (comprension amplia de si mismo).
 - Como usar la plataforma: donde estan las lecciones, como marcar el progreso, donde se genera el certificado.
 
 ---
@@ -72,13 +72,13 @@
 
 ## Leccion 6 — El Amor Real: comprension, compasion y bondad
 
-**Objetivo:** cerrar la Etapa 1 con el concepto que articula todo el proceso.
+**Objetivo:** cerrar la Taller Intensivo con el concepto que articula todo el proceso.
 
 **Puntos a cubrir:**
 - El amor condicionado (basado en expectativa y apego) vs. el Amor Real.
 - Los 3 componentes: Comprension (ver el "desde donde" de las acciones), Compasion (reconocer que todos actuamos desde nuestros propios patrones), Bondad (elegir una respuesta que no perpetue el dano).
 - El Amor Real como practica, no como emocion espontanea.
-- Cierre de la Etapa 1: invitar al alumno a generar su certificado en el Campus, y presentar brevemente que le espera en la Etapa 2 (Maestria).
+- Cierre de la Taller Intensivo: invitar al alumno a generar su certificado en el Campus, y presentar brevemente que le espera en la Diplomado (Maestria).
 
 *(Contenido base ya redactado en el blog: "Que es el Amor Real en el Codigo Holográfico".)*
 

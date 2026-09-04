@@ -4,7 +4,7 @@
 ---
 
 ## Por qué esto es urgente
-Se cobran mensualidades (Etapa 2: inscripción + 6 pagos; Etapa 3: inscripción + 6 o 9 pagos). Sin una política escrita, cada caso se resuelve por improvisación y el primer conflicto real será desgastante y caro. Conviene definirlo **antes** de la primera inscripción pagada.
+Se cobran mensualidades (Diplomado: inscripción + 6 pagos; Certificación como Instructor: inscripción + 6 o 9 pagos). Sin una política escrita, cada caso se resuelve por improvisación y el primer conflicto real será desgastante y caro. Conviene definirlo **antes** de la primera inscripción pagada.
 
 ---
 
@@ -12,13 +12,13 @@ Se cobran mensualidades (Etapa 2: inscripción + 6 pagos; Etapa 3: inscripción 
 
 Marca la opción que corresponda y con eso se redacta el texto final:
 
-**1. Etapa 1 (pago único, $8,500 MXN)**
+**1. Taller Intensivo (pago único, $8,500 MXN)**
 - [ ] Reembolso total si cancela con más de X días de anticipación
 - [ ] Reembolso parcial (¿qué %?)
 - [ ] Sin reembolso, pero con derecho a cambiar de fecha una vez
 - [ ] Otra: ______
 
-**2. Inscripción de Etapa 2 y 3**
+**2. Inscripción de Diplomado y 3**
 - [ ] La inscripción no es reembolsable en ningún caso
 - [ ] Reembolsable antes del inicio del programa
 - [ ] Otra: ______

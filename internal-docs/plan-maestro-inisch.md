@@ -8,8 +8,8 @@
 ## 1. Diagnóstico de lo que ya existe
 
 - **Marca e identidad conceptual clara**: INISCH, Sistema Código Holográfico, guía Isabel Elizalde.
-- **7 líneas de negocio/producto**: Formación de Especialistas (3 etapas), Acompañamiento Especializado, Rituales y Experiencias, Numerología Holográfica, Círculos de Mujeres, Inmersión Sonora, Viajes de Experiencia.
-- **Programa formativo en 3 etapas** con objetivos, requisitos, duración, precios (MXN/USD) y rutas de certificación oficial (SEP-CONOCER EC1375, RENAP, Apostilla de La Haya, STPS/DC-3).
+- **7 líneas de negocio/producto**: Formación de Especialistas (3 programas), Acompañamiento Especializado, Rituales y Experiencias, Numerología Holográfica, Círculos de Mujeres, Inmersión Sonora, Viajes de Experiencia.
+- **Programa formativo en 3 programas** con objetivos, requisitos, duración, precios (MXN/USD) y rutas de certificación oficial (SEP-CONOCER EC1375, RENAP, Apostilla de La Haya, STPS/DC-3).
 - **Contenido pedagógico extenso** (el Manual del Código Holográfico) convertible directamente en material de curso.
 - **Canal de atención actual**: WhatsApp.
 
@@ -25,7 +25,7 @@
 | Escuelas SEP-CONOCER (IDEC, HDiosaBlanca) | Valor curricular/legal como gancho de venta | Checkout y soporte manual vía WhatsApp | Página dedicada de Certificación y Validez |
 | Kajabi / Thinkific / Teachable / LearnWorlds | Cursos + comunidad + pagos + marketing integrados | Costo recurrente en USD, personalización limitada | Definen el piso tecnológico mínimo a igualar/superar |
 
-**Conclusión:** los competidores directos tienen sitios funcionales pero visualmente genéricos y con poca automatización real. Ninguno combina narrativa de marca profunda + campus por etapas + automatización con IA. Ahí está la diferenciación de INISCH.
+**Conclusión:** los competidores directos tienen sitios funcionales pero visualmente genéricos y con poca automatización real. Ninguno combina narrativa de marca profunda + campus por programas + automatización con IA. Ahí está la diferenciación de INISCH.
 
 ---
 
@@ -35,7 +35,7 @@ Sitio publicado en GitHub Pages (`/docs` del repositorio, rama `main`): https://
 
 1. Inicio — propuesta de valor, 7 líneas de producto, CTA
 2. El Sistema Código Holográfico — historia, fundamentos, Isabel Elizalde
-3. Formación de Especialistas — Etapa 1 / 2 / 3, con precios y requisitos reales
+3. Formación de Especialistas — Taller Intensivo / 2 / 3, con precios y requisitos reales
 4. Acompañamiento Especializado
 5. Numerología Holográfica
 6. Experiencias — Rituales, Círculos de Mujeres, Inmersión Sonora, Viajes
@@ -82,7 +82,7 @@ Se descartaron las plataformas todo-en-uno (Kajabi/Thinkific) por su costo mensu
 **Por qué esta combinación gana en los 3 criterios pedidos:**
 - **Eficacia:** Supabase da en una sola herramienta lo que en WordPress requeriría 4-5 plugins distintos (auth, base de datos, storage, API).
 - **Automatización:** las Edge Functions permiten conectar Stripe → activación de acceso → notificación al alumno sin intervención manual, y son la misma tecnología que usarán después los agentes de IA (sección 5) para leer/escribir datos de alumnos.
-- **Costo:** $0 de infraestructura hasta que haya un volumen real de alumnos pagando, momento en el cual el costo (~$25 USD/mes) es marginal frente al ingreso que ya estaría generando la Etapa 2/3.
+- **Costo:** $0 de infraestructura hasta que haya un volumen real de alumnos pagando, momento en el cual el costo (~$25 USD/mes) es marginal frente al ingreso que ya estaría generando la Diplomado/3.
 
 ### 4.3 Esquema inicial de base de datos (borrador)
 
@@ -99,7 +99,7 @@ certificates    (id, student_id, etapa, issued_at, pdf_url, folio)
 1. Crear proyecto en Supabase (gratuito) — requiere que el usuario cree la cuenta (correo + verificación), Claude puede diseñar el esquema y el código pero no puede crear la cuenta por él.
 2. Definir las tablas del esquema 4.3 y las políticas de seguridad (Row Level Security) para que cada alumno solo vea su propio progreso.
 3. Construir la pantalla de login/registro del campus (frontend estático + supabase-js).
-4. Cargar el catálogo de cursos de la Etapa 1 como piloto.
+4. Cargar el catálogo de cursos de la Taller Intensivo como piloto.
 5. Conectar Stripe Checkout → Edge Function → activación automática de acceso.
 
 ---
@@ -143,7 +143,7 @@ certificates    (id, student_id, etapa, issued_at, pdf_url, folio)
 - [ ] Cuenta de Supabase creada (requiere acción del usuario)
 - [ ] Esquema de base de datos implementado
 - [ ] Login/registro del campus
-- [ ] Catálogo Etapa 1 como piloto
+- [ ] Catálogo Taller Intensivo como piloto
 - [ ] Progreso, certificados, pagos
 - [ ] Comunidad / Círculos
 
@@ -154,7 +154,7 @@ certificates    (id, student_id, etapa, issued_at, pdf_url, folio)
 - [ ] Dashboard analítico
 
 ### Fase 4 — Piloto y lanzamiento
-- [ ] Cohorte piloto Etapa 1
+- [ ] Cohorte piloto Taller Intensivo
 - [ ] Ajustes de UX
 - [ ] Lanzamiento oficial
 

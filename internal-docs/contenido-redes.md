@@ -116,7 +116,7 @@ Lista del Manual sobre el aquí y ahora.
 - "Hice una guía gratuita de 5 pasos para descubrir tu *desde dónde*" → `/guia-gratuita.html`
 - "Calcula tu número de vida gratis" → `/calculadora-numerologia.html`
 - "¿No sabes por dónde empezar? 8 preguntas" → `/test.html`
-- "Próxima Etapa 1: [FECHA]" → `/formacion.html`
+- "Próxima Taller Intensivo: [FECHA]" → `/formacion.html`
 
 ---
 
