@@ -1,13 +1,16 @@
 /* Campus INISCH · trabajador de servicio
    Guarda la interfaz para que el campus abra aunque no haya conexion.
    Los DATOS del alumno nunca se guardan aqui: siempre se piden al servidor. */
-var CACHE = "inisch-campus-v1";
+var CACHE = "inisch-campus-v3";
 var BASE = [
   "/campus/dashboard.html", "/campus/lecciones.html", "/campus/leccion.html",
   "/campus/mi-pelicula.html", "/campus/bitacora.html", "/campus/practica.html",
-  "/campus/certificados.html", "/campus/perfil.html", "/campus/login.html",
+  "/campus/certificados.html", "/campus/certificado.html", "/campus/exportar.html",
+  "/campus/perfil.html", "/campus/login.html",
+  "/campus/instructores.html", "/campus/herramientas.html",
   "/campus/css/campus.css", "/campus/js/campus-core.js",
-  "/campus/js/supabase-config.js", "/assets/mandala.png", "/assets/favicon.png"
+  "/campus/js/supabase-config.js", "/campus/js/instalar.js",
+  "/assets/mandala.png", "/assets/favicon.png"
 ];
 
 self.addEventListener("install", function(e){
