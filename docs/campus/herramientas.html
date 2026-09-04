@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Herramientas — Campus INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0A1518">
+<link rel="stylesheet" href="css/campus.css">
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/campus-core.js"></script>
+<script>
+
+var FUNC = "https://ygzpxtwozqfrncvqrgqo.functions.supabase.co/campus-agent";
+
+Campus.boot("Herramientas", function(c, u){
+  var E = Campus.esc;
+  var zona = document.createElement("div");
+  zona.innerHTML = '<div class="card"><p class="muted tiny">Verificando tus permisos…</p></div>';
+  c.appendChild(zona);
+
+  if (Campus.DEMO){
+    zona.innerHTML = '<div class="card"><b>Herramientas del Instituto</b>' +
+      '<p class="muted" style="margin-top:8px;font-size:15px">En modo demostración no están disponibles. ' +
+      'Requieren sesión real y rol de instructor.</p></div>';
+    return;
+  }
+
+  Campus.esInstructor().then(function(puede){
+    if (!puede){
+      zona.innerHTML = '<div class="card" style="text-align:center;padding:44px 24px">' +
+        '<div style="font-size:30px;opacity:.5;margin-bottom:12px">🔒</div>' +
+        '<b>Sección reservada</b>' +
+        '<p class="muted" style="margin-top:8px;max-width:440px;margin-left:auto;margin-right:auto;font-size:15px">' +
+        'Estas herramientas están disponibles solo para instructores del Instituto.</p>' +
+        '<a class="btn-o btn-sm" style="margin-top:18px" href="dashboard.html">Volver al inicio</a></div>';
+      return;
+    }
+    montar();
+  });
+
+  function montar(){
+    var h = '';
+    h += '<div class="eyebrow">Solo instructores</div>';
+    h += '<h1 style="font-size:clamp(25px,4vw,34px);line-height:1.12;margin:6px 0 8px">Herramientas</h1>';
+    h += '<p class="muted" style="margin-bottom:24px;max-width:620px">Cuatro asistentes para el trabajo interno del Instituto.</p>';
+
+    h += '<div class="pick" style="margin-bottom:24px">' +
+         '<button class="pick-o on" data-t="auditoria">◈ Auditoría del sitio</button>' +
+         '<button class="pick-o" data-t="idiomas">⇄ Sincronía de idiomas</button>' +
+         '<button class="pick-o" data-t="redes">✎ Contenido para redes</button>' +
+         '<button class="pick-o" data-t="instructor">◉ Asistente de instructor</button>' +
+         '</div>';
+    h += '<div id="panel"></div>';
+    zona.innerHTML = h;
+
+    zona.querySelectorAll(".pick-o").forEach(function(b){
+      b.addEventListener("click", function(){
+        zona.querySelectorAll(".pick-o").forEach(function(x){ x.classList.remove("on"); });
+        b.classList.add("on");
+        pintar(b.dataset.t);
+      });
+    });
+    pintar("auditoria");
+  }
+
+  function pintar(t){
+    var p = document.getElementById("panel");
+    if (t === "auditoria")  return auditoria(p);
+    if (t === "idiomas")    return idiomas(p);
+    return agente(p, t);
+  }
+
+  /* ============================================================
+     1. AUDITOR DEL SITIO
+     Recorre las páginas públicas y revisa enlaces, imágenes y SEO.
+     ============================================================ */
+  var PAGINAS = ["index.html","programas.html","taller.html","diplomado.html","instructor.html",
+  "nosotros.html","isabel.html","consulta.html","acompanamiento.html","numerologia.html",
+  "calculadora-numerologia.html","experiencias.html","galeria.html","certificaciones.html",
+  "empresas.html","guia-gratuita.html","faq.html","contacto.html","privacidad.html","terminos.html",
+  "test.html","blog/index.html","blog/amor-real.html","blog/observador-consciente.html",
+  "blog/perdon-transformacion.html","blog/el-control.html","blog/las-expectativas.html",
+  "blog/siete-leyes-universales.html",
+  "en/index.html","en/programs.html","en/intensive-workshop.html","en/specialist-diploma.html",
+  "en/instructor-certification.html","en/about.html","en/isabel.html","en/guidance.html",
+  "en/numerology.html","en/numerology-calculator.html","en/experiences.html","en/gallery.html",
+  "en/certifications.html","en/companies.html","en/free-guide.html","en/faq.html","en/contact.html",
+  "en/privacy.html","en/terms.html","en/quiz.html","en/blog/index.html","en/blog/real-love.html",
+  "en/blog/conscious-observer.html","en/blog/forgiveness-transformation.html","en/blog/control.html",
+  "en/blog/expectations.html","en/blog/seven-universal-laws.html"];
+
+  function auditoria(p){
+    p.innerHTML = '<div class="card"><b>Auditoría del sitio</b>' +
+      '<p class="muted" style="margin-top:7px;font-size:15px">Revisa las ' + PAGINAS.length +
+      ' páginas públicas: que carguen, que no tengan enlaces ni imágenes rotas, y que conserven título, descripción y datos de SEO.</p>' +
+      '<p class="tiny soft" style="margin-top:8px">Tarda entre uno y dos minutos. Se ejecuta desde tu navegador.</p>' +
+      '<div style="margin-top:18px"><button class="btn-p btn-sm" id="a-go">Ejecutar auditoría</button></div>' +
+      '<div id="a-out" style="margin-top:20px"></div></div>';
+
+    document.getElementById("a-go").addEventListener("click", function(){
+      var btn = this; btn.disabled = true; btn.textContent = "Revisando…";
+      correrAuditoria(document.getElementById("a-out"), function(){
+        btn.disabled = false; btn.textContent = "Ejecutar de nuevo";
+      });
+    });
+  }
+
+  function correrAuditoria(out, fin){
+    var base = location.origin + "/";
+    var fallos = [], enlaces = {}, recursos = {}, revisadas = 0;
+    out.innerHTML = '<div class="bar"><i id="a-bar" style="width:0%"></i></div>' +
+                    '<p class="tiny soft" style="margin-top:8px" id="a-st">Empezando…</p>';
+    var bar = document.getElementById("a-bar"), st = document.getElementById("a-st");
+
+    function paso(i){
+      if (i >= PAGINAS.length) return verificarDestinos();
+      var pag = PAGINAS[i];
+      fetch(base + pag, { cache: "no-store" })
+        .then(function(r){
+          revisadas++;
+          if (!r.ok){ fallos.push(["Página no carga", pag, r.status]); return ""; }
+          return r.text();
+        })
+        .then(function(html){
+          if (!html) return;
+          if (!/<title>[^<]{5,}<\/title>/.test(html))       fallos.push(["Sin título", pag, ""]);
+          if (html.indexOf('name="description"') < 0)        fallos.push(["Sin descripción", pag, ""]);
+          if (html.indexOf('rel="canonical"') < 0)           fallos.push(["Sin canonical", pag, ""]);
+          if (html.indexOf('property="og:image"') < 0)       fallos.push(["Sin imagen social", pag, ""]);
+          var h1 = (html.match(/<h1[\s>]/g) || []).length;
+          if (h1 !== 1)                                      fallos.push(["H1 incorrecto (" + h1 + ")", pag, ""]);
+          var imgsSinAlt = (html.match(/<img(?![^>]*\balt=)[^>]*>/g) || []).length;
+          if (imgsSinAlt)                                    fallos.push([imgsSinAlt + " img sin alt", pag, ""]);
+          if (/\bEtapa\s\d|\bStage\s\d/.test(html.replace(/<script[\s\S]*?<\/script>/g,"")))
+                                                             fallos.push(["Dice «Etapa»", pag, ""]);
+          // recolectar destinos
+          var carpeta = pag.indexOf("/") >= 0 ? pag.slice(0, pag.lastIndexOf("/") + 1) : "";
+          (html.match(/(?:href|src)="([^"#?:]+\.(?:html|jpg|png|svg|css|js))"/g) || []).forEach(function(m){
+            var v = m.split('"')[1];
+            if (/^(https?:)?\/\//.test(v)) return;
+            var abs = v.charAt(0) === "/" ? v.slice(1) : normaliza(carpeta + v);
+            (v.slice(-5) === ".html" ? enlaces : recursos)[abs] = pag;
+          });
+        })
+        .catch(function(){ fallos.push(["Error de red", pag, ""]); })
+        .then(function(){
+          var pct = Math.round((i + 1) / PAGINAS.length * 70);
+          bar.style.width = pct + "%";
+          st.textContent = "Revisando páginas… " + (i + 1) + " de " + PAGINAS.length;
+          paso(i + 1);
+        });
+    }
+
+    function normaliza(ruta){
+      var partes = ruta.split("/"), pila = [];
+      partes.forEach(function(x){
+        if (x === "." || x === "") return;
+        if (x === "..") pila.pop(); else pila.push(x);
+      });
+      return pila.join("/");
+    }
+
+    function verificarDestinos(){
+      var todos = Object.keys(enlaces).concat(Object.keys(recursos));
+      var i = 0;
+      function sig(){
+        if (i >= todos.length) return terminar();
+        var d = todos[i];
+        fetch(base + d, { method: "GET", cache: "no-store" })
+          .then(function(r){
+            if (!r.ok) fallos.push([r.status === 404 ? "Destino roto (404)" : "Destino " + r.status,
+                                    d, "desde " + (enlaces[d] || recursos[d])]);
+          })
+          .catch(function(){ fallos.push(["Destino inalcanzable", d, ""]); })
+          .then(function(){
+            i++;
+            bar.style.width = (70 + Math.round(i / todos.length * 30)) + "%";
+            st.textContent = "Verificando destinos… " + i + " de " + todos.length;
+            sig();
+          });
+      }
+      sig();
+    }
+
+    function terminar(){
+      bar.style.width = "100%";
+      var h = "";
+      if (!fallos.length){
+        h = '<div style="text-align:center;padding:26px 10px">' +
+            '<div style="font-size:30px;color:var(--gold);margin-bottom:10px">✓</div>' +
+            '<b>Todo en orden</b><p class="muted tiny" style="margin-top:6px">' +
+            revisadas + ' páginas revisadas, sin problemas detectados.</p></div>';
+      } else {
+        var grupos = {};
+        fallos.forEach(function(f){ (grupos[f[0]] = grupos[f[0]] || []).push(f); });
+        h = '<p style="margin-bottom:14px"><b>' + fallos.length + '</b> ' +
+            (fallos.length === 1 ? 'detalle encontrado' : 'detalles encontrados') +
+            ' en ' + revisadas + ' páginas.</p>';
+        Object.keys(grupos).forEach(function(g){
+          h += '<div class="card" style="margin-bottom:10px">';
+          h += '<b style="font-size:15px">' + E(g) + ' <span class="tiny soft">(' + grupos[g].length + ')</span></b>';
+          h += '<div style="margin-top:8px">';
+          grupos[g].slice(0, 12).forEach(function(f){
+            h += '<p class="tiny soft" style="margin:3px 0">· ' + E(f[1]) + (f[2] ? ' — ' + E(f[2]) : '') + '</p>';
+          });
+          if (grupos[g].length > 12) h += '<p class="tiny soft">· y ' + (grupos[g].length - 12) + ' más</p>';
+          h += '</div></div>';
+        });
+      }
+      document.getElementById("a-out").innerHTML = h;
+      fin();
+    }
+
+    paso(0);
+  }
+
+  /* ============================================================
+     2. SINCRONÍA DE IDIOMAS
+     Compara cada página con su equivalente y avisa si se desfasaron.
+     ============================================================ */
+  var PARES = [
+    ["index.html","en/index.html"],["programas.html","en/programs.html"],
+    ["taller.html","en/intensive-workshop.html"],["diplomado.html","en/specialist-diploma.html"],
+    ["instructor.html","en/instructor-certification.html"],["nosotros.html","en/about.html"],
+    ["isabel.html","en/isabel.html"],["acompanamiento.html","en/guidance.html"],
+    ["numerologia.html","en/numerology.html"],["calculadora-numerologia.html","en/numerology-calculator.html"],
+    ["experiencias.html","en/experiences.html"],["galeria.html","en/gallery.html"],
+    ["certificaciones.html","en/certifications.html"],["empresas.html","en/companies.html"],
+    ["guia-gratuita.html","en/free-guide.html"],["faq.html","en/faq.html"],
+    ["contacto.html","en/contact.html"],["privacidad.html","en/privacy.html"],
+    ["terminos.html","en/terms.html"],["test.html","en/quiz.html"],
+    ["blog/index.html","en/blog/index.html"],["blog/amor-real.html","en/blog/real-love.html"],
+    ["blog/observador-consciente.html","en/blog/conscious-observer.html"],
+    ["blog/perdon-transformacion.html","en/blog/forgiveness-transformation.html"],
+    ["blog/el-control.html","en/blog/control.html"],["blog/las-expectativas.html","en/blog/expectations.html"],
+    ["blog/siete-leyes-universales.html","en/blog/seven-universal-laws.html"],
+    ["consulta.html","en/consultation.html"]
+  ];
+
+  function idiomas(p){
+    p.innerHTML = '<div class="card"><b>Sincronía de idiomas</b>' +
+      '<p class="muted" style="margin-top:7px;font-size:15px">Compara cada página en español con su equivalente en inglés y avisa si una creció, encogió o falta. ' +
+      'No traduce: detecta que se desfasaron para que pidas la actualización.</p>' +
+      '<div style="margin-top:18px"><button class="btn-p btn-sm" id="i-go">Comparar los ' + PARES.length + ' pares</button></div>' +
+      '<div id="i-out" style="margin-top:20px"></div></div>';
+
+    document.getElementById("i-go").addEventListener("click", function(){
+      var btn = this; btn.disabled = true; btn.textContent = "Comparando…";
+      var out = document.getElementById("i-out");
+      out.innerHTML = '<div class="bar"><i id="i-bar" style="width:0%"></i></div>';
+      var bar = document.getElementById("i-bar");
+      var base = location.origin + "/", res = [], i = 0;
+
+      function texto(html){
+        return html.replace(/<script[\s\S]*?<\/script>/g," ")
+                   .replace(/<style[\s\S]*?<\/style>/g," ")
+                   .replace(/<[^>]+>/g," ")
+                   .replace(/\s+/g," ").trim();
+      }
+      function sig(){
+        if (i >= PARES.length) return fin();
+        var par = PARES[i];
+        Promise.all([
+          fetch(base + par[0], {cache:"no-store"}).then(function(r){ return r.ok ? r.text() : null; }).catch(function(){ return null; }),
+          fetch(base + par[1], {cache:"no-store"}).then(function(r){ return r.ok ? r.text() : null; }).catch(function(){ return null; })
+        ]).then(function(x){
+          var a = x[0], b = x[1];
+          if (!a)      res.push(["falta_es", par[0], par[1], 0]);
+          else if (!b) res.push(["falta_en", par[0], par[1], 0]);
+          else {
+            var la = texto(a).length, lb = texto(b).length;
+            var dif = la ? Math.round(Math.abs(la - lb) / la * 100) : 0;
+            if (dif >= 25) res.push([la > lb ? "en_corto" : "es_corto", par[0], par[1], dif]);
+          }
+          i++; bar.style.width = Math.round(i / PARES.length * 100) + "%";
+          sig();
+        });
+      }
+      function fin(){
+        var h;
+        if (!res.length){
+          h = '<div style="text-align:center;padding:24px 10px"><div style="font-size:28px;color:var(--gold)">✓</div>' +
+              '<b style="display:block;margin-top:8px">Los dos idiomas están alineados</b>' +
+              '<p class="muted tiny" style="margin-top:6px">' + PARES.length + ' pares comparados.</p></div>';
+        } else {
+          var ETIQ = { falta_es:"Falta la página en español", falta_en:"Falta la página en inglés",
+                       en_corto:"La versión en inglés quedó corta", es_corto:"La versión en español quedó corta" };
+          h = '<p style="margin-bottom:14px"><b>' + res.length + '</b> de ' + PARES.length + ' pares necesitan atención.</p>';
+          res.forEach(function(r){
+            h += '<div class="card" style="margin-bottom:9px"><b style="font-size:14.5px">' + E(ETIQ[r[0]]) + '</b>' +
+                 '<p class="tiny soft" style="margin-top:5px">' + E(r[1]) + ' ⇄ ' + E(r[2]) +
+                 (r[3] ? ' · ' + r[3] + '% de diferencia' : '') + '</p></div>';
+          });
+          h += '<p class="note" style="margin-top:12px">Una diferencia por debajo del 25% es normal: el inglés suele ser más compacto.</p>';
+        }
+        document.getElementById("i-out").innerHTML = h;
+        btn.disabled = false; btn.textContent = "Comparar de nuevo";
+      }
+      sig();
+    });
+  }
+
+  /* ============================================================
+     3 y 4. AGENTES DE IA (redes / instructor)
+     ============================================================ */
+  var TXT = {
+    redes: {
+      t: "Contenido para redes",
+      d: "Genera publicaciones con la voz del Instituto, a partir del Manual y de los programas reales.",
+      ph: "Ej. Un carrusel sobre las tres raíces del sufrimiento, para Instagram.",
+      ideas: ["Un reel sobre «tu vida es una película»",
+              "Carrusel: 5 expectativas que nos arruinan el día",
+              "Post para anunciar el taller del 10 y 11 de octubre",
+              "Tres ganchos distintos sobre el auténtico perdón"]
+    },
+    instructor: {
+      t: "Asistente de instructor",
+      d: "Ayuda a preparar sesiones, diseñar dinámicas y anticipar preguntas difíciles del grupo.",
+      ph: "Ej. Diseña la apertura de una sesión sobre el control, para un grupo de 12 personas.",
+      ideas: ["Estructura de una sesión de 4 horas sobre el apego",
+              "Una dinámica en tríos para trabajar el «desde dónde»",
+              "Cómo explico las Leyes Herméticas a un grupo escéptico",
+              "Qué hago si alguien se quiebra a media sesión"]
+    }
+  };
+
+  function agente(p, tipo){
+    var T = TXT[tipo];
+    p.innerHTML =
+      '<div class="card"><b>' + E(T.t) + '</b>' +
+      '<p class="muted" style="margin-top:7px;font-size:15px">' + E(T.d) + '</p>' +
+      '<div class="pick" style="margin-top:14px" id="g-ideas">' +
+        T.ideas.map(function(i){ return '<button class="pick-o tiny">' + E(i) + '</button>'; }).join("") +
+      '</div>' +
+      '<textarea class="fld fld-t" id="g-msg" rows="3" style="margin-top:14px" placeholder="' + E(T.ph) + '"></textarea>' +
+      '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px">' +
+        '<button class="btn-p btn-sm" id="g-go">Generar</button>' +
+        '<button class="btn-o btn-sm" id="g-copy" style="display:none">Copiar</button>' +
+        '<span class="tiny soft" id="g-st"></span></div>' +
+      '</div><div id="g-out" style="margin-top:16px"></div>';
+
+    p.querySelectorAll("#g-ideas .pick-o").forEach(function(b){
+      b.addEventListener("click", function(){ document.getElementById("g-msg").value = b.textContent; });
+    });
+
+    var historial = [];
+    document.getElementById("g-go").addEventListener("click", function(){
+      var msg = document.getElementById("g-msg").value.trim();
+      var st = document.getElementById("g-st"), out = document.getElementById("g-out");
+      if (!msg){ st.textContent = "Escribe qué necesitas."; return; }
+      var btn = this; btn.disabled = true; st.textContent = "Generando…";
+
+      supabaseClient.auth.getSession().then(function(s){
+        var token = s && s.data && s.data.session ? s.data.session.access_token : null;
+        return fetch(FUNC, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+          body: JSON.stringify({ tipo: tipo, message: msg, history: historial })
+        });
+      }).then(function(r){ return r.json(); }).then(function(d){
+        btn.disabled = false; st.textContent = "";
+        var texto = d.reply || d.error || "Sin respuesta.";
+        historial.push({ role:"user", content: msg });
+        historial.push({ role:"assistant", content: texto });
+        out.innerHTML = '<div class="card"><div style="white-space:pre-wrap;font-size:15px;line-height:1.7">' +
+                        E(texto) + '</div></div>';
+        var cp = document.getElementById("g-copy");
+        cp.style.display = "";
+        cp.onclick = function(){
+          navigator.clipboard.writeText(texto).then(function(){ Campus.toast("Copiado"); });
+        };
+      }).catch(function(e){
+        console.error(e); btn.disabled = false; st.textContent = "No se pudo generar.";
+      });
+    });
+  }
+});
+
+</script>
+<script src="js/instalar.js"></script>
+</body>
+</html>

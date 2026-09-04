@@ -210,7 +210,8 @@
     { lbl:"Mi cuenta" },
     { h:"certificados.html", ic:"✦", t:"Certificados" },
     { h:"perfil.html",     ic:"☺", t:"Mi perfil" },
-    { h:"instructores.html", ic:"◈", t:"Instructores", soloInstructor:true }
+    { h:"instructores.html", ic:"◈", t:"Instructores", soloInstructor:true },
+    { h:"herramientas.html", ic:"⚙", t:"Herramientas", soloInstructor:true }
   ];
 
   function buildChrome(pageTitle){
