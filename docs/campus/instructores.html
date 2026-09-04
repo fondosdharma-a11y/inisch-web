@@ -92,7 +92,7 @@ Campus.boot("Panel de instructores", function(c, u){
         vis.forEach(function(a){
           var hechas = (porAlumno[a.id]||[]).length;
           var pct = Math.round(hechas/total*100);
-          var et = (inscPor[a.id]||[]).map(function(e){ return "Etapa " + e.etapa + " (" + e.status + ")"; }).join(" · ");
+          var et = (inscPor[a.id]||[]).map(function(e){ return "Programa " + e.etapa + " (" + e.status + ")"; }).join(" · ");
           s += '<div class="card" style="margin-bottom:12px">';
           s += '<div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">';
           s += '<div class="avatar" style="width:42px;height:42px;font-size:15px">' + E(Campus.initials(a.full_name)) + '</div>';
