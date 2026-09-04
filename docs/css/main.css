@@ -787,3 +787,61 @@ hr, .rule{ border:none; height:1px; background:linear-gradient(90deg, transparen
   .ed-dias{ font-size:34px; }
   .ed-btns .btn-teal, .ed-btns .btn-line{ flex:1; text-align:center; }
 }
+
+
+/* ============ SELLOS DE CERTIFICACION OFICIAL ============ */
+.sello{
+  display:flex; gap:18px; align-items:center; flex-wrap:wrap;
+  padding:22px 26px; border-radius:var(--r);
+  border:1.5px solid var(--gold);
+  background:
+    radial-gradient(520px 200px at 12% 0%, rgba(198,160,59,.14), transparent 70%),
+    var(--bg-2);
+  position:relative; overflow:hidden;
+}
+[data-theme="dark"] .sello{
+  background:
+    radial-gradient(520px 200px at 12% 0%, rgba(216,180,90,.18), transparent 70%),
+    linear-gradient(160deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
+  backdrop-filter:blur(6px);
+}
+.sello::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(115deg, transparent 40%, rgba(255,255,255,.07) 50%, transparent 60%);
+}
+.sello-ic{
+  flex-shrink:0; width:72px; height:72px; border-radius:50%;
+  border:2px solid var(--gold);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  background:var(--bg); text-align:center; line-height:1.05;
+}
+.sello-ic b{ font-family:'Space Grotesk',sans-serif; font-size:15px; color:var(--gold); letter-spacing:.02em; }
+.sello-ic span{ font-size:8.5px; letter-spacing:.1em; color:var(--ink-dim); margin-top:3px; }
+.sello-txt{ flex:1; min-width:230px; }
+.sello-txt .s-tag{
+  display:inline-block; font-size:10.5px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--gold); border:1px solid var(--line-gold); border-radius:12px;
+  padding:3px 10px; margin-bottom:9px;
+}
+.sello-txt b{ display:block; font-size:17px; margin-bottom:6px; }
+.sello-txt p{ color:var(--ink-dim); font-size:14.5px; line-height:1.6; margin:0; }
+.sello-lista{ display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
+
+/* fila compacta, para usar dentro de una ficha de precios */
+.sello-mini{
+  display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+  padding:13px 16px; border-radius:8px; margin:14px 0;
+  border:1px solid var(--line-gold); background:rgba(198,160,59,.09);
+}
+[data-theme="dark"] .sello-mini{ background:rgba(216,180,90,.10); }
+.sello-mini .sm-ic{ font-size:17px; color:var(--gold); flex-shrink:0; }
+.sello-mini .sm-txt{ flex:1; min-width:190px; font-size:14px; color:var(--ink-dim); line-height:1.55; }
+.sello-mini .sm-txt b{ color:var(--ink); }
+
+/* insignia en linea, para el texto corrido */
+.oficial{
+  display:inline-flex; align-items:center; gap:6px;
+  padding:2px 9px; border-radius:11px; font-size:12.5px; font-weight:500;
+  border:1px solid var(--line-gold); color:var(--gold);
+  background:rgba(198,160,59,.10); white-space:nowrap;
+}
