@@ -78,9 +78,56 @@ Campus.boot("Panel de instructores", function(c, u){
            'de tus alumnos son privados y <b>no son accesibles para nadie</b>, ni siquiera para ti. ' +
            'La base de datos lo impide técnicamente, no solo por acuerdo.</div></div>';
 
+
+      /* ---- control de accesos al campus ---- */
+      h += '<div class="pick" style="margin:26px 0 18px">' +
+           '<button class="pick-o on" data-v="avance">Avance</button>' +
+           '<button class="pick-o" data-v="accesos">Accesos al campus</button>' +
+           '</div>';
       h += '<div class="buscador"><input class="fld" id="iq" placeholder="Buscar alumno por nombre…" autocomplete="off"></div>';
       h += '<div id="lista"></div>';
       zona.innerHTML = h;
+
+      var vista = "avance";
+      zona.querySelectorAll('.pick .pick-o').forEach(function(b){
+        b.addEventListener("click", function(){
+          zona.querySelectorAll('.pick .pick-o').forEach(function(x){ x.classList.remove("on"); });
+          b.classList.add("on"); vista = b.dataset.v;
+          pintar(document.getElementById("iq").value);
+        });
+      });
+
+      function activo(id){
+        return (inscPor[id]||[]).some(function(e){ return e.status === "active" || e.status === "completed"; });
+      }
+
+      function cambiarAcceso(id, dar, boton){
+        boton.disabled = true; boton.textContent = dar ? "Activando…" : "Quitando…";
+        var previa = (inscPor[id]||[]).filter(function(e){ return e.etapa === 1; })[0];
+        var p;
+        if (dar){
+          p = previa
+            ? supabaseClient.from("enrollments").update({ status:"active", started_at:new Date().toISOString() })
+                .eq("student_id", id).eq("etapa", 1)
+            : supabaseClient.from("enrollments").insert({
+                student_id:id, etapa:1, status:"active", started_at:new Date().toISOString(),
+                nota:"Acceso activado manualmente por un instructor tras confirmar el pago." });
+        } else {
+          p = supabaseClient.from("enrollments").update({ status:"cancelled" })
+                .eq("student_id", id).eq("etapa", 1);
+        }
+        p.then(function(r){
+          if (r.error) throw r.error;
+          if (previa) previa.status = dar ? "active" : "cancelled";
+          else (inscPor[id] = inscPor[id] || []).push({ student_id:id, etapa:1, status:"active" });
+          Campus.toast(dar ? "Acceso activado" : "Acceso retirado");
+          pintar(document.getElementById("iq").value);
+        }).catch(function(e){
+          console.error(e); boton.disabled = false;
+          boton.textContent = dar ? "Activar acceso" : "Quitar acceso";
+          Campus.toast("No se pudo guardar.");
+        });
+      }
 
       function pintar(filtro){
         var f = (filtro||"").toLowerCase().trim();
@@ -89,6 +136,36 @@ Campus.boot("Panel de instructores", function(c, u){
         });
         var s = "";
         if (!vis.length){ s = '<div class="card"><p class="muted">Sin resultados.</p></div>'; }
+
+        if (vista === "accesos"){
+          var conAcc = vis.filter(function(a){ return activo(a.id); }).length;
+          s = '<div class="nudge" style="margin-bottom:18px"><span class="n-ic">🔑</span>' +
+              '<div class="n-txt"><b>' + conAcc + ' de ' + vis.length + '</b> tienen el campus abierto. ' +
+              'Activa a quien ya pagó el Taller Intensivo y retira a quien no corresponda.</div></div>';
+          vis.forEach(function(a){
+            var ok = activo(a.id);
+            var e1 = (inscPor[a.id]||[]).filter(function(x){ return x.etapa === 1; })[0];
+            s += '<div class="card" style="margin-bottom:11px">';
+            s += '<div style="display:flex;gap:13px;align-items:center;flex-wrap:wrap">';
+            s += '<div class="avatar" style="width:40px;height:40px;font-size:14px">' + E(Campus.initials(a.full_name)) + '</div>';
+            s += '<div style="flex:1;min-width:180px"><b>' + E(a.full_name || "Sin nombre") + '</b>';
+            s += '<p class="tiny soft" style="margin-top:3px">' +
+                 (ok ? '<span style="color:var(--ok)">● Campus abierto</span>' : '<span style="color:var(--ink-soft)">○ Sin acceso</span>') +
+                 (e1 && e1.nota && e1.nota.indexOf("antes de exigir") >= 0 ? ' · <span style="color:var(--warn)">revisar: cuenta antigua</span>' : '') +
+                 '</p></div>';
+            s += '<button class="' + (ok ? "btn-o" : "btn-p") + ' btn-sm" data-acc="' + a.id + '" data-dar="' + (ok ? "0" : "1") + '">' +
+                 (ok ? "Quitar acceso" : "Activar acceso") + '</button>';
+            s += '</div></div>';
+          });
+          document.getElementById("lista").innerHTML = s;
+          document.querySelectorAll("[data-acc]").forEach(function(b){
+            b.addEventListener("click", function(){
+              cambiarAcceso(b.dataset.acc, b.dataset.dar === "1", b);
+            });
+          });
+          return;
+        }
+
         vis.forEach(function(a){
           var hechas = (porAlumno[a.id]||[]).length;
           var pct = Math.round(hechas/total*100);

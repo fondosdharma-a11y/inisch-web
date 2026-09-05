@@ -312,7 +312,19 @@
           for (var i=0;i<e2.length;i++) e2[i].style.display = "";
         }).catch(function(){});
       }
-      try { render(content, u); } catch(e){ console.error(e); toast("Ocurrió un error al cargar."); }
+
+      /* Puerta de acceso: sin inscripción activa no se entra.
+         La página de perfil queda abierta para que pueda ver sus datos y salir. */
+      var abierta = (page === "perfil.html");
+      tieneAcceso().then(function(ok){
+        if (ok === false && !abierta){
+          var lat = document.querySelector(".side nav");
+          if (lat) lat.style.display = "none";
+          pantallaSinAcceso(content);
+          return;
+        }
+        try { render(content, u); } catch(e){ console.error(e); toast("Ocurrió un error al cargar."); }
+      });
     });
   }
 
@@ -350,6 +362,41 @@
     var d = parseInt(p[2],10), m = parseInt(p[1],10)-1, y = p[0];
     return en ? (MM[m] + " " + d + ", " + y) : (d + " de " + M[m] + " de " + y);
   }
+  /* ¿Tiene inscripción activa o es instructor? */
+  function tieneAcceso(){
+    if (DEMO) return Promise.resolve(true);
+    return supabaseClient.rpc("tiene_acceso")
+      .then(function(r){ if (r.error) throw r.error; return !!r.data; })
+      .catch(function(e){
+        console.warn("No se pudo verificar el acceso:", e);
+        return null;   // null = no pudimos saber; no bloqueamos por un fallo de red
+      });
+  }
+
+  function pantallaSinAcceso(content){
+    content.innerHTML =
+      '<div class="card" style="text-align:center;padding:clamp(40px,7vw,64px) 26px;max-width:620px;margin:0 auto">' +
+        '<img src="../assets/mandala.png" alt="" style="width:72px;height:72px;border-radius:50%;margin-bottom:22px">' +
+        '<h1 style="font-size:clamp(22px,4vw,28px);line-height:1.2;margin-bottom:14px">Tu cuenta está creada</h1>' +
+        '<p class="muted" style="font-size:15.5px;line-height:1.7;margin-bottom:8px">' +
+          'El campus se abre al confirmarse tu inscripción al <b>Taller Intensivo</b>. ' +
+          'Ahí encontrarás tus lecciones, Mi Película, la Bitácora y la Práctica.</p>' +
+        '<p class="muted" style="font-size:15.5px;line-height:1.7">' +
+          'Si ya pagaste, escríbenos y lo activamos enseguida: a veces tarda unas horas.</p>' +
+        '<div style="display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin-top:26px">' +
+          '<a class="btn-p btn-sm" href="../taller.html">Ver el Taller Intensivo</a>' +
+          '<a class="btn-o btn-sm" target="_blank" rel="noopener" ' +
+            'href="https://wa.me/523314701563?text=' +
+            encodeURIComponent("Hola, ya pagué el Taller Intensivo y me gustaría activar mi acceso al campus. Mi correo es: " + (USER.email||"")) +
+            '">Ya pagué, activar mi acceso</a>' +
+        '</div>' +
+        '<p class="tiny soft" style="margin-top:24px">Sesión iniciada como ' + esc(USER.email||"") + ' · ' +
+          '<a href="#" id="sa-out" style="color:var(--gold)">salir</a></p>' +
+      '</div>';
+    var o = document.getElementById("sa-out");
+    if (o) o.addEventListener("click", function(e){ e.preventDefault(); signOut(); });
+  }
+
   function esInstructor(){
     if (DEMO) return false;
     return supabaseClient.from("profiles").select("role").eq("id", USER.id).single()
