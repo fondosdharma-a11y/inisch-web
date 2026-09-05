@@ -15,6 +15,8 @@ window.INISCH_PAGOS = {
   diplomado_inscripcion:  "https://buy.stripe.com/3cI28s2Fqd5C5MVeoZgEg01",
   diplomado_mensualidad:  "https://buy.stripe.com/5kQeVe1Bme9Gb7fa8JgEg02",
   instructor_inscripcion: "https://buy.stripe.com/eVq7sMfsc4z63EN0y9gEg05",
+  retiro_tulum_reserva:   "https://buy.stripe.com/cNicN60xi3v23EN1CdgEg06",
+  retiro_tulum_total:     "https://buy.stripe.com/5kQ7sM4Ny0iQgrzdkVgEg07",
   instructor_mensualidad: "https://buy.stripe.com/3cIaEYcg0e9Gejrgx7gEg00"
 };
 
