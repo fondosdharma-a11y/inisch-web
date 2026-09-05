@@ -165,13 +165,37 @@
 
   /* Ejecuta varias promesas sin que una sola falla tumbe la pantalla.
      Devuelve el valor por defecto de la que falle. */
+  var FALLOS = [];
   function todas(lista, pordefecto){
     return Promise.all(lista.map(function(p, i){
       return Promise.resolve(p).catch(function(e){
+        var m = (e && (e.message || e.error_description || e.hint)) || String(e);
         console.warn("Consulta fallida (" + i + "):", e);
+        FALLOS.push(m);
+        avisarFallo();
         return (pordefecto && pordefecto[i] !== undefined) ? pordefecto[i] : [];
       });
     }));
+  }
+
+  /* Si algo falla al leer datos, el alumno debe enterarse.
+     Antes la pestaña se quedaba en "Cargando..." para siempre. */
+  var avisoPuesto = false;
+  function avisarFallo(){
+    if (avisoPuesto || !FALLOS.length) return;
+    avisoPuesto = true;
+    setTimeout(function(){
+      var c = document.querySelector(".content");
+      if (!c) return;
+      var d = el("div","nudge");
+      d.style.marginBottom = "18px";
+      d.innerHTML = '<span class="n-ic">&#9888;</span><div class="n-txt">' +
+        '<b>No pudimos cargar parte de tu informacion.</b> ' +
+        'Puede ser un problema de conexion. Recarga la pagina; si sigue igual, escribenos por WhatsApp al +52 33 1470 1563.' +
+        '<br><span class="tiny soft">Detalle: ' + esc(FALLOS[0]).slice(0,160) + '</span></div>' +
+        '<button class="btn-o btn-sm" onclick="location.reload()">Recargar</button>';
+      c.insertBefore(d, c.firstChild);
+    }, 400);
   }
 
   function signOut(){
@@ -405,7 +429,20 @@
           pantallaSinAcceso(content);
           return;
         }
-        try { render(content, u); } catch(e){ console.error(e); toast("Ocurrió un error al cargar."); }
+        try {
+          render(content, u);
+        } catch(e){
+          console.error("Error al dibujar la pantalla:", e);
+          var d = el("div","card");
+          d.innerHTML = '<b>No pudimos mostrar esta seccion</b>' +
+            '<p class="muted" style="margin-top:8px;font-size:15px">Ocurrio un error al construir la pagina. ' +
+            'Recarga para intentarlo de nuevo.</p>' +
+            '<p class="tiny soft" style="margin-top:8px">Detalle: ' + esc(String(e && e.message || e)).slice(0,200) + '</p>' +
+            '<div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">' +
+            '<button class="btn-p btn-sm" onclick="location.reload()">Recargar</button>' +
+            '<a class="btn-o btn-sm" href="dashboard.html">Ir al inicio</a></div>';
+          content.appendChild(d);
+        }
       });
     });
   }
@@ -480,7 +517,7 @@
   }
 
   function esInstructor(){
-    if (DEMO) return false;
+    if (DEMO) return Promise.resolve(false);
     return supabaseClient.from("profiles").select("role").eq("id", USER.id).single()
       .then(function(r){ return !!(r.data && (r.data.role === "instructor" || r.data.role === "admin")); })
       .catch(function(){ return false; });
