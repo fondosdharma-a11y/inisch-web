@@ -63,6 +63,92 @@
   </div>
 </section>
 
+<section class="wrap-narrow" style="padding:56px 32px 20px;">
+  <div style="border:1px solid var(--line-gold); border-radius:6px; padding:34px; background:var(--bg-2);">
+    <h2 style="font-size:23px; margin-bottom:8px;">Send us your message</h2>
+    <p style="color:var(--ink-dim); font-size:15.5px; margin-bottom:24px;">Fill in the details and WhatsApp will open with your message already written, ready to send.</p>
+
+    <div style="margin-bottom:17px;">
+      <label for="f-nombre" style="display:block; font-size:14px; color:var(--ink-dim); margin-bottom:6px;">Full name</label>
+      <input id="f-nombre" type="text" autocomplete="name" style="width:100%; padding:12px 14px; border:1px solid var(--line-gold); border-radius:4px; background:var(--bg); color:var(--ink); font-family:inherit; font-size:15.5px;">
+    </div>
+
+    <div style="margin-bottom:17px;">
+      <label for="f-interes" style="display:block; font-size:14px; color:var(--ink-dim); margin-bottom:6px;">What are you interested in?</label>
+      <select id="f-interes" style="width:100%; padding:12px 14px; border:1px solid var(--line-gold); border-radius:4px; background:var(--bg); color:var(--ink); font-family:inherit; font-size:15.5px;">
+        <option value="">Select an option</option>
+        <option>Intensive Workshop</option>
+        <option>Self-Knowledge Specialist Diploma</option>
+        <option>SCH Instructor Certification</option>
+        <option>SEP-CONOCER Certification</option>
+        <option>Holographic Numerology</option>
+        <option>Individual guidance</option>
+        <option>Women's Circles</option>
+        <option>Sound Immersion</option>
+        <option>Expansion Journeys</option>
+        <option>Corporate program</option>
+        <option>Other</option>
+      </select>
+    </div>
+
+    <div style="margin-bottom:17px;">
+      <label for="f-ciudad" style="display:block; font-size:14px; color:var(--ink-dim); margin-bottom:6px;">City or country <span style="opacity:.7;">(optional)</span></label>
+      <input id="f-ciudad" type="text" style="width:100%; padding:12px 14px; border:1px solid var(--line-gold); border-radius:4px; background:var(--bg); color:var(--ink); font-family:inherit; font-size:15.5px;">
+    </div>
+
+    <div style="margin-bottom:22px;">
+      <label for="f-msg" style="display:block; font-size:14px; color:var(--ink-dim); margin-bottom:6px;">Cu&eacute;ntanos m&aacute;s <span style="opacity:.7;">(optional)</span></label>
+      <textarea id="f-msg" rows="4" style="width:100%; padding:12px 14px; border:1px solid var(--line-gold); border-radius:4px; background:var(--bg); color:var(--ink); font-family:inherit; font-size:15.5px; resize:vertical;"></textarea>
+    </div>
+
+    <button class="btn-teal" style="width:100%; border:none; cursor:pointer;" onclick="enviarWA()">Open WhatsApp with my message</button>
+    <p class="note" style="margin-top:14px;">Tus datos no se guardan en este sitio. El formulario solo arma el texto y lo abre en tu WhatsApp: t&uacute; decides si lo env&iacute;as.</p>
+  </div>
+</section>
+
+<section class="wrap-narrow" style="padding:24px 32px 70px;">
+  <div class="card-grid">
+    <div class="card">
+      <h3>WhatsApp directo</h3>
+      <p>La forma m&aacute;s r&aacute;pida de contactarnos.</p>
+      <p style="margin-top:10px;"><a href="https://wa.me/523314701563" target="_blank" style="color:var(--teal); font-weight:500;">+52 33 1470 1563</a></p>
+    </div>
+    <div class="card">
+      <h3>&iquest;A&uacute;n no sabes qu&eacute; te conviene?</h3>
+      <p>Responde 8 preguntas y te orientamos sobre el mejor punto de partida.</p>
+      <p style="margin-top:10px;"><a href="test.html" style="color:var(--teal); font-weight:500;">Hacer el test &rarr;</a></p>
+    </div>
+    <div class="card">
+      <h3>Empieza sin costo</h3>
+      <p>Una gu&iacute;a de 5 pasos para identificar el origen de tus patrones.</p>
+      <p style="margin-top:10px;"><a href="guia-gratuita.html" style="color:var(--teal); font-weight:500;">Ver la gu&iacute;a &rarr;</a></p>
+    </div>
+    <div class="card">
+      <h3>Empresas</h3>
+      <p>Programas de bienestar para equipos, con constancias DC-3.</p>
+      <p style="margin-top:10px;"><a href="empresas.html" style="color:var(--teal); font-weight:500;">Ver propuesta &rarr;</a></p>
+    </div>
+  </div>
+</section>
+
+<script>
+function enviarWA(){
+  var n = document.getElementById('f-nombre').value.trim();
+  var i = document.getElementById('f-interes').value;
+  var c = document.getElementById('f-ciudad').value.trim();
+  var m = document.getElementById('f-msg').value.trim();
+  if (!n){ alert('Please write your name para continuar.'); return; }
+  if (!i){ alert('Selecciona en qu\u00e9 est\u00e1s interesado.'); return; }
+  var txt = 'Hola, soy ' + n + '.';
+  txt += '\nMe interesa: ' + i + '.';
+  if (c) txt += '\nEscribo desde: ' + c + '.';
+  if (m) txt += '\n\n' + m;
+  txt += '\n\n(Enviado desde inisch.com)';
+  window.open('https://wa.me/523314701563?text=' + encodeURIComponent(txt), '_blank');
+}
+</script>
+
+
 <footer>
   <div class="foot-top">
     <div class="foot-logo"><img src="../assets/mandala.png" alt="INISCH" loading="lazy" decoding="async"><span class="fl-txt">INISCH</span></div>
