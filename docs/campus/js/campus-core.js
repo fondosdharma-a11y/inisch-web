@@ -49,37 +49,118 @@
     u.demo = true; return u;
   }
 
+  /* ------------------------------------------------------------
+     ¿La URL trae una respuesta de inicio de sesión social?
+     Google devuelve ?code= (PKCE) o #access_token= (implícito).
+     La biblioteca necesita un instante para canjearlo por sesión.
+     ------------------------------------------------------------ */
+  function hayRespuestaOAuth(){
+    return /[?&](code|error|error_description)=/.test(location.search) ||
+           /[#&](access_token|error|error_description)=/.test(location.hash);
+  }
+
+  /* Pide la sesión y, si venimos de un proveedor social, espera a que
+     la biblioteca termine de canjear el código antes de rendirse. */
+  function obtenerSesion(intentos){
+    return supabaseClient.auth.getSession().then(function(r){
+      var s = r && r.data && r.data.session;
+      if (s) return s;
+      if (intentos > 0){
+        return new Promise(function(ok){ setTimeout(ok, 350); })
+                 .then(function(){ return obtenerSesion(intentos - 1); });
+      }
+      return null;
+    });
+  }
+
+  /* Corta un bucle de redirección en seco.
+     Si rebotamos entre campus y login 3 veces en 20 segundos, paramos
+     y explicamos qué pasa, en vez de dejar la pestaña dando vueltas. */
+  function irALogin(){
+    var CLAVE = "inisch-rebote";
+    try {
+      var d = JSON.parse(sessionStorage.getItem(CLAVE) || '{"n":0,"t":0}');
+      var ahora = Date.now();
+      if (ahora - d.t > 20000) d = { n:0, t:ahora };
+      d.n++; d.t = ahora;
+      sessionStorage.setItem(CLAVE, JSON.stringify(d));
+      if (d.n >= 3){ sessionStorage.removeItem(CLAVE); return pantallaBucle(); }
+    } catch(e){}
+    location.replace("login.html");
+  }
+
+  function pantallaBucle(){
+    document.body.innerHTML =
+      '<div style="max-width:520px;margin:14vh auto;padding:0 26px;text-align:center;' +
+      'font-family:system-ui,-apple-system,sans-serif;color:#C3D5D9">' +
+        '<div style="font-size:34px;margin-bottom:16px">⟳</div>' +
+        '<h1 style="font-size:23px;margin-bottom:14px;color:#F2F8F9">No pudimos abrir tu sesión</h1>' +
+        '<p style="line-height:1.65;font-size:15.5px">Tu sesión quedó en un estado inconsistente y el campus ' +
+        'entró en un ciclo. Vamos a limpiarla para que puedas entrar de nuevo.</p>' +
+        '<button id="bc-limpiar" style="margin-top:24px;padding:12px 24px;border-radius:22px;cursor:pointer;' +
+        'border:1px solid #D8B45A;background:transparent;color:#D8B45A;font-size:15px">Limpiar y volver a entrar</button>' +
+        '<p style="margin-top:22px;font-size:13px;opacity:.7">Si vuelve a pasar, escríbenos por WhatsApp al +52 33 1470 1563.</p>' +
+      '</div>';
+    document.body.style.background = "#0A1518";
+    document.getElementById("bc-limpiar").addEventListener("click", function(){
+      try {
+        Object.keys(localStorage).forEach(function(k){
+          if (k.indexOf("sb-") === 0 || k.indexOf("supabase") >= 0) localStorage.removeItem(k);
+        });
+        sessionStorage.clear();
+      } catch(e){}
+      if (typeof supabaseClient !== "undefined" && supabaseClient.auth){
+        supabaseClient.auth.signOut().finally(function(){ location.replace("login.html"); });
+      } else location.replace("login.html");
+    });
+  }
+
   function resolveUser(cb){
     if (DEMO){ USER = demoUser(); return cb(USER); }
 
+    /* cb se llama UNA sola vez y FUERA de la cadena de promesas.
+       Antes, un error al dibujar la pantalla caía en el .catch de abajo,
+       se interpretaba como "no hay sesión" y mandaba al login. El login
+       veía la sesión y devolvía al campus: bucle infinito. */
+    var entregado = false;
+    function entregar(u){
+      if (entregado) return;
+      entregado = true;
+      USER = u;
+      setTimeout(function(){ cb(u); }, 0);
+    }
+
     function armar(s){
-      var m = s.user.user_metadata || {};
-      USER = {
+      var m = (s && s.user && s.user.user_metadata) || {};
+      return {
         id: s.user.id,
         email: s.user.email,
-        // Google usa 'name', X usa 'user_name'; no solo 'full_name'
         full_name: m.full_name || m.name || m.user_name || m.preferred_username || s.user.email,
         avatar: m.avatar_url || m.picture || null,
         demo: false
       };
-      cb(USER);
     }
 
-    supabaseClient.auth.getSession().then(function(r){
-      var s = r && r.data && r.data.session;
-      if(!s){ USER = null; return cb(null); }
-      // Si el token esta por vencer (o acaba de llegar de un proveedor
-      // social), renovarlo ANTES de lanzar las consultas. Sin esto, una de
-      // las peticiones en paralelo puede salir con un token viejo y dar 401.
+    var deOAuth = hayRespuestaOAuth();
+    obtenerSesion(deOAuth ? 12 : 0).then(function(s){
+      if (!s) return entregar(null);
+
+      // Limpiar los parámetros del proveedor para que un refresco no los reprocese
+      if (deOAuth && history.replaceState){
+        try { history.replaceState(null, "", location.pathname); } catch(e){}
+      }
+
       var ahora = Math.floor(Date.now()/1000);
       if (s.expires_at && (s.expires_at - ahora) < 120){
         return supabaseClient.auth.refreshSession().then(function(r2){
-          var s2 = (r2 && r2.data && r2.data.session) || s;
-          armar(s2);
-        }).catch(function(){ armar(s); });
+          entregar(armar((r2 && r2.data && r2.data.session) || s));
+        }).catch(function(){ entregar(armar(s)); });
       }
-      armar(s);
-    }).catch(function(){ USER=null; cb(null); });
+      entregar(armar(s));
+    }).catch(function(e){
+      console.error("No se pudo resolver la sesión:", e);
+      entregar(null);
+    });
   }
 
   /* Ejecuta varias promesas sin que una sola falla tumbe la pantalla.
@@ -294,7 +375,8 @@
   function boot(pageTitle, render){
     var content = buildChrome(pageTitle);
     resolveUser(function(u){
-      if (!u){ location.href = "login.html"; return; }
+      if (!u){ irALogin(); return; }
+      try { sessionStorage.removeItem("inisch-rebote"); } catch(e){}
       var av = document.getElementById("cx-av");
       if (av) av.textContent = initials(u.full_name);
 
@@ -316,7 +398,7 @@
       /* Puerta de acceso: sin inscripción activa no se entra.
          La página de perfil queda abierta para que pueda ver sus datos y salir. */
       var abierta = (page === "perfil.html");
-      tieneAcceso().then(function(ok){
+      tieneAcceso().catch(function(){ return null; }).then(function(ok){
         if (ok === false && !abierta){
           var lat = document.querySelector(".side nav");
           if (lat) lat.style.display = "none";

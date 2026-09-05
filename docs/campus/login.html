@@ -163,12 +163,39 @@
   if (!CAMPUS_CONFIGURED){
     show("ok", "Modo demostración: entra con cualquier correo y contraseña para recorrer el campus.");
   } else {
-    // Si el enlace del correo trajo sesión, o ya había una, entrar directo.
+    var rebote = 0;
+    try { rebote = (JSON.parse(sessionStorage.getItem("inisch-rebote") || '{"n":0}')).n || 0; } catch(e){}
+    if (/[?&]error/.test(location.search) || /[#&]error/.test(location.hash)){
+      show("err", "El proveedor rechazo el acceso. Intenta de nuevo o entra con tu correo.");
+      if (history.replaceState) { try { history.replaceState(null,"",location.pathname); } catch(e){} }
+    }
     supabaseClient.auth.getSession().then(function(r){
-      if (r && r.data && r.data.session){ location.href = "dashboard.html"; return; }
-      if (/[?&]confirmado=1/.test(location.search)){
-        show("ok", "Tu correo quedó confirmado. Ya puedes entrar con tu contraseña.");
+      var s = r && r.data && r.data.session;
+      if (s && rebote >= 2){
+        show("err", "Tu sesion quedo en un estado inconsistente. Presiona Limpiar sesion y vuelve a entrar.");
+        var b = document.createElement("button");
+        b.className = "btn-line"; b.style.cssText = "width:100%;margin-top:12px;cursor:pointer";
+        b.textContent = "Limpiar sesion";
+        b.addEventListener("click", function(){
+          try {
+            Object.keys(localStorage).forEach(function(k){
+              if (k.indexOf("sb-") === 0 || k.indexOf("supabase") >= 0) localStorage.removeItem(k);
+            });
+            sessionStorage.clear();
+          } catch(e){}
+          supabaseClient.auth.signOut().finally(function(){ location.replace("login.html"); });
+        });
+        msg.parentNode.insertBefore(b, msg.nextSibling);
+        return;
       }
+      if (s){ location.replace("dashboard.html"); return; }
+      try { sessionStorage.removeItem("inisch-rebote"); } catch(e){}
+      if (/[?&]confirmado=1/.test(location.search)){
+        show("ok", "Tu correo quedo confirmado. Ya puedes entrar con tu contrasena.");
+      }
+    }).catch(function(e){
+      console.error(e);
+      show("err", "No pudimos verificar tu sesion. Intenta entrar con tu correo.");
     });
   }
 
