@@ -319,8 +319,12 @@
     { h:"herramientas.html", ic:"⚙", t:"Herramientas", soloInstructor:true }
   ];
 
+  function rutaActual(){
+    return (location.pathname.split("/").pop() || "dashboard.html");
+  }
+
   function buildChrome(pageTitle){
-    var page = (location.pathname.split("/").pop() || "dashboard.html");
+    var page = rutaActual();
 
     var shell = el("div","shell");
     var side  = el("aside","side");
@@ -421,7 +425,7 @@
 
       /* Puerta de acceso: sin inscripción activa no se entra.
          La página de perfil queda abierta para que pueda ver sus datos y salir. */
-      var abierta = (page === "perfil.html");
+      var abierta = (rutaActual() === "perfil.html");
       tieneAcceso().catch(function(){ return null; }).then(function(ok){
         if (ok === false && !abierta){
           var lat = document.querySelector(".side nav");
