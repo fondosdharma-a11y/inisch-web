@@ -426,7 +426,11 @@
 
       /* Puerta de acceso: sin inscripción activa no se entra.
          La página de perfil queda abierta para que pueda ver sus datos y salir. */
-      var abierta = (rutaActual() === "perfil.html");
+      /* Paginas accesibles sin inscripcion activa: el perfil, para que
+         pueda ver sus datos y salir, y el programa de referidos, que
+         esta abierto a cualquiera con cuenta. */
+      var ABIERTAS = ["perfil.html", "referidos.html"];
+      var abierta = ABIERTAS.indexOf(rutaActual()) >= 0;
       tieneAcceso().catch(function(){ return null; }).then(function(ok){
         if (ok === false && !abierta){
           var lat = document.querySelector(".side nav");
@@ -509,6 +513,7 @@
           'Si ya pagaste, escríbenos y lo activamos enseguida: a veces tarda unas horas.</p>' +
         '<div style="display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin-top:26px">' +
           '<a class="btn-p btn-sm" href="../taller.html">Ver el Taller Intensivo</a>' +
+          '<a class="btn-o btn-sm" href="referidos.html">Mi enlace de referido</a>' +
           '<a class="btn-o btn-sm" target="_blank" rel="noopener" ' +
             'href="https://wa.me/523314701563?text=' +
             encodeURIComponent("Hola, ya pagué el Taller Intensivo y me gustaría activar mi acceso al campus. Mi correo es: " + (USER.email||"")) +
