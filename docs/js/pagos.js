@@ -10,14 +10,17 @@
    ============================================================ */
 
 window.INISCH_PAGOS = {
+  taller_inscripcion:     "https://buy.stripe.com/8x26oIeo85Da8Z7a8JgEg0a",
   taller:                 "https://buy.stripe.com/bJe14ogwg1mUdfneoZgEg03",
   consulta:               "https://buy.stripe.com/4gMfZicg0c1ygrz3KlgEg04",
   diplomado_inscripcion:  "https://buy.stripe.com/3cI28s2Fqd5C5MVeoZgEg01",
-  diplomado_mensualidad:  "https://buy.stripe.com/5kQeVe1Bme9Gb7fa8JgEg02",
-  instructor_inscripcion: "https://buy.stripe.com/eVq7sMfsc4z63EN0y9gEg05",
+  diplomado_mensualidad:  "https://buy.stripe.com/00w7sM4Ny7LiejreoZgEg0c",
+  instructor_inscripcion_reg: "https://buy.stripe.com/00w14o7ZK4z6a3b6WxgEg0d",
+  instructor_mensualidad_reg: "https://buy.stripe.com/eVq3cw0xi7Lia3b6WxgEg08",
+  instructor_inscripcion: "https://buy.stripe.com/5kQfZi3Ju1mU0sBcgRgEg09",
   retiro_tulum_reserva:   "https://buy.stripe.com/cNicN60xi3v23EN1CdgEg06",
   retiro_tulum_total:     "https://buy.stripe.com/5kQ7sM4Ny0iQgrzdkVgEg07",
-  instructor_mensualidad: "https://buy.stripe.com/3cIaEYcg0e9Gejrgx7gEg00"
+  instructor_mensualidad: "https://buy.stripe.com/8x2cN6dk4fdKcbjcgRgEg0b"
 };
 
 /* ------------------------------------------------------------
