@@ -424,7 +424,11 @@ blockquote{ position:relative; }
 footer{ position:relative; }
 .foot-logo img{ transition:transform .6s var(--ease); }
 .foot-logo:hover img{ transform:rotate(45deg); }
-.foot-col a{ transition:color .25s var(--ease), padding-left .25s var(--ease); display:inline-block; }
+.foot-col a{ transition:color .25s var(--ease), padding-left .25s var(--ease); }
+/* Cada enlace del pie ocupa su propia linea. Antes esta regla usaba
+   inline-block y, como en el HTML los enlaces van sin salto de linea,
+   las palabras aparecian pegadas unas con otras. */
+.foot-col a{ display:block; width:fit-content; }
 .foot-col a:hover{ color:var(--gold); padding-left:4px; }
 
 /* ---------- APARICION AL HACER SCROLL ---------- */
@@ -857,3 +861,18 @@ hr, .rule{ border:none; height:1px; background:linear-gradient(90deg, transparen
 }
 .foot-logo{ display:flex; align-items:center; gap:14px; }
 .cert-mandala, .page-hero::after{ }
+
+
+/* ============ REFUERZO DEL PIE ============ */
+.foot-col{ min-width:150px; }
+.foot-col a{
+  display:block !important;
+  width:fit-content;
+  line-height:1.5;
+  margin-bottom:9px;
+}
+.foot-col a:last-child{ margin-bottom:0; }
+@media(max-width:700px){
+  .foot-grid{ gap:32px 40px; }
+  .foot-col{ min-width:130px; }
+}
