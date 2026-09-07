@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refiere y gana — Campus INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0A1518">
+<link rel="stylesheet" href="css/campus.css">
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/campus-core.js"></script>
+<script>
+
+Campus.boot("Refiere y gana", function(c, u){
+  var E = Campus.esc;
+  var zona = document.createElement("div");
+  zona.innerHTML = '<div class="card"><p class="muted tiny">Preparando tu enlace…</p></div>';
+  c.appendChild(zona);
+
+  if (Campus.DEMO){
+    zona.innerHTML = '<div class="card"><b>Refiere y gana</b>' +
+      '<p class="muted" style="margin-top:8px;font-size:15px">En modo demostración no se genera enlace. ' +
+      'Entra con tu cuenta real para obtener el tuyo.</p></div>';
+    return;
+  }
+
+  Promise.all([
+    supabaseClient.rpc("mi_codigo_referido"),
+    supabaseClient.rpc("mis_referencias"),
+    Campus.DB.list("referencias", { order:"created_at", desc:true })
+  ]).then(function(r){
+    if (r[0].error) throw r[0].error;
+    var codigo = r[0].data;
+    var res = (r[1].data && r[1].data[0]) || { personas:0, pagos:0, por_cobrar:0, ya_pagado:0, ganado_total:0 };
+    var lista = r[2] || [];
+    pintar(codigo, res, lista);
+  }).catch(function(e){
+    console.error(e);
+    zona.innerHTML = '<div class="card"><p class="muted">No pudimos generar tu enlace. Recarga la página.</p>' +
+      '<p class="tiny soft" style="margin-top:8px">' + E(String(e && e.message || e)).slice(0,180) + '</p></div>';
+  });
+
+  function mxn(n){ return "$" + Number(n||0).toLocaleString("es-MX"); }
+
+  function pintar(codigo, res, lista){
+    var enlace = "https://www.inisch.com/?ref=" + codigo;
+    var h = "";
+
+    h += '<div class="eyebrow">Programa de referidos</div>';
+    h += '<h1 style="font-size:clamp(25px,4vw,34px);line-height:1.12;margin:6px 0 8px">Refiere y gana</h1>';
+    h += '<p class="muted" style="margin-bottom:24px;max-width:640px">Comparte tu enlace. Quien entre por él recibe ' +
+         '<b>10% de descuento</b>, y a ti se te acredita el <b>10% de cada pago que haga</b>.</p>';
+
+    /* ---- el enlace, lo primero y lo mas grande ---- */
+    h += '<div class="card" style="border-color:var(--gold);background:linear-gradient(160deg,rgba(216,180,90,.10),transparent);margin-bottom:20px">';
+    h += '<div class="tiny soft" style="letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px">Tu código</div>';
+    h += '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:clamp(24px,5vw,34px);color:var(--gold);letter-spacing:.06em;word-break:break-all">' + E(codigo) + '</div>';
+    h += '<div class="tiny soft" style="margin:18px 0 8px">Tu enlace para compartir</div>';
+    h += '<div style="display:flex;gap:9px;flex-wrap:wrap;align-items:center">';
+    h += '<input class="fld" id="rf-url" readonly value="' + E(enlace) + '" style="flex:1;min-width:220px;font-size:13.5px">';
+    h += '<button class="btn-p btn-sm" id="rf-copiar">Copiar</button>';
+    h += '</div>';
+    h += '<div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:14px">';
+    h += '<a class="btn-o btn-sm" target="_blank" rel="noopener" href="https://wa.me/?text=' +
+         encodeURIComponent("Te comparto el Instituto donde estoy haciendo mi proceso. Con este enlace tienes 10% de descuento: " + enlace) +
+         '">Compartir por WhatsApp</a>';
+    h += '<button class="btn-o btn-sm" id="rf-nativo" style="display:none">Compartir…</button>';
+    h += '</div>';
+    h += '</div>';
+
+    /* ---- lo ganado ---- */
+    h += '<div class="grid g3" style="margin-bottom:22px">';
+    h += tarjeta(res.personas, res.personas === 1 ? "persona referida" : "personas referidas");
+    h += tarjeta(mxn(res.por_cobrar), "por cobrar", true);
+    h += tarjeta(mxn(res.ganado_total), "ganado en total", true);
+    h += '</div>';
+
+    /* ---- como funciona ---- */
+    h += '<div class="card" style="margin-bottom:22px">';
+    h += '<b>Cómo funciona</b>';
+    h += '<div style="margin-top:14px;display:grid;gap:13px">';
+    h += paso("1", "Comparte tu enlace", "Por WhatsApp, redes o en persona. El enlace recuerda tu código durante 60 días.");
+    h += paso("2", "Tu referido recibe 10%", "Se aplica solo al momento de pagar. Si además liquida de contado, su descuento total es del 25%.");
+    h += paso("3", "Se te acredita el 10%", "De cada pago que haga, no del total por adelantado. Si paga a mensualidades, ganas con cada una.");
+    h += paso("4", "Cobras tu comisión", "Escríbenos cuando quieras retirar lo acumulado. Se paga por transferencia.");
+    h += '</div>';
+    h += '<p class="note" style="margin-top:16px">No puedes usar tu propio código. Si un pago se reembolsa, su comisión se cancela.</p>';
+    h += '</div>';
+
+    /* ---- historial ---- */
+    h += '<div class="card"><b>Tus referencias</b>';
+    if (!lista.length){
+      h += '<p class="muted" style="margin-top:10px;font-size:15px">Todavía no hay ninguna. En cuanto alguien pague usando tu enlace, aparecerá aquí.</p>';
+    } else {
+      h += '<div style="margin-top:14px">';
+      lista.forEach(function(x){
+        var col = x.estado === "pagada" ? "var(--ok)" : (x.estado === "cancelada" ? "var(--ink-soft)" : "var(--gold)");
+        var et  = x.estado === "pagada" ? "Pagada a ti" : (x.estado === "cancelada" ? "Cancelada" : "Por cobrar");
+        h += '<div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:11px 0;border-bottom:1px solid var(--line)">';
+        h += '<div style="flex:1;min-width:170px"><b style="font-size:14.5px">' + E(x.nombre_referido || x.email_referido || "Alguien") + '</b>';
+        h += '<p class="tiny soft" style="margin-top:3px">' + E(Campus.fechaLarga(x.created_at)) +
+             (x.programa ? ' · ' + E(x.programa) : '') + '</p></div>';
+        h += '<div style="text-align:right"><b style="font-family:\'Space Grotesk\',sans-serif">' + mxn(x.comision_mxn) + '</b>';
+        h += '<p class="tiny" style="color:' + col + ';margin-top:2px">' + et + '</p></div>';
+        h += '</div>';
+      });
+      h += '</div>';
+    }
+    h += '</div>';
+
+    zona.innerHTML = h;
+
+    var inp = document.getElementById("rf-url");
+    document.getElementById("rf-copiar").addEventListener("click", function(){
+      inp.select();
+      navigator.clipboard.writeText(enlace).then(function(){
+        Campus.toast("Enlace copiado");
+      }).catch(function(){ document.execCommand("copy"); Campus.toast("Enlace copiado"); });
+    });
+    if (navigator.share){
+      var b = document.getElementById("rf-nativo");
+      b.style.display = "";
+      b.addEventListener("click", function(){
+        navigator.share({ title:"INISCH", text:"Te comparto el Instituto donde estoy haciendo mi proceso. Tienes 10% de descuento:", url:enlace })
+          .catch(function(){});
+      });
+    }
+  }
+
+  function tarjeta(v, t, dorado){
+    return '<div class="card" style="text-align:center">' +
+      '<div style="font-family:\'Space Grotesk\',sans-serif;font-size:26px;font-weight:600;line-height:1' +
+      (dorado ? ';color:var(--gold)' : '') + '">' + v + '</div>' +
+      '<div class="tiny soft" style="margin-top:5px">' + t + '</div></div>';
+  }
+  function paso(n, t, d){
+    return '<div style="display:flex;gap:12px;align-items:flex-start">' +
+      '<span style="flex-shrink:0;width:24px;height:24px;border-radius:50%;border:1px solid var(--line-gold);' +
+      'color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px">' + n + '</span>' +
+      '<div><b style="font-size:14.5px">' + t + '</b>' +
+      '<p class="tiny soft" style="margin-top:3px;line-height:1.6">' + d + '</p></div></div>';
+  }
+});
+
+</script>
+<script src="js/instalar.js"></script>
+</body>
+</html>

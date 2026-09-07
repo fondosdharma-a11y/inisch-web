@@ -70,6 +70,16 @@ Campus.boot("Inicio", function(c, u){
 
     var h = '';
 
+    // --- Enlace de referido, visible desde el panel ---
+    h += '<a href="referidos.html" class="card reveal" style="display:flex;gap:14px;align-items:center;' +
+         'flex-wrap:wrap;margin-bottom:20px;border-color:var(--line-gold);' +
+         'background:linear-gradient(160deg,rgba(216,180,90,.10),transparent)">' +
+         '<span style="font-size:22px;color:var(--gold)">◎</span>' +
+         '<div style="flex:1;min-width:210px"><b>Refiere y gana</b>' +
+         '<p class="tiny soft" style="margin-top:4px">Comparte tu enlace: quien entre por él recibe 10% de descuento ' +
+         'y a ti se te acredita el 10% de cada pago.</p></div>' +
+         '<span class="btn-o btn-sm">Ver mi enlace</span></a>';
+
     // --- Aviso amable si lleva dias sin practicar (nunca culpabiliza) ---
     (function(){
       if (!pra.length) return;                    // aun no empieza: no lo presionamos

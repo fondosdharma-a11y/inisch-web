@@ -314,6 +314,7 @@
     { h:"practica.html",   ic:"◉", t:"Práctica" },
     { lbl:"Mi cuenta" },
     { h:"certificados.html", ic:"✦", t:"Certificados" },
+    { h:"referidos.html", ic:"◎", t:"Refiere y gana" },
     { h:"perfil.html",     ic:"☺", t:"Mi perfil" },
     { h:"instructores.html", ic:"◈", t:"Instructores", soloInstructor:true },
     { h:"herramientas.html", ic:"⚙", t:"Herramientas", soloInstructor:true }
