@@ -28,6 +28,21 @@
 
 window.INISCH_TESTIMONIOS = [
 
+  /* --- Taller Intensivo --- */
+  { nombre: "Adilene",         video: "https://youtu.be/n6Nzkwe0DgM", programa: 1, lang: "es" },
+  { nombre: "Adriana",         video: "https://youtu.be/5m9Yo3IKd8I", programa: 1, lang: "es" },
+  { nombre: "Alejandro",       video: "https://youtu.be/lxW95brnXYw", programa: 1, lang: "es" },
+  { nombre: "Aurora",          video: "https://youtu.be/3S1s2uewuGk", programa: 1, lang: "es" },
+  { nombre: "Debs",            video: "https://youtu.be/JzIXsmDt6cg", programa: 1, lang: "es" },
+  { nombre: "Ema",             video: "https://youtu.be/EEX8EgkSL3E", programa: 1, lang: "es" },
+  { nombre: "Haulima",         video: "https://youtu.be/7ZM18rsOEe4", programa: 1, lang: "es" },
+  { nombre: "Isac",            video: "https://youtu.be/z7UFYQ5WtmM", programa: 1, lang: "es" },
+  { nombre: "Jaime",           video: "https://youtu.be/flWN9Jh_CTI", programa: 1, lang: "es" },
+  { nombre: "Mariana",         video: "https://youtu.be/CvpTAqSff9w", programa: 1, lang: "es" },
+  { nombre: "Mundo",           video: "https://youtu.be/-0EydBHUxco", programa: 1, lang: "es" },
+  { nombre: "Norma",           video: "https://youtu.be/lTYHD8RzeJE", programa: 1, lang: "es" },
+
+  /* --- Diplomado de Especialista --- */
   { nombre: "Aurora",      video: "https://youtu.be/adDGuazRgAg", programa: 2, lang: "es" },
   { nombre: "Blanca",      video: "https://youtu.be/tCMRjQ7b8zc", programa: 2, lang: "es" },
   { nombre: "Jos\u00e9 Miguel", video: "https://youtu.be/XyAizBFjW8s", programa: 2, lang: "es" },
