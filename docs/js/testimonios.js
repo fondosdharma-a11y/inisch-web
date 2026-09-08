@@ -39,6 +39,7 @@ window.INISCH_TESTIMONIOS = [
   { nombre: "Isac",            video: "https://youtu.be/z7UFYQ5WtmM", programa: 1, lang: "es" },
   { nombre: "Jaime",           video: "https://youtu.be/flWN9Jh_CTI", programa: 1, lang: "es" },
   { nombre: "Mariana",         video: "https://youtu.be/CvpTAqSff9w", programa: 1, lang: "es" },
+  { nombre: "Melba",           video: "https://youtu.be/A2QQPN88BhI", programa: 1, lang: "es" },
   { nombre: "Mundo",           video: "https://youtu.be/-0EydBHUxco", programa: 1, lang: "es" },
   { nombre: "Norma",           video: "https://youtu.be/lTYHD8RzeJE", programa: 1, lang: "es" },
 
