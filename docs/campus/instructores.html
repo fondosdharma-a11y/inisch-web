@@ -80,15 +80,24 @@ Campus.boot("Panel de instructores", function(c, u){
 
 
       /* ---- control de accesos al campus ---- */
-      h += '<div class="pick" style="margin:26px 0 18px">' +
+      h += '<div class="pick" style="margin:26px 0 18px" id="pestanas">' +
            '<button class="pick-o on" data-v="avance">Avance</button>' +
            '<button class="pick-o" data-v="accesos">Accesos al campus</button>' +
+           '<button class="pick-o" data-v="roles" data-solo-admin="1" style="display:none">Roles</button>' +
            '</div>';
       h += '<div class="buscador"><input class="fld" id="iq" placeholder="Buscar alumno por nombre…" autocomplete="off"></div>';
       h += '<div id="lista"></div>';
       zona.innerHTML = h;
 
       var vista = "avance";
+      var soyAdmin = false;
+      supabaseClient.rpc("es_admin").then(function(r){
+        soyAdmin = !!(r && r.data);
+        if (soyAdmin){
+          var b = zona.querySelector('[data-solo-admin="1"]');
+          if (b) b.style.display = "";
+        }
+      }).catch(function(){});
       zona.querySelectorAll('.pick .pick-o').forEach(function(b){
         b.addEventListener("click", function(){
           zona.querySelectorAll('.pick .pick-o').forEach(function(x){ x.classList.remove("on"); });
@@ -99,6 +108,40 @@ Campus.boot("Panel de instructores", function(c, u){
 
       function activo(id){
         return (inscPor[id]||[]).some(function(e){ return e.status === "active" || e.status === "completed"; });
+      }
+
+      var MENSAJES = {
+        ok: "Rol actualizado",
+        sin_permiso: "Solo un administrador puede cambiar roles",
+        rol_invalido: "Ese rol no existe",
+        no_existe: "No encontramos esa cuenta",
+        ultimo_admin: "No puedes quitar al único administrador que queda",
+        no_puedes_degradarte: "No puedes quitarte a ti mismo el rol de administrador"
+      };
+
+      function cambiarRol(id, rol, sel){
+        var antes = alumnos.filter(function(a){ return a.id === id; })[0];
+        var previo = antes ? (antes.role || "alumno") : "alumno";
+        if (rol === "admin" && !confirm("Vas a dar acceso de ADMINISTRADOR. Podrá ver el avance de todos, administrar accesos, la agenda y los roles. ¿Continuar?")){
+          sel.value = previo; return;
+        }
+        sel.disabled = true;
+        supabaseClient.rpc("cambiar_rol", { p_student: id, p_rol: rol }).then(function(r){
+          sel.disabled = false;
+          if (r.error) throw r.error;
+          var res = r.data;
+          if (res === "ok"){
+            if (antes) antes.role = rol;
+            Campus.toast(MENSAJES.ok);
+            pintar(document.getElementById("iq").value);
+          } else {
+            sel.value = previo;
+            Campus.toast(MENSAJES[res] || "No se pudo cambiar el rol");
+          }
+        }).catch(function(e){
+          console.error(e); sel.disabled = false; sel.value = previo;
+          Campus.toast("No se pudo cambiar el rol");
+        });
       }
 
       function cambiarAcceso(id, dar, boton){
@@ -136,6 +179,45 @@ Campus.boot("Panel de instructores", function(c, u){
         });
         var s = "";
         if (!vis.length){ s = '<div class="card"><p class="muted">Sin resultados.</p></div>'; }
+
+        if (vista === "roles"){
+          if (!soyAdmin){
+            document.getElementById("lista").innerHTML =
+              '<div class="card"><p class="muted">Solo un administrador puede cambiar roles.</p></div>';
+            return;
+          }
+          var todos = alumnos.filter(function(a){
+            return !f || String(a.full_name||"").toLowerCase().indexOf(f) >= 0;
+          });
+          var s2 = '<div class="nudge" style="margin-bottom:18px"><span class="n-ic">&#9888;</span>' +
+            '<div class="n-txt"><b>El rol de instructor da acceso al avance de todos los alumnos</b> y a las herramientas del Instituto. ' +
+            'Nunca abre Mi Película, la Bitácora ni los apuntes: eso es privado para todos, sin excepción. ' +
+            'El rol de administrador añade el control de accesos, la agenda de consultas y los roles.</div></div>';
+
+          todos.forEach(function(a){
+            var rol = a.role || "alumno";
+            var etiq = rol === "admin" ? "Administrador" : (rol === "instructor" ? "Instructor" : "Alumno");
+            var col  = rol === "admin" ? "var(--gold)" : (rol === "instructor" ? "var(--ok)" : "var(--ink-soft)");
+            s2 += '<div class="card" style="margin-bottom:11px">';
+            s2 += '<div style="display:flex;gap:13px;align-items:center;flex-wrap:wrap">';
+            s2 += '<div class="avatar" style="width:40px;height:40px;font-size:14px">' + E(Campus.initials(a.full_name)) + '</div>';
+            s2 += '<div style="flex:1;min-width:170px"><b>' + E(a.full_name || "Sin nombre") + '</b>';
+            s2 += '<p class="tiny" style="margin-top:3px;color:' + col + '">' + etiq + '</p></div>';
+            s2 += '<select class="fld" data-rol="' + a.id + '" style="width:auto;min-width:150px;padding:8px 12px">' +
+                  '<option value="alumno"' + (rol==="alumno"?" selected":"") + '>Alumno</option>' +
+                  '<option value="instructor"' + (rol==="instructor"?" selected":"") + '>Instructor</option>' +
+                  '<option value="admin"' + (rol==="admin"?" selected":"") + '>Administrador</option>' +
+                  '</select>';
+            s2 += '</div></div>';
+          });
+          document.getElementById("lista").innerHTML = s2;
+          document.querySelectorAll("[data-rol]").forEach(function(sel){
+            sel.addEventListener("change", function(){
+              cambiarRol(sel.dataset.rol, sel.value, sel);
+            });
+          });
+          return;
+        }
 
         if (vista === "accesos"){
           var conAcc = vis.filter(function(a){ return activo(a.id); }).length;
