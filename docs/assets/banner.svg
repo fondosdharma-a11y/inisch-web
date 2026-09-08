@@ -115,9 +115,8 @@
 
   <g transform="translate(650, 0)">
     <text x="0" y="222" font-family="Georgia, 'Cormorant Garamond', serif" font-size="112" letter-spacing="26" fill="#254C58">INISCH</text>
-    <line x1="4" y1="262" x2="196" y2="262" stroke="url(#gold)" stroke-width="2"/>
-    <text x="212" y="268" font-family="'Jost', 'Helvetica Neue', Arial, sans-serif" font-size="21" letter-spacing="3.4" fill="#3C7285">INSTITUTO INTERNACIONAL</text>
-    <text x="4" y="308" font-family="'Jost', 'Helvetica Neue', Arial, sans-serif" font-size="21" letter-spacing="3.4" fill="#3C7285">DEL SISTEMA C&#211;DIGO HOLOGR&#193;FICO</text>
-    <text x="4" y="372" font-family="Georgia, 'Cormorant Garamond', serif" font-style="italic" font-size="27" fill="#7A6A4F">Vuelve a ti. Compr&#233;ndete. Expande tu manera de vivir.</text>
+    <text x="6" y="272" font-family="'Jost', 'Helvetica Neue', Arial, sans-serif" font-size="20" letter-spacing="3.1" fill="#3C7285">INSTITUTO INTERNACIONAL DEL SISTEMA C&#211;DIGO HOLOGR&#193;FICO</text>
+    <line x1="6" y1="304" x2="430" y2="304" stroke="url(#gold)" stroke-width="2" opacity="0.85"/>
+    <text x="6" y="356" font-family="Georgia, 'Cormorant Garamond', serif" font-style="italic" font-size="27" fill="#7A6A4F">Vuelve a ti. Compr&#233;ndete. Expande tu manera de vivir.</text>
   </g>
 </svg>
