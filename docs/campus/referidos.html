@@ -29,21 +29,35 @@ Campus.boot("Refiere y gana", function(c, u){
     return;
   }
 
+  /* La tabla referencias se relaciona por referidor_id, no por student_id.
+     La politica de seguridad ya limita cada consulta a lo propio, asi que
+     no hace falta filtrar aqui: pedirla directo evita el filtro equivocado. */
   Promise.all([
     supabaseClient.rpc("mi_codigo_referido"),
     supabaseClient.rpc("mis_referencias"),
-    Campus.DB.list("referencias", { order:"created_at", desc:true })
+    supabaseClient.from("referencias").select("*").order("created_at", { ascending:false }).limit(100)
   ]).then(function(r){
     if (r[0].error) throw r[0].error;
     var codigo = r[0].data;
     var res = (r[1].data && r[1].data[0]) || { personas:0, pagos:0, por_cobrar:0, ya_pagado:0, ganado_total:0 };
-    var lista = r[2] || [];
+    var lista = (r[2] && r[2].data) || [];
     pintar(codigo, res, lista);
   }).catch(function(e){
     console.error(e);
-    zona.innerHTML = '<div class="card"><p class="muted">No pudimos generar tu enlace. Recarga la página.</p>' +
-      '<p class="tiny soft" style="margin-top:8px">' + E(String(e && e.message || e)).slice(0,180) + '</p></div>';
+    // Ultimo recurso: al menos entregar el codigo, que es lo que vino a buscar
+    supabaseClient.rpc("mi_codigo_referido").then(function(r2){
+      if (r2 && r2.data){
+        pintar(r2.data, { personas:0, pagos:0, por_cobrar:0, ya_pagado:0, ganado_total:0 }, []);
+      } else { fallo(e); }
+    }).catch(function(){ fallo(e); });
   });
+
+  function fallo(e){
+    zona.innerHTML = '<div class="card"><b>No pudimos cargar tu enlace</b>' +
+      '<p class="muted" style="margin-top:8px;font-size:15px">Recarga la página. Si sigue igual, escríbenos por WhatsApp.</p>' +
+      '<p class="tiny soft" style="margin-top:10px">Detalle: ' + E(String(e && e.message || e)).slice(0,200) + '</p>' +
+      '<button class="btn-p btn-sm" style="margin-top:16px" onclick="location.reload()">Recargar</button></div>';
+  }
 
   function mxn(n){ return "$" + Number(n||0).toLocaleString("es-MX"); }
 
