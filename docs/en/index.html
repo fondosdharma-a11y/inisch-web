@@ -110,6 +110,15 @@
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "EducationalOrganization", "@id": "https://www.inisch.com/#organizacion", "name": "Instituto Internacional del Sistema Código Holográfico", "alternateName": "INISCH", "url": "https://www.inisch.com/", "logo": "https://www.inisch.com/assets/mandala.png", "image": "https://www.inisch.com/assets/fotos/grupo-piramides.jpg", "description": "Instituto de formación en autoconocimiento con el Sistema Código Holográfico, metodología creada por Isabel Elizalde.", "founder": {"@type": "Person", "name": "Isabel Elizalde", "jobTitle": "Creadora del Sistema Código Holográfico", "image": "https://www.inisch.com/assets/fotos/isabel-retrato.jpg"}, "areaServed": {"@type": "Country", "name": "México"}, "contactPoint": {"@type": "ContactPoint", "contactType": "customer service", "telephone": "+52-33-1470-1563", "availableLanguage": ["Spanish", "English"]}, "sameAs": []}</script>
 
 <script src="../js/analitica.js?v=20260930"></script>
+<style>
+.video-inst{padding:10px 32px 0}
+.video-inst .pantalla{max-width:980px;margin:22px auto 0;border:1px solid rgba(216,180,90,.45);border-radius:18px;overflow:hidden;background:#000;box-shadow:0 30px 80px -45px rgba(216,180,90,.5)}
+.video-inst video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000}
+.video-inst .cab{text-align:center;max-width:720px;margin:0 auto}
+.video-inst .pie{max-width:980px;margin:12px auto 0;text-align:right;font-size:14px}
+@media (max-width:600px){.video-inst{padding:6px 16px 0}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoObject","name":"Bienvenida al Instituto INISCH","description":"Qué es el Sistema Código Holográfico, quién es Isabel Elizalde y por dónde empezar en el Instituto.","thumbnailUrl":"https://inisch.com/assets/video/bienvenida.jpg","contentUrl":"https://inisch.com/assets/video/bienvenida.mp4","uploadDate":"2026-09-28","duration":"PT1M3S","inLanguage":"es-MX","publisher":{"@type":"Organization","name":"INISCH","url":"https://inisch.com/"}}</script>
 </head>
 <body>
 <header><nav>
@@ -151,6 +160,22 @@
     <div class="hero-badge"><b>SEP</b>Optional certification</div>
     <div class="hero-badge"><b>120+</b>Countries of validity</div>
   </div>
+</section>
+
+<section class="video-inst" id="video" aria-labelledby="video-titulo">
+  <div class="cab">
+    <div class="eyebrow">In one minute</div>
+    <h2 id="video-titulo">Welcome to the Institute</h2>
+    <p class="muted">What the Holographic Code System is, who Isabel Elizalde is and where to begin (audio in Spanish, with captions).</p>
+  </div>
+  <div class="pantalla">
+    <video controls playsinline preload="none" poster="../assets/video/bienvenida.jpg" width="1920" height="1080" aria-label="INISCH welcome video, 1 minute">
+      <source src="../assets/video/bienvenida.mp4" type="video/mp4">
+      <track kind="captions" src="../assets/video/bienvenida.es.vtt" srclang="es" label="Espa&ntilde;ol" default>
+      <a href="../assets/video/bienvenida.mp4">Watch the video</a>
+    </video>
+  </div>
+  <p class="muted pie">1:03 &middot; Spanish with captions</p>
 </section>
 
 <section class="alt" id="sistema">
