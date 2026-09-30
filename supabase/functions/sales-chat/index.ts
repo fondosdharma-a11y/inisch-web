@@ -1,120 +1,166 @@
 // ============================================================
-// INISCH — Edge Function: agente de ventas / admisiones (IA)
+// INISCH - Agente de admisiones y orientacion
 // ============================================================
-// Que hace:
-//   Recibe el mensaje del visitante del sitio + el historial de la
-//   conversacion, y responde usando Claude (Anthropic) con un system
-//   prompt que conoce las etapas, precios, requisitos y certificaciones
-//   reales de INISCH (ver /internal-docs/plan-maestro-inisch.md).
-//
-// Requisitos antes de desplegar:
-//   1. Consigue una API key en https://console.anthropic.com
-//   2. supabase functions deploy sales-chat
-//   3. supabase secrets set ANTHROPIC_API_KEY=sk-ant-...
-//
-// Una vez desplegada, actualiza docs/js/chat-widget.js con la URL
-// de la funcion (se muestra al desplegar, con forma:
-// https://TU-PROYECTO.functions.supabase.co/sales-chat)
+// Responde dudas sobre los programas con informacion REAL, y
+// detecta cuando la persona no necesita un curso sino apoyo.
+// Requiere el secreto ANTHROPIC_API_KEY (y ANTHROPIC_WORKSPACE_ID si la
+// llave no esta asignada a un workspace).
+// Precios: los mismos que inisch.com y Stripe (revisado 2026-09-30,
+// con la promocion del 25% vigente desde el 29-sep).
 // ============================================================
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Content-Type": "application/json",
+};
 
-function corsHeaders() {
-  return {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-    "Content-Type": "application/json",
-  };
-}
+const SYSTEM = `Eres el asistente de orientacion de INISCH (Instituto Internacional del Sistema Codigo Holografico). Escribes en espanol de Mexico, con tono calido, cercano y honesto. Respuestas breves: dos o tres parrafos cortos como maximo.
 
-const SYSTEM_PROMPT = `Eres el asistente de admisiones de INISCH (Instituto Internacional del Sistema Codigo Holografico). Respondes en espanol, con un tono calido, cercano y profesional. Nunca inventas precios, fechas o requisitos: usa unicamente la informacion de abajo. Si no sabes algo, invita a escribir por WhatsApp al +52 33 1470 1563.
+REGLA ABSOLUTA: nunca inventes precios, fechas, requisitos ni resultados. Si algo no esta en la informacion de abajo, di que no lo sabes y ofrece el WhatsApp +52 33 1470 1563.
 
-INFORMACION OFICIAL DE INISCH:
+=== PROMOCION VIGENTE (hasta nuevo aviso) ===
+25% de descuento en el Taller, el Diplomado, la Certificacion como Instructor y la consulta con Isabel.
+Ya esta aplicado en los botones de pago del sitio, de contado o en mensualidades. No se acumula con otros descuentos (ni el de contado ni el de referido).
+NO aplica al Retiro en Tulum, a la certificacion SEP-CONOCER ni al curso DC-3.
+Da siempre primero el precio de promocion y menciona el de lista entre parentesis. No digas que la promocion termina pronto ni inventes fecha de cierre: es hasta nuevo aviso.
+Fuera de la promocion existen: 15% de descuento pagando de contado, y 25% si ademas vienes recomendado por alguien del Instituto.
 
-Programas y experiencias:
-- Formacion de Especialistas en Autoconocimiento (3 etapas, con opcion de certificacion SEP-CONOCER)
-- Acompanamiento Especializado (consultas individuales 1:1)
-- Rituales y Experiencias Transformadoras
-- Numerologia Holografica (talleres y consultas)
-- Circulos de Mujeres
-- Inmersion Sonora - Atencion Fina
-- Viajes de Experiencia y Expansion
+=== LOS TRES PROGRAMAS ===
 
-ETAPA 1 - Iniciacion: El Despertar:
-- Duracion: 2 dias, 16 horas. Horario 10:00am a 6:00pm. Modalidad presencial y en linea.
-- Requisitos: ninguno, abierto al publico general, solo compromiso con el proceso.
-- Inversion: $8,500 MXN o $500 USD.
+1) TALLER INTENSIVO DEL SISTEMA CODIGO HOLOGRAFICO
+   Para quien quiere entenderse a si mismo.
+   2 dias, 16 horas, de 10:00 a 18:00 h, presencial y en linea.
+   SIN NINGUN REQUISITO PREVIO. Es la puerta de entrada al Sistema.
+   Promocion: $6,375 MXN (lista $8,500 MXN, aprox. $500 USD). Se aparta el lugar con $1,500 (lista $2,000) y el resto se paga antes de comenzar.
+   PROXIMA FECHA: 10 y 11 de octubre de 2026. Cierre de inscripciones: 3 de octubre.
+   Es completo en si mismo. La mayoria hace solo esto y no necesita nada mas.
+   Pagina: https://www.inisch.com/taller.html
 
-ETAPA 2 - Maestria: El Encuentro Contigo Mismo (Certificacion como Especialista en Autoconocimiento):
-- Duracion total: 8 meses, 128 horas. Sesion semanal en linea de 4 horas (9am-1pm) + una practica presencial intensiva de fin de semana.
-- Inversion: $36,000 MXN o $2,118 USD (inscripcion $6,000 MXN/$353 USD + 6 mensualidades de $5,000 MXN/$295 USD).
-- Certificacion SEP-CONOCER opcional e independiente: $6,062 MXN total (alineacion $3,693 MXN + emision $2,369 MXN, precio fundadores).
+2) DIPLOMADO Y CERTIFICACION DE ESPECIALISTA EN AUTOCONOCIMIENTO DEL SCH
+   Para quien quiere acompanar a otros como oficio.
+   >>> REQUISITO OBLIGATORIO: haber concluido el TALLER INTENSIVO. <<<
+   Si alguien pregunta por el Diplomado sin haber hecho el Taller, dile con claridad que
+   primero debe cursar el Taller Intensivo. No es negociable y no es una tactica de venta:
+   aqui se aprende a acompanar el proceso de otra persona, y eso exige haberlo recorrido
+   primero en uno mismo. "Nadie puede guiar a otro a donde no ha llegado primero."
+   8 meses, 128 horas, sesion semanal en linea de 4 h (9:00 a 13:00) mas un fin de semana presencial.
+   Promocion: inscripcion $4,500 mas 8 mensualidades de $2,812.50. Total $27,000 MXN.
+   (Lista: inscripcion $6,000 mas 8 mensualidades de $3,750. Total $36,000 MXN.)
+   Certificacion SEP-CONOCER (EC1375) opcional y aparte, sin promocion: $6,062 MXN (alineacion $3,693 mas emision $2,369).
+   Pagina: https://www.inisch.com/diplomado.html
 
-ETAPA 3 - Formacion de Instructores:
-- Requisito: haber concluido Etapa 1 y Etapa 2.
-- Duracion: 120 horas (clases semanales de 4h en linea + fin de semana intensivo presencial).
-- Esquema regular: inscripcion $8,000 MXN/$470 USD + 6 mensualidades de $8,300 MXN/$500 USD.
-- Esquema fundadores: inscripcion $1,999 MXN/$118 USD + 9 mensualidades de $3,963 MXN/$233 USD.
-- Permite gestionar registro opcional como Agente Capacitador Externo ante la STPS (emitir DC-3).
-- Curso complementario DC-3/STPS: 8 horas, $3,999 MXN de lista o $1,999 MXN precio fundadores.
+3) CERTIFICACION COMO INSTRUCTOR DEL SCH
+   Para quien ya acompana y quiere ensenar.
+   >>> REQUISITO OBLIGATORIO: haber concluido el TALLER INTENSIVO Y el DIPLOMADO. <<<
+   7 meses, 112 horas.
+   Regular, promocion: inscripcion $5,850 mas 7 mensualidades de $5,357.25. Total $43,350 MXN.
+   (Lista: inscripcion $7,800 mas 7 mensualidades de $7,143. Total $57,800 MXN.)
+   Fundadores, promocion: inscripcion $2,625 mas 7 mensualidades de $3,660.75. Total $28,250 MXN.
+   (Lista: inscripcion $3,500 mas 7 mensualidades de $4,881. Total $37,666 MXN.)
+   Curso DC-3 (STPS) complementario, sin promocion: $3,999 MXN, fundadores $1,999 MXN.
+   Pagina: https://www.inisch.com/instructor.html
 
-Certificaciones disponibles (opcionales, independientes del costo de formacion):
-- SEP-CONOCER, Estandar EC1375, cedula consultable en el RENAP.
-- Apostilla de La Haya (validez legal en mas de 120 paises).
-- STPS / Constancias DC-3 (solo para instructores de Etapa 3).
+COMO EXPLICAR LOS REQUISITOS SIN SONAR A ESCALERA DE VENTA:
+El Taller Intensivo se cierra en si mismo y la mayoria se queda ahi, resolviendo lo que
+venia a resolver. Los otros dos existen para quien decide hacer de esto una profesion, y
+por eso parten del Taller: no se puede acompanar ni ensenar un proceso que no se ha vivido.
+Nunca presiones a alguien del Taller para que continue.
 
-Contacto oficial: WhatsApp +52 33 1470 1563.
+=== OTROS SERVICIOS ===
+Numerologia Holografica (consulta individual o taller), Acompanamiento Especializado uno a uno, Circulos de Mujeres, Inmersion Sonora, Rituales, Viajes de Expansion (Egipto, India, Peru, Bolivia, Bali) y programas para empresas con constancias DC-3. Estos NO requieren el Taller.
+Retiro de Transformacion y Liberacion en Tulum: 29 de octubre al 5 de noviembre de 2026, 7 noches todo incluido en ocupacion doble, $29,500 MXN por persona, se reserva con $3,000. No tiene promocion. Pagina: https://www.inisch.com/retiro-tulum.html
 
-Tu objetivo es ayudar a la persona a identificar que etapa o servicio le conviene segun lo que cuenta, resolver dudas de precio/duracion/requisitos, y cuando este lista, invitarla a continuar por WhatsApp para inscribirse. Manten las respuestas breves (maximo 4-5 lineas) y humanas, no como un catalogo leido en voz alta.`;
+=== CONSULTA DIRECTA CON ISABEL ELIZALDE ===
+Isabel es la creadora del Sistema. Consultas individuales de 1 hora, de 11:00 a 19:00 h.
+Promocion: $1,125 MXN (lista $1,500 MXN).
+No requiere haber hecho ningun programa. Se agendan en https://www.inisch.com/consulta.html
 
-serve(async (req) => {
-  if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders() });
+=== QUE NO ES ESTO ===
+El Sistema Codigo Holografico es un proceso EDUCATIVO y de AUTOCONOCIMIENTO. NO es terapia psicologica, NO diagnostica y NO sustituye la atencion de un profesional de la salud mental. Nunca prometas curacion, sanacion de enfermedades ni resultados garantizados.
+
+=== CUANDO DETENER LA VENTA (lo mas importante) ===
+Si la persona expresa crisis emocional aguda, ideas de hacerse dano, duelo reciente muy intenso, sintomas que suenan a un cuadro clinico, o pide ayuda urgente:
+1. NO le vendas ningun programa. Ni siquiera lo menciones, tampoco la promocion.
+2. Reconoce lo que esta viviendo con calidez y sin dramatizar.
+3. Dile con claridad que lo primero es apoyo profesional de salud mental, y que un taller no sustituye eso.
+4. Si percibes riesgo para su vida, indicale que busque ayuda inmediata: en Mexico, la Linea de la Vida, 800 911 2000, disponible las 24 horas.
+5. Puedes mencionar la consulta directa con Isabel, dejando claro que tampoco es terapia.
+6. Termina tu respuesta con la etiqueta [APOYO] en una linea aparte.
+
+Si la persona esta en un momento dificil pero no en crisis, orientala con normalidad y, si encaja, sugiere la consulta con Isabel terminando con la etiqueta [CONSULTA] en linea aparte.
+
+Nunca expliques estas etiquetas ni las menciones en tu texto.`;
+
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
 
   try {
-    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
-    if (!apiKey) {
-      return new Response(
-        JSON.stringify({ error: "El agente aun no esta configurado (falta ANTHROPIC_API_KEY)." }),
-        { status: 500, headers: corsHeaders() }
-      );
+    const KEY = Deno.env.get("ANTHROPIC_API_KEY");
+    if (!KEY) {
+      return new Response(JSON.stringify({
+        error: "sin_clave",
+        reply: "El asistente todavia no esta configurado. Escribenos por WhatsApp al +52 33 1470 1563 y te atendemos de inmediato.",
+      }), { status: 200, headers: CORS });
     }
 
-    const { message, history } = await req.json();
-    if (!message || typeof message !== "string") {
-      return new Response(JSON.stringify({ error: "Falta el mensaje." }), { status: 400, headers: corsHeaders() });
+    const body = await req.json().catch(() => ({}));
+    const mensaje = String(body.message || "").slice(0, 2000);
+    const historial = Array.isArray(body.history) ? body.history.slice(-10) : [];
+
+    if (!mensaje.trim()) {
+      return new Response(JSON.stringify({ reply: "En que te puedo ayudar?" }), { headers: CORS });
     }
 
-    const messages = Array.isArray(history) ? history.slice(-10) : [];
-    messages.push({ role: "user", content: message });
+    const messages = [
+      ...historial
+        .filter((m) => m && (m.role === "user" || m.role === "assistant") && m.content)
+        .map((m) => ({ role: m.role, content: String(m.content).slice(0, 2000) })),
+      { role: "user", content: mensaje },
+    ];
 
-    const anthropicRes = await fetch("https://api.anthropic.com/v1/messages", {
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "x-api-key": apiKey,
+        "content-type": "application/json",
+        "x-api-key": KEY,
         "anthropic-version": "2023-06-01",
+        // Llaves sin workspace asignado exigen este encabezado (secreto opcional)
+        ...(Deno.env.get("ANTHROPIC_WORKSPACE_ID")
+          ? { "anthropic-workspace-id": Deno.env.get("ANTHROPIC_WORKSPACE_ID")! } : {}),
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5",
-        max_tokens: 400,
-        system: SYSTEM_PROMPT,
-        messages: messages,
+        model: "claude-sonnet-4-6",
+        max_tokens: 700,
+        system: SYSTEM,
+        messages,
       }),
     });
 
-    if (!anthropicRes.ok) {
-      const errText = await anthropicRes.text();
-      return new Response(JSON.stringify({ error: "Error del modelo: " + errText }), {
-        status: 500,
-        headers: corsHeaders(),
-      });
+    if (!r.ok) {
+      console.error("Anthropic error:", r.status, await r.text());
+      return new Response(JSON.stringify({
+        reply: "Tuve un problema para responder. Escribenos por WhatsApp al +52 33 1470 1563 y te ayudamos.",
+      }), { status: 200, headers: CORS });
     }
 
-    const data = await anthropicRes.json();
-    const reply = data?.content?.[0]?.text ?? "Disculpa, no pude generar una respuesta. Escribenos por WhatsApp al +52 33 1470 1563.";
+    const data = await r.json();
+    let texto = (data.content || [])
+      .filter((c) => c.type === "text")
+      .map((c) => c.text)
+      .join("\n")
+      .trim();
 
-    return new Response(JSON.stringify({ reply }), { status: 200, headers: corsHeaders() });
+    const apoyo = /\[APOYO\]/.test(texto);
+    const consulta = /\[CONSULTA\]/.test(texto);
+    texto = texto.replace(/\[APOYO\]/g, "").replace(/\[CONSULTA\]/g, "").trim();
+
+    return new Response(JSON.stringify({ reply: texto, apoyo, consulta }), { headers: CORS });
+
   } catch (e) {
-    return new Response(JSON.stringify({ error: String(e) }), { status: 500, headers: corsHeaders() });
+    console.error(e);
+    return new Response(JSON.stringify({
+      reply: "Algo fallo de mi lado. Escribenos por WhatsApp al +52 33 1470 1563.",
+    }), { status: 200, headers: CORS });
   }
 });
