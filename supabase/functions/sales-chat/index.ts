@@ -3,8 +3,8 @@
 // ============================================================
 // Responde dudas sobre los programas con informacion REAL, y
 // detecta cuando la persona no necesita un curso sino apoyo.
-// Requiere el secreto ANTHROPIC_API_KEY (y ANTHROPIC_WORKSPACE_ID si la
-// llave no esta asignada a un workspace).
+// Requiere el secreto ANTHROPIC_API_KEY. ANTHROPIC_WORKSPACE_ID es opcional
+// (por defecto, el workspace Default de la organizacion).
 // Precios: los mismos que inisch.com y Stripe (revisado 2026-09-30,
 // con la promocion del 25% vigente desde el 29-sep).
 // ============================================================
@@ -125,9 +125,9 @@ Deno.serve(async (req) => {
         "content-type": "application/json",
         "x-api-key": KEY,
         "anthropic-version": "2023-06-01",
-        // Llaves sin workspace asignado exigen este encabezado (secreto opcional)
-        ...(Deno.env.get("ANTHROPIC_WORKSPACE_ID")
-          ? { "anthropic-workspace-id": Deno.env.get("ANTHROPIC_WORKSPACE_ID")! } : {}),
+        // La llave no esta asignada a un workspace: la API exige este encabezado.
+        // Por defecto, el workspace "Default" de Fondos Dharma (no es secreto).
+        "anthropic-workspace-id": Deno.env.get("ANTHROPIC_WORKSPACE_ID") || "wrkspc_01LyujcwYfyx185ZjRP8Qmzm",
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
