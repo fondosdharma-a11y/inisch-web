@@ -207,7 +207,8 @@ if (window.INISCH_PROMO.activa){
   css.textContent =
     ".promo-antes{opacity:.55;font-weight:400;font-size:.72em;margin-right:.25em;text-decoration-thickness:1.5px}" +
     ".promo-ahora{color:var(--gold,#D8B45A)}" +
-    ".an-promo{background:var(--gold,#D8B45A)!important;color:#0D1A1E!important}";
+    ".an-promo{background:var(--gold,#D8B45A)!important;color:#0D1A1E!important}" +
+    ".promo-nota{margin:0 0 16px;padding:10px 14px;border:1px solid var(--gold,#D8B45A);border-radius:10px;font-size:14px;line-height:1.45}";
   document.head.appendChild(css);
 
   function precios(){
@@ -249,6 +250,19 @@ if (window.INISCH_PROMO.activa){
       sellos[i].innerHTML = ES
         ? "<b>Promoci&oacute;n: 25% de descuento en todos los programas.</b> Ya est&aacute; aplicado en los precios y en los botones de pago, de contado o en mensualidades. No se acumula con otros descuentos."
         : "<b>Promotion: 25% off every program.</b> It is already applied to the prices and payment buttons, whether you pay in full or monthly. It cannot be combined with other discounts.";
+    }
+
+    // Cajas de precio sin sello (ingles, consulta, fundadores): una nota breve
+    var cajas = document.querySelectorAll(".price-box");
+    for (var j = 0; j < cajas.length; j++){
+      var c = cajas[j];
+      if (!c.querySelector(".promo-ahora") || c.querySelector(".sello-mini,.promo-nota")) continue;
+      var nota = document.createElement("div");
+      nota.className = "promo-nota";
+      nota.innerHTML = ES
+        ? "<b>Promoci&oacute;n: 25% de descuento.</b> Ya est&aacute; aplicado en el precio y en el bot&oacute;n de pago; no se acumula con otros descuentos."
+        : "<b>Promotion: 25% off.</b> Already applied to the price and the payment button; it cannot be combined with other discounts.";
+      c.insertBefore(nota, c.firstChild);
     }
   }
 
