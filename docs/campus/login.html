@@ -301,10 +301,35 @@
       social.style.display = "none";
       var sp = document.querySelector(".sep"); if (sp) sp.style.display = "none";
     } else {
+      /* Solo se muestran los proveedores que Supabase tiene ACTIVOS. Antes el boton
+         mandaba al alumno a una pantalla de error cruda ("provider is not enabled"):
+         signInWithOAuth redirige directo y el error nunca regresaba a esta pagina.
+         Cuando se active un proveedor en Supabase, su boton aparece solo. */
+      var ACTIVO = {};
+      social.style.visibility = "hidden";
+      fetch(SUPABASE_URL + "/auth/v1/settings", { headers: { apikey: SUPABASE_ANON_KEY } })
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(cfg){
+          var ext = (cfg && cfg.external) || {};
+          ACTIVO = { google: !!ext.google, facebook: !!ext.facebook,
+                     x: !!ext.x ? "x" : (!!ext.twitter ? "twitter" : false) };
+          social.querySelectorAll(".social-btn").forEach(function(b){
+            if (!ACTIVO[b.dataset.p]) b.style.display = "none";
+          });
+          var fila = social.querySelector(".social-row");
+          if (fila && !fila.querySelector(".social-btn:not([style*='none'])")) fila.style.display = "none";
+          if (!social.querySelector(".social-btn:not([style*='none'])")){
+            social.style.display = "none";
+            var sp = document.querySelector(".sep"); if (sp) sp.style.display = "none";
+          }
+        })
+        .catch(function(){ /* sin red: se dejan los botones y el aviso de abajo */ })
+        .then(function(){ social.style.visibility = ""; });
       social.querySelectorAll(".social-btn").forEach(function(b){
         b.addEventListener("click", function(){
           var prov = b.dataset.p;
           clear();
+          if (prov === "x" && typeof ACTIVO.x === "string") prov = ACTIVO.x;
           social.querySelectorAll(".social-btn").forEach(function(x){ x.disabled = true; });
           entrarCon(prov, prov === "x" ? "twitter" : null);
         });
