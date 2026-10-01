@@ -100,7 +100,7 @@ var PLAUSIBLE = "";               // alternativa sin cookies (desactivada)
       '<p>' + T(
         'Usamos cookies de medici\u00f3n para entender c\u00f3mo se usa el sitio. Puedes rechazarlas y todo seguir\u00e1 funcionando igual.',
         'We use measurement cookies to understand how the site is used. You can decline and everything will keep working.'
-      ) + ' <a href="' + (isEN() ? 'privacy.html' : 'privacidad.html') + '">' +
+      ) + ' <a href="' + (isEN() ? '/en/privacy.html' : '/privacidad.html') + '">' +
         T('Aviso de privacidad','Privacy notice') + '</a></p>' +
       '<div class="consent-btns">' +
         '<button class="btn-line btn-consent" data-v="no">' + T('Rechazar','Decline') + '</button>' +

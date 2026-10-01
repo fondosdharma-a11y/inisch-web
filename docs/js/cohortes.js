@@ -93,8 +93,8 @@ window.INISCH_COHORTES = [
     3: "instructor.html", dc3: "empresas.html"
   };
   var ENLACE_EN = {
-    1: "awakening.html", 2: "specialist.html",
-    3: "instructor-training.html", dc3: "companies.html"
+    1: "intensive-workshop.html", 2: "specialist-diploma.html",
+    3: "instructor-certification.html", dc3: "companies.html"
   };
 
   function vigentes(){
