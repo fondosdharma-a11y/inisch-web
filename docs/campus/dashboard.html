@@ -81,6 +81,21 @@ Campus.boot("Inicio", function(c, u){
            '</video></div></div>';
     }
 
+    // --- Novedad: las lecciones ya tienen video (se puede cerrar; deja de salir el 18-oct-2026) ---
+    (function(){
+      var conVideo = all.filter(function(l){ return !!l.video_url; });
+      if (!conVideo.length || new Date() >= new Date("2026-10-18T00:00:00")) return;
+      try { if (localStorage.getItem("inisch-nov-videos-oct") === "1") return; } catch(e){}
+      h += '<div class="card reveal" id="nov-videos" style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;' +
+           'margin-bottom:20px;border-color:var(--line-gold)">' +
+           '<span style="font-size:20px;color:var(--gold)">▶</span>' +
+           '<div style="flex:1;min-width:210px"><b>Nuevo: tus lecciones ya tienen video</b>' +
+           '<p class="tiny soft" style="margin-top:4px">' + (conVideo.length === 1 ? 'Una lección tiene' : 'Las ' + conVideo.length + ' lecciones tienen') +
+           ' un video de repaso de 2 a 3 minutos, con subtítulos.</p></div>' +
+           '<a class="btn-o btn-sm" href="leccion.html?id=' + encodeURIComponent(conVideo[0].id) + '">Ver la primera</a>' +
+           '<button type="button" class="btn-o btn-sm" id="nov-cerrar" aria-label="Cerrar este aviso" style="padding:6px 11px">×</button></div>';
+    })();
+
     // --- Enlace de referido, visible desde el panel ---
     h += '<a href="referidos.html" class="card reveal" style="display:flex;gap:14px;align-items:center;' +
          'flex-wrap:wrap;margin-bottom:20px;border-color:var(--line-gold);' +
@@ -172,6 +187,11 @@ Campus.boot("Inicio", function(c, u){
 
     zone.innerHTML = h;
     Campus.reveal(c);
+    var cerrarNov = document.getElementById("nov-cerrar");
+    if (cerrarNov) cerrarNov.addEventListener("click", function(){
+      try { localStorage.setItem("inisch-nov-videos-oct", "1"); } catch(e){}
+      var nv = document.getElementById("nov-videos"); if (nv) nv.parentNode.removeChild(nv);
+    });
   })
   .catch(function(e){
     console.error(e);
