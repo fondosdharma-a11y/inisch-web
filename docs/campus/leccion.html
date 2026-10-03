@@ -33,6 +33,9 @@ Campus.boot("Lección", function(c, u){
     if (m) return "https://player.vimeo.com/video/" + m[1] + (seg ? "#t=" + Math.floor(seg) + "s" : "");
     return url;
   }
+  /* Video propio (MP4/WebM): se reproduce aquí mismo, con subtítulos y póster
+     del mismo nombre (leccion-1.mp4 → leccion-1.jpg, leccion-1.es.vtt) */
+  function esArchivo(url){ return /\.(mp4|webm)(\?|#|$)/i.test(url || ""); }
   function mmss(s){
     s = Math.floor(s||0);
     var m = Math.floor(s/60), r = s%60;
@@ -129,7 +132,14 @@ Campus.boot("Lección", function(c, u){
       /* ---- video ---- */
       var caja = document.getElementById("v-caja");
       var src = incrustar(l.video_url, reanudarDesde);
-      if (src){
+      if (src && esArchivo(src)){
+        var base = src.replace(/\.(mp4|webm)(\?.*)?$/i, "");
+        caja.innerHTML = '<video controls playsinline preload="metadata" poster="' + E(base) + '.jpg">' +
+          '<source src="' + E(src) + '" type="video/' + (/\.webm/i.test(src) ? "webm" : "mp4") + '">' +
+          '<track kind="subtitles" srclang="es" label="Español" src="' + E(base) + '.es.vtt">' +
+          '</video>';
+        seguirVideo(l.id, caja.querySelector("video"), reanudarDesde);
+      } else if (src){
         caja.innerHTML = '<iframe src="' + E(src) + '" allow="accelerated-destination; autoplay; encrypted-media; picture-in-picture" allowfullscreen title="' + E(l.title) + '"></iframe>';
         empezarConteo(l.id, reanudarDesde);
       } else {
@@ -192,6 +202,24 @@ Campus.boot("Lección", function(c, u){
        sin su API. Llevamos un conteo propio del tiempo en pantalla, que es
        suficiente para ofrecer "continuar donde quedaste". */
     var reloj = null;
+    /* Con video propio sí sabemos el segundo exacto y la duración */
+    function seguirVideo(lessonId, v, desde){
+      if (reloj) { clearInterval(reloj); reloj = null; }
+      var ultimo = 0;
+      if (desde) v.addEventListener("loadedmetadata", function(){ v.currentTime = desde; }, { once:true });
+      function guardar(){
+        var seg = Math.floor(v.currentTime || 0), dur = Math.floor(v.duration || 0);
+        var prev = vpos[lessonId] || {};
+        Campus.DB.save("video_progreso", { id:prev.id, lesson_id:lessonId, segundos:seg, duracion:dur || null })
+          .then(function(s){ if (s) vpos[lessonId] = s; })
+          .catch(function(){});
+      }
+      v.addEventListener("timeupdate", function(){
+        if (Math.abs((v.currentTime || 0) - ultimo) >= 15){ ultimo = v.currentTime; guardar(); }
+      });
+      v.addEventListener("pause", guardar);
+      v.addEventListener("ended", guardar);
+    }
     function empezarConteo(lessonId, desde){
       if (reloj) clearInterval(reloj);
       var seg = desde || 0, ultimo = 0;

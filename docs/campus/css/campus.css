@@ -367,6 +367,7 @@ details.q[open]{border-color:var(--line-gold)}
 .video-wrap{ position:relative; width:100%; aspect-ratio:16/9; background:#000;
   border-radius:10px; overflow:hidden; border:1px solid var(--line); }
 .video-wrap iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+.video-wrap video{ position:absolute; inset:0; width:100%; height:100%; background:#000; }
 .video-vacio{ position:absolute; inset:0; display:flex; flex-direction:column;
   align-items:center; justify-content:center; gap:10px;
   background:var(--bg-2); color:var(--ink-dim); text-align:center; padding:30px; }
