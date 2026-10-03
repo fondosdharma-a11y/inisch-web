@@ -70,6 +70,17 @@ Campus.boot("Inicio", function(c, u){
 
     var h = '';
 
+    // --- Video de bienvenida al campus, solo mientras no ha terminado ninguna lección (Omnistudio; aprobado por GUARDIAN) ---
+    if (done === 0){
+      h += '<div class="card reveal" style="margin-bottom:20px">' +
+           '<div class="eyebrow">Empieza aqu&iacute;</div>' +
+           '<h2 style="font-size:20px;margin:4px 0 12px">Bienvenida al campus <span class="tiny soft">&middot; 0:51</span></h2>' +
+           '<div class="video-wrap"><video controls playsinline preload="none" poster="../assets/video/campus/bienvenida.jpg">' +
+           '<source src="../assets/video/campus/bienvenida.mp4" type="video/mp4">' +
+           '<track kind="captions" srclang="es" label="Espa&ntilde;ol" src="../assets/video/campus/bienvenida.es.vtt" default>' +
+           '</video></div></div>';
+    }
+
     // --- Enlace de referido, visible desde el panel ---
     h += '<a href="referidos.html" class="card reveal" style="display:flex;gap:14px;align-items:center;' +
          'flex-wrap:wrap;margin-bottom:20px;border-color:var(--line-gold);' +
