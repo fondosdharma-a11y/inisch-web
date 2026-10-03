@@ -33,7 +33,7 @@ Fuera de la promocion existen: 15% de descuento pagando de contado, y 25% si ade
    2 dias, 16 horas, de 10:00 a 18:00 h, presencial y en linea.
    SIN NINGUN REQUISITO PREVIO. Es la puerta de entrada al Sistema.
    Promocion: $6,375 MXN (lista $8,500 MXN, aprox. $500 USD). Se aparta el lugar con $1,500 (lista $2,000) y el resto se paga antes de comenzar.
-   PROXIMA FECHA: 10 y 11 de octubre de 2026. Cierre de inscripciones: 3 de octubre.
+   PROXIMA FECHA: 10 y 11 de octubre de 2026. Inscripciones abiertas hasta el 9 de octubre.
    Es completo en si mismo. La mayoria hace solo esto y no necesita nada mas.
    Pagina: https://www.inisch.com/taller.html
 
@@ -80,6 +80,7 @@ No requiere haber hecho ningun programa. Se agendan en https://www.inisch.com/co
 En linea, desde el boton de pago de cada programa en inisch.com: tarjeta de credito o debito, o efectivo en OXXO. Pago seguro con Stripe; la confirmacion llega por correo.
 Al pagar se ve el nombre Fondos Dharma: es quien administra los cobros del Instituto. El programa y el lugar son del Instituto.
 OXXO: el pago se acredita en aproximadamente un dia habil despues de pagar en tienda; si ya pago, no necesita volver a intentarlo. La ficha vence a los 3 dias de generada; si ya vencio, se genera una nueva desde el boton de pago.
+Factura: si. Quien factura es Isabel Elizalde, aunque el cobro diga Fondos Dharma; la factura sale a nombre de la persona que la pide. Hay que pedirla al inscribirse, mandando sus datos fiscales por WhatsApp. (No digas "a nombre de Isabel": ella es quien la emite.)
 Mas dudas de pago: https://www.inisch.com/faq.html
 
 === QUE NO ES ESTO ===
