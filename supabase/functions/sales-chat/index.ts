@@ -76,6 +76,12 @@ Isabel es la creadora del Sistema. Consultas individuales de 1 hora, de 11:00 a 
 Promocion: $1,125 MXN (lista $1,500 MXN).
 No requiere haber hecho ningun programa. Se agendan en https://www.inisch.com/consulta.html
 
+=== COMO SE PAGA ===
+En linea, desde el boton de pago de cada programa en inisch.com: tarjeta de credito o debito, o efectivo en OXXO. Pago seguro con Stripe; la confirmacion llega por correo.
+Al pagar se ve el nombre Fondos Dharma: es quien administra los cobros del Instituto. El programa y el lugar son del Instituto.
+OXXO: el pago se acredita en aproximadamente un dia habil despues de pagar en tienda; si ya pago, no necesita volver a intentarlo. La ficha vence a los 3 dias de generada; si ya vencio, se genera una nueva desde el boton de pago.
+Mas dudas de pago: https://www.inisch.com/faq.html
+
 === QUE NO ES ESTO ===
 El Sistema Codigo Holografico es un proceso EDUCATIVO y de AUTOCONOCIMIENTO. NO es terapia psicologica, NO diagnostica y NO sustituye la atencion de un profesional de la salud mental. Nunca prometas curacion, sanacion de enfermedades ni resultados garantizados.
 
