@@ -24,6 +24,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="css/main.css">
+<style>
+.video-inst{padding:10px 32px 0}
+.video-inst .pantalla{max-width:980px;margin:22px auto 0;border:1px solid rgba(216,180,90,.45);border-radius:18px;overflow:hidden;background:#000;box-shadow:0 30px 80px -45px rgba(216,180,90,.5)}
+.video-inst video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#000}
+.video-inst .cab{text-align:center;max-width:720px;margin:0 auto}
+.video-inst .pie{max-width:980px;margin:12px auto 0;text-align:right;font-size:14px}
+@media (max-width:600px){.video-inst{padding:6px 16px 0}}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"VideoObject","name":"Retiro de Transformación y Liberación en Tulum","description":"Siete noches en Tulum guiadas por Isabel Elizalde, del 29 de octubre al 5 de noviembre de 2026.","duration":"PT1M15S","thumbnailUrl":"https://www.inisch.com/assets/video/retiro-tulum.jpg","contentUrl":"https://www.inisch.com/assets/video/retiro-tulum.mp4","uploadDate":"2026-10-02","inLanguage":"es-MX","publisher":{"@type":"Organization","name":"INISCH","url":"https://www.inisch.com/"}}</script>
 </head>
 <body>
 <header><nav>
@@ -67,6 +76,22 @@
     </div>
   </div>
 </div>
+
+<section class="video-inst" id="video" aria-labelledby="video-titulo">
+  <div class="cab">
+    <div class="eyebrow">En video</div>
+    <h2 id="video-titulo">&iquest;Y si te regalas siete d&iacute;as para volver a ti?</h2>
+    <p class="muted">Lo que vivir&aacute;s en Tulum, del 29 de octubre al 5 de noviembre de 2026.</p>
+  </div>
+  <div class="pantalla">
+    <video controls playsinline preload="none" poster="assets/video/retiro-tulum.jpg" width="1280" height="720" aria-label="Video de invitaci&oacute;n al Retiro en Tulum, 1 minuto 15 segundos">
+      <source src="assets/video/retiro-tulum.mp4" type="video/mp4">
+      <track kind="captions" src="assets/video/retiro-tulum.es.vtt" srclang="es" label="Espa&ntilde;ol" default>
+      <a href="assets/video/retiro-tulum.mp4">Ver el video</a>
+    </video>
+  </div>
+  <p class="muted pie">1:15 &middot; con subt&iacute;tulos</p>
+</section>
 
 <section class="wrap-narrow" style="padding:60px 32px 20px;">
   <h2 style="font-size:clamp(25px,3.4vw,34px); margin-bottom:20px;">Una pausa, no unas vacaciones</h2>
