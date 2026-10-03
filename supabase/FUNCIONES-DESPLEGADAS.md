@@ -7,7 +7,8 @@ Proyecto: `ygzpxtwozqfrncvqrgqo`
 | `sales-chat` | ACTIVA | no requiere | Agente de admisiones del sitio publico. Responde dudas sobre los tres programas con informacion real y **detecta cuando la persona necesita apoyo profesional en lugar de un curso**. Devuelve las banderas `apoyo` y `consulta`. |
 | `campus-agent` | ACTIVA | requerido | Agentes internos del campus: `tipo:"redes"` genera contenido para redes; `tipo:"instructor"` ayuda a preparar sesiones. Verifica que el rol sea `instructor` o `admin`. |
 | `generate-certificate` | escrita, sin desplegar | — | Genera el PDF de la constancia. |
-| `stripe-webhook` | escrita, sin desplegar | — | Activa el acceso al recibir el pago. Requiere claves de Stripe. |
+| `stripe-webhook` | ACTIVA (v5) | no requiere (valida firma de Stripe) | Registra pagos de INISCH, abre el campus y programa el fin de las mensualidades. Copia exacta en `jarvis/infra/inisch/`. |
+| `whatsapp-agent` | ACTIVA (v1), **apagada hasta tener los datos de Meta** | no requiere (valida firma de Meta) | Asistente de IA del Instituto en WhatsApp (número propio, API oficial). Sin los secretos `WA_*` responde 403/503 y no hace nada. Guía de alta: vault INISCH/Instituto/«Asistente de WhatsApp — alta con Meta». |
 
 ## Secreto pendiente
 
@@ -37,3 +38,12 @@ Conviene poner un limite de gasto en la consola de Anthropic desde el primer dia
 El `sales-chat` tiene instruccion explicita de **no vender** cuando detecta crisis emocional,
 ideas de hacerse dano o sintomas clinicos. En ese caso remite a apoyo profesional y, si hay
 riesgo, a la Linea de la Vida (800 911 2000). Esa regla no debe quitarse del prompt.
+
+## Conocimiento compartido (2026-10-03)
+
+Lo que saben los asistentes (programas, precios, fechas, reglas del Canon, protocolo de crisis) vive en
+`functions/_shared/conocimiento.ts` y lo importan `sales-chat` y `whatsapp-agent`. Si cambia un precio o una fecha,
+se cambia ahí y se despliegan **las dos** funciones (al desplegar, se manda también `../_shared/conocimiento.ts`).
+`sales-chat` v11 desplegada todavía trae ese texto dentro (idéntico); la próxima vez que se despliegue ya usa el archivo compartido.
+
+Pruebas de la lógica del asistente de WhatsApp: `node supabase/functions/whatsapp-agent/logica.test.ts`.
