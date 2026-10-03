@@ -136,7 +136,7 @@ Campus.boot("Lección", function(c, u){
         var base = src.replace(/\.(mp4|webm)(\?.*)?$/i, "");
         caja.innerHTML = '<video controls playsinline preload="metadata" poster="' + E(base) + '.jpg">' +
           '<source src="' + E(src) + '" type="video/' + (/\.webm/i.test(src) ? "webm" : "mp4") + '">' +
-          '<track kind="subtitles" srclang="es" label="Español" src="' + E(base) + '.es.vtt">' +
+          '<track kind="captions" srclang="es" label="Español" src="' + E(base) + '.es.vtt" default>' +
           '</video>';
         seguirVideo(l.id, caja.querySelector("video"), reanudarDesde);
       } else if (src){
