@@ -280,3 +280,45 @@ if (window.INISCH_PROMO.activa){
   window.addEventListener("load", barra);
   setTimeout(barra, 1500);
 })();
+
+/* ------------------------------------------------------------
+   QUIEN COBRA: la pagina de pago de Stripe muestra "Fondos Dharma"
+   (administra los cobros del Instituto). Se avisa antes del clic para
+   que nadie desconfie ni desconozca el cargo. Frase aprobada por
+   GUARDIAN (ENC-1439DF, 2026-10-02).
+   ------------------------------------------------------------ */
+(function(){
+  var ES = !/^en/i.test(document.documentElement.lang || "");
+  var TXT = ES
+    ? "Al pagar ver&aacute;s el nombre <b>Fondos Dharma</b>: es quien administra los cobros del Instituto."
+    : "At checkout you will see the name <b>Fondos Dharma</b>: it manages the Institute&rsquo;s payments.";
+
+  function avisar(){
+    var css = document.createElement("style");
+    css.textContent = ".cobro-nota{display:block;margin:10px 0 0;font-size:13px;line-height:1.45;opacity:.75}";
+    document.head.appendChild(css);
+    var els = document.querySelectorAll("[data-pago]");
+    for (var i = 0; i < els.length; i++){
+      var e = els[i];
+      if (e.style.display === "none") continue;
+      var n = document.createElement("small");
+      n.className = "cobro-nota";
+      n.innerHTML = TXT;
+      var caja = e.closest(".price-box");
+      if (caja){
+        if (!caja.querySelector(".cobro-nota")) caja.appendChild(n);
+        continue;
+      }
+      // Boton suelto: si va en una fila de botones (flex/grid), la nota va debajo de la fila
+      var fila = e.parentNode;
+      if (/flex|grid/.test(getComputedStyle(fila).display)){
+        var sig = fila.nextElementSibling;
+        if (!(sig && sig.classList.contains("cobro-nota"))) fila.parentNode.insertBefore(n, fila.nextSibling);
+      } else if (!fila.querySelector(".cobro-nota")){
+        fila.insertBefore(n, e.nextSibling);
+      }
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", avisar);
+  else avisar();
+})();
