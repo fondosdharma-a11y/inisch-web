@@ -19,5 +19,5 @@
     { "pattern": "inisch.com/*", "zone_name": "inisch.com" },
     { "pattern": "www.inisch.com/*", "zone_name": "inisch.com" }
   ],
-  "vars": { "FUENTE": "https://raw.githubusercontent.com/fondosdharma-a11y/inisch-web/main/docs", "HOST_CANONICO": "www.inisch.com", "HOSTS_ALTERNOS": "inisch.com" }
+  "vars": { "REDIRECCIONES": "{\"/maestria.html\": \"/instructor.html\", \"/formacion.html\": \"/programas.html\"}", "FUENTE": "https://raw.githubusercontent.com/fondosdharma-a11y/inisch-web/main/docs", "HOST_CANONICO": "www.inisch.com", "HOSTS_ALTERNOS": "inisch.com" }
 }
