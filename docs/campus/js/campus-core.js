@@ -518,7 +518,7 @@
           'El campus se abre de dos formas: con tu inscripción al <b>Taller Intensivo</b>, que ya lo incluye, ' +
           'o con el <b>acceso al campus por $599 MXN durante 12 meses</b>, un complemento para estudiar a tu ritmo que no sustituye al Taller. ' +
           'Ahí encontrarás las lecciones en video, Mi Película, la Bitácora y la Práctica.</p>' +
-        (conCupon ? '<p style="font-size:15.5px;line-height:1.7;margin-bottom:8px">Hasta el 4 de noviembre, con el cupón ' +
+        (conCupon ? '<p style="font-size:15.5px;line-height:1.7;margin-bottom:8px">Hasta el 4 de noviembre de 2026 a las 23:59 (hora del centro de México), con el cupón ' +
           '<b>FUNDADOR</b> el acceso al campus queda en <b>$299.50</b> (50% de descuento). Ya va puesto en el botón de pago.</p>' : '') +
         '<p class="muted" style="font-size:15.5px;line-height:1.7">' +
           'Si ya pagaste, escríbenos y lo activamos enseguida: a veces tarda unas horas.</p>' +

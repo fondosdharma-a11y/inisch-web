@@ -258,8 +258,8 @@ window.INISCH_COHORTES = [
       '<div class="an-inc">' +
         '<span class="an-tag">' + T("Por tiempo limitado", "Limited time") + '</span>' +
         '<span class="an-txt"><b>' + T("Cupón " + CUPON.codigo + ": 50% de descuento", "Code " + CUPON.codigo + ": 50% off") + '</b> ' +
-          T("en el acceso al campus por 12 meses: $599 → $299.50 MXN · hasta el 4 de noviembre",
-            "the student portal for 12 months: $599 → $299.50 MXN · until November 4") + '</span>' +
+          T("solo en el acceso al campus por 12 meses: $599 → $299.50 MXN · válido hasta el 4 de noviembre de 2026, 23:59 h (hora del centro de México)",
+            "the student portal (12 months) only: $599 → $299.50 MXN · valid until November 4, 2026, 11:59 p.m. (Mexico City time)") + '</span>' +
         '<a class="an-btn" href="' + CUPON.pago + '" target="_blank" rel="noopener">' +
           T("Usar el cupón", "Use the code") + '</a>' +
         '<button class="an-x" aria-label="' + T("Cerrar","Close") + '">&times;</button>' +
