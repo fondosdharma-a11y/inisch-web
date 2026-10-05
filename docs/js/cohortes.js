@@ -25,13 +25,13 @@ window.INISCH_COHORTES = [
 
   {
     etapa: 1,
-    inicio: "2026-10-10",
-    fin: "2026-10-11",
+    inicio: "2026-11-21",
+    fin: "2026-11-22",
     horario: "10:00 a 18:00 h",
     modalidad: "Presencial y en linea",
     ciudad: "",              // <-- PENDIENTE: escribe la ciudad
     cupo: null,              // <-- opcional: numero de lugares
-    cierre: "2026-10-09",    // fecha limite de inscripcion
+    cierre: "2026-11-20",    // fecha limite de inscripcion (orden del Jefe 2026-10-05: el Taller pasa al 21-22 de noviembre)
     nota: ""
   },
 
