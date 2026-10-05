@@ -670,6 +670,8 @@ hr, .rule{ border:none; height:1px; background:linear-gradient(90deg, transparen
 .consent p a{ color:var(--gold); text-decoration:underline; }
 .consent-btns{ display:flex; gap:9px; }
 .consent-btns .btn-teal, .consent-btns .btn-line{ padding:10px 20px; font-size:13.5px; }
+/* «Rechazar» es <button>: sin esto toma el fondo gris del navegador y en modo oscuro no se lee. Debe verse igual que «Aceptar». */
+.consent-btns .btn-line{ background:transparent; font-family:inherit; cursor:pointer; }
 @media(max-width:520px){ .consent-btns{ width:100%; } .consent-btns > *{ flex:1; text-align:center; } }
 
 
