@@ -207,6 +207,8 @@ if (window.INISCH_PROMO.activa){
   css.textContent =
     ".promo-antes{opacity:.55;font-weight:400;font-size:.72em;margin-right:.25em;text-decoration-thickness:1.5px}" +
     ".promo-ahora{color:var(--gold,#D8B45A)}" +
+    // Dentro de un botón el precio toma el color del botón: en modo oscuro el botón es dorado y el precio no se leía.
+    "[class*=btn] .promo-ahora{color:inherit;font-weight:700}" +
     ".an-promo{background:var(--gold,#D8B45A)!important;color:#0D1A1E!important}" +
     ".promo-nota{margin:0 0 16px;padding:10px 14px;border:1px solid var(--gold,#D8B45A);border-radius:10px;font-size:14px;line-height:1.45}";
   document.head.appendChild(css);
