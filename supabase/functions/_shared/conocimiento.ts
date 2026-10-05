@@ -70,10 +70,10 @@ Promocion: $1,125 MXN (lista $1,500 MXN).
 No requiere haber hecho ningun programa. Se agendan en https://www.inisch.com/consulta.html
 
 === ACCESO AL CAMPUS (sin tomar el Taller) ===
-El campus de alumnos tambien se puede contratar solo: $599 MXN, pago unico, con acceso por 12 meses. Incluye las 6 lecciones en video del Taller Intensivo (repaso de lo que se ve en el Taller), Mi Pelicula, la Bitacora del darte cuenta y Mi practica. No tiene promocion.
+El campus de alumnos tambien se puede contratar solo: $599 MXN, pago unico, con acceso por 12 meses. Incluye las 6 lecciones en video del Taller Intensivo (repaso de lo que se ve en el Taller), Mi Pelicula, la Bitacora del darte cuenta y Mi practica. No tiene la promocion del 25%.
 Es un complemento: no sustituye al Taller ni incluye la Constancia de Formacion del Taller. Quien paga el Taller ya tiene el campus incluido, sin costo extra.
 Se contrata creando la cuenta en https://inisch.com/campus, donde aparece el boton de pago.
-
+{{CUPON}}
 === COMO SE PAGA ===
 En linea, desde el boton de pago de cada programa en inisch.com: tarjeta de credito o debito, o efectivo en OXXO. Pago seguro con Stripe; la confirmacion llega por correo.
 Al pagar se ve el nombre Fondos Dharma: es quien administra los cobros del Instituto. El programa y el lugar son del Instituto.
@@ -128,7 +128,18 @@ export function lineaFechaTaller(ahora: Date = new Date()): string {
     "en cuanto se confirme, " + donde + ".";
 }
 
+// Cupon FUNDADOR (orden del Jefe 2026-10-05): 50% en el acceso al campus hasta el 4-nov-2026 23:59 (hora de Mexico).
+export const CUPON_FUNDADOR_VENCE = Date.UTC(2026, 10, 5, 5, 59, 59);
+
+/** La linea del cupon mientras esta vigente; despues, nada (los asistentes ya no lo ofrecen). */
+export function lineaCupon(ahora: Date = new Date()): string {
+  if (ahora.getTime() > CUPON_FUNDADOR_VENCE) return "";
+  return "CUPON VIGENTE: con el cupon FUNDADOR, el acceso al campus queda en $299.50 MXN (50% de descuento) hasta el 4 de noviembre de 2026. " +
+    "Solo aplica al acceso al campus (no al Taller, al Retiro ni a otros programas). Se escribe en la pagina de pago, o ya va puesto en el boton " +
+    "\"Usar el cupon\" de la barra de arriba del sitio: https://buy.stripe.com/8x25kEgwg7Li2AJdkVgEg2N?prefilled_promo_code=FUNDADOR\n";
+}
+
 /** Instrucciones completas con la fecha del dia. Es lo que usan sales-chat y whatsapp-agent. */
 export function sistemaINISCH(ahora: Date = new Date()): string {
-  return SYSTEM_INISCH.replace("{{FECHA_TALLER}}", lineaFechaTaller(ahora));
+  return SYSTEM_INISCH.replace("{{FECHA_TALLER}}", lineaFechaTaller(ahora)).replace("{{CUPON}}", lineaCupon(ahora));
 }

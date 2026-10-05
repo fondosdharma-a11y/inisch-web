@@ -2,7 +2,7 @@
 import {
   BAJA, RECHAZO, aWhatsApp, canonico, contextoWA, historiaParaModelo, hoyMX, origenDe, procesar, textoDe, videosVigentes,
 } from "./logica.ts";
-import { lineaFechaTaller, sistemaINISCH, tallerAbierto } from "../_shared/conocimiento.ts";
+import { lineaCupon, lineaFechaTaller, sistemaINISCH, tallerAbierto } from "../_shared/conocimiento.ts";
 
 let fallas = 0;
 function ok(cond: boolean, nombre: string) {
@@ -78,6 +78,11 @@ ok(lineaFechaTaller(new Date("2026-11-23T18:00:00Z")).includes("NO tiene fecha c
 ok(!sistemaINISCH(new Date("2026-11-23T18:00:00Z")).includes("{{FECHA_TALLER}}") &&
    !sistemaINISCH(new Date("2026-11-23T18:00:00Z")).includes("21 y 22 de noviembre de 2026 (sabado y domingo). Inscripciones"), "el sistema ya no ofrece la fecha vencida");
 ok(sistemaINISCH().includes("taller de 4 horas"), "el taller de 4 horas aparece como próximamente");
+
+// Cupon FUNDADOR: vigente hasta el 4 de noviembre (hora de Mexico) y nunca se queda la marca en el texto
+ok(lineaCupon(new Date("2026-11-05T05:00:00Z")).includes("FUNDADOR"), "el 4 de noviembre a las 23:00 sigue vigente");
+ok(lineaCupon(new Date("2026-11-05T06:30:00Z")) === "", "el 5 de noviembre ya no se ofrece");
+ok(!sistemaINISCH().includes("{{CUPON}}") && !sistemaINISCH(new Date("2026-12-01T00:00:00Z")).includes("{{CUPON}}"), "sin marcas sueltas");
 
 console.log(fallas ? `${fallas} FALLAS` : "TODO BIEN");
 if (fallas) process.exit(1);
