@@ -15,7 +15,7 @@ const CORS = {
   "Content-Type": "application/json",
 };
 
-import { SYSTEM_INISCH as SYSTEM } from "../_shared/conocimiento.ts";
+import { sistemaINISCH } from "../_shared/conocimiento.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
       body: JSON.stringify({
         model: "claude-sonnet-4-6",
         max_tokens: 700,
-        system: SYSTEM,
+        system: sistemaINISCH(),
         messages,
       }),
     });

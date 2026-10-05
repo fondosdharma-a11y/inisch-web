@@ -60,7 +60,7 @@ export function videosVigentes(ahora: Date = new Date()): string[] {
 }
 
 /** Lo que se agrega a las instrucciones del Instituto cuando la plática es por WhatsApp. */
-export function contextoWA(o: { primero: boolean; alumno: boolean; ahora?: Date }): string {
+export function contextoWA(o: { primero: boolean; alumno: boolean; ahora?: Date; abierto?: boolean }): string {
   const videos = videosVigentes(o.ahora);
   let s =
     "\n\n=== CONTEXTO DE ESTA CONVERSACION ===\n" +
@@ -74,7 +74,11 @@ export function contextoWA(o: { primero: boolean; alumno: boolean; ahora?: Date 
     "UNA PERSONA: si pide hablar con alguien, que le llamen, factura, reembolso, una queja, o algo que no este en tu informacion, ofrecele dos caminos: " +
     "que escriba al WhatsApp del Instituto (dale el enlace), o que una persona del Instituto le escriba a ella. Para lo segundo preguntale si esta de acuerdo en que compartamos su numero con el equipo para eso. " +
     "SOLO cuando diga que si, confirma en una linea que le escribiran pronto (sin prometer hora) y pon la etiqueta [HUMANO] en una linea aparte al final.\n" +
-    "Nunca te corrijas a ti mismo dentro del mensaje: manda el texto ya limpio y definitivo.";
+    "Nunca te corrijas a ti mismo dentro del mensaje: manda el texto ya limpio y definitivo.\n" +
+    "LISTA DE ESPERA: " + (o.abierto === false
+      ? "la proxima generacion del Taller todavia no tiene fecha. Si le interesa el Taller, ofrecele anotarle en la lista de espera para avisarle por este WhatsApp en cuanto haya fecha. "
+      : "si le interesa el Taller pero no puede en la fecha vigente, ofrecele anotarle en la lista de espera de la siguiente generacion. ") +
+    "Preguntale si esta de acuerdo en que guardemos su numero solo para avisarle de la fecha. SOLO cuando diga que si, confirma en una linea que le avisaremos por aqui y pon la etiqueta [LISTA_ESPERA] en una linea aparte al final. Nunca inventes una fecha.";
   if (videos.length) {
     s += "\nVIDEOS (se mandan solos si pones la etiqueta en una linea aparte al final; cada uno una sola vez por conversacion):";
     if (videos.includes("VIDEO_APARTAR")) s += " si pregunta como inscribirse, apartar o pagar el Taller, pon [VIDEO_APARTAR];";
@@ -95,14 +99,27 @@ export function procesar(crudo: string, ahora: Date = new Date()) {
   const t = String(crudo || "");
   const vigentes = videosVigentes(ahora);
   const videos = Object.keys(VIDEOS).filter((k) => t.includes(`[${k}]`) && vigentes.includes(k));
-  const texto = t.replace(/\[(APOYO|CONSULTA|HUMANO|VIDEO_[A-Z]+)\]/g, "").trim();
+  const texto = t.replace(/\[(APOYO|CONSULTA|HUMANO|LISTA_ESPERA|VIDEO_[A-Z]+)\]/g, "").trim();
   return {
     texto,
     apoyo: /\[APOYO\]/.test(t),
     consulta: /\[CONSULTA\]/.test(t),
     humano: /\[HUMANO\]/.test(t),
+    lista: /\[LISTA_ESPERA\]/.test(t),
     videos,
   };
+}
+
+/** De dónde llegó la persona: si escribió desde un anuncio de Facebook o Instagram con botón de WhatsApp,
+ *  Meta manda `referral` en su primer mensaje. Se guarda para saber qué anuncio trae conversaciones (sin datos de la persona). */
+export function origenDe(msg: any): Record<string, string> | null {
+  const r = msg?.referral;
+  if (!r || typeof r !== "object") return null;
+  const o: Record<string, string> = { tipo: String(r.source_type || "referral") };
+  for (const k of ["source_id", "source_url", "headline", "media_type", "ctwa_clid"]) {
+    if (r[k]) o[k] = String(r[k]).slice(0, 300);
+  }
+  return o;
 }
 
 /** Formato de WhatsApp: *negritas sencillas*, sin títulos ni enlaces de markdown, tope de 4,096 caracteres. */

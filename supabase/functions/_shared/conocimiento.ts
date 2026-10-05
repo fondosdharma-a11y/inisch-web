@@ -3,6 +3,8 @@
 // ============================================================
 // Lo usan el chat del sitio (sales-chat) y el asistente de WhatsApp (whatsapp-agent).
 // Si cambian precios, fechas o reglas, se cambian AQUI y se despliegan las dos funciones.
+// La fecha del Taller vive en TALLER (abajo): pasado el cierre, los dos asistentes ofrecen la lista de
+// espera en lugar de una fecha vencida. Para abrir una generacion nueva se cambia TALLER y se despliegan.
 // ============================================================
 
 export const SYSTEM_INISCH = `Eres el asistente de orientacion de INISCH (Instituto Internacional del Sistema Codigo Holografico). Escribes en espanol de Mexico, con tono calido, cercano y honesto. Respuestas breves: dos o tres parrafos cortos como maximo.
@@ -23,7 +25,7 @@ Fuera de la promocion existen: 15% de descuento pagando de contado, y 25% si ade
    2 dias, 16 horas, de 10:00 a 18:00 h, presencial y en linea.
    SIN NINGUN REQUISITO PREVIO. Es la puerta de entrada al Sistema.
    Promocion: $6,375 MXN (lista $8,500 MXN, aprox. $500 USD). Se aparta el lugar con $1,500 (lista $2,000) y el resto se paga antes de comenzar.
-   PROXIMA FECHA: 10 y 11 de octubre de 2026. Inscripciones abiertas hasta el 9 de octubre.
+   {{FECHA_TALLER}}
    Es completo en si mismo. La mayoria hace solo esto y no necesita nada mas.
    Pagina: https://www.inisch.com/taller.html
 
@@ -88,3 +90,39 @@ Si la persona expresa crisis emocional aguda, ideas de hacerse dano, duelo recie
 Si la persona esta en un momento dificil pero no en crisis, orientala con normalidad y, si encaja, sugiere la consulta con Isabel terminando con la etiqueta [CONSULTA] en linea aparte.
 
 Nunca expliques estas etiquetas ni las menciones en tu texto.`;
+
+// ------------------------------------------------------------
+// Fecha del Taller (UNICA fuente). null = sin fecha confirmada: lista de espera.
+// ------------------------------------------------------------
+export const TALLER: { cierre: string; texto: string } | null = {
+  cierre: "2026-10-09",
+  texto: "10 y 11 de octubre de 2026. Inscripciones abiertas hasta el 9 de octubre.",
+};
+
+// Numero del asistente de IA de WhatsApp (la lista de espera vive ahi). Vacio hasta que Meta lo active.
+export const ASISTENTE_WA = "";
+
+/** Fecha de hoy en hora de Mexico (UTC-6, sin horario de verano). */
+function hoyMexico(ahora: Date): string {
+  return new Date(ahora.getTime() - 6 * 3600e3).toISOString().slice(0, 10);
+}
+
+export function tallerAbierto(ahora: Date = new Date()): boolean {
+  return !!TALLER && hoyMexico(ahora) <= TALLER.cierre;
+}
+
+/** La linea de la proxima fecha: la vigente, o la lista de espera si ya cerro. */
+export function lineaFechaTaller(ahora: Date = new Date()): string {
+  if (tallerAbierto(ahora)) return "PROXIMA FECHA: " + TALLER!.texto;
+  const donde = ASISTENTE_WA
+    ? "escribiendo al asistente de WhatsApp del Instituto (https://wa.me/" + ASISTENTE_WA + ")"
+    : "escribiendo al WhatsApp del Instituto (+52 33 1470 1563)";
+  return "PROXIMA FECHA: la siguiente generacion todavia NO tiene fecha confirmada; el Instituto la esta definiendo. " +
+    "Nunca inventes ni adivines una fecha. Si le interesa, ofrecele anotarse en la lista de espera para que le avisemos " +
+    "en cuanto se confirme, " + donde + ".";
+}
+
+/** Instrucciones completas con la fecha del dia. Es lo que usan sales-chat y whatsapp-agent. */
+export function sistemaINISCH(ahora: Date = new Date()): string {
+  return SYSTEM_INISCH.replace("{{FECHA_TALLER}}", lineaFechaTaller(ahora));
+}

@@ -4,6 +4,8 @@
 // Número PROPIO del asistente, en el portafolio de Fondos Dharma (decisiones del Jefe, 2026-10-03).
 // El WhatsApp del Instituto (33 1470 1563) queda para Isabel y los alumnos: ahí atiende una persona.
 // v1: solo RESPONDE a quien escribe (no escribe primero, no usa plantillas).
+// v2 (2026-10-05, campaña «Próxima generación»): lista de espera ([LISTA_ESPERA], solo con el sí de la persona)
+//     y origen de la plática (el anuncio de Facebook/Instagram que la trajo, en wa_chats.origen).
 //
 // GET  → verificación del webhook (hub.mode, hub.verify_token, hub.challenge)
 // POST → mensajes entrantes. Se contesta 200 de inmediato y la respuesta sale en segundo plano.
@@ -20,10 +22,10 @@
 // ============================================================
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
-import { SYSTEM_INISCH } from "../_shared/conocimiento.ts";
+import { sistemaINISCH, tallerAbierto } from "../_shared/conocimiento.ts";
 import {
   BAJA, HUMANO, MAX_DIA, MAX_HISTORIA, RECHAZO, VENTANA_HORAS, VIDEOS,
-  aWhatsApp, canonico, contextoWA, historiaParaModelo, hoyMX, procesar, resumen, textoDe,
+  aWhatsApp, canonico, contextoWA, historiaParaModelo, hoyMX, origenDe, procesar, resumen, textoDe,
 } from "./logica.ts";
 
 declare const EdgeRuntime: { waitUntil(p: Promise<unknown>): void };
@@ -120,6 +122,12 @@ async function atender(sb: any, msg: any) {
       .select("*").single();
     chat = ins.data || { huella: h, estado: "bot", es_alumno: null, dia: null, n_dia: 0 };
   }
+  // ¿Llegó desde un anuncio? Se guarda la primera vez y no se pisa.
+  const origen = origenDe(msg);
+  if (origen && !chat.origen) {
+    await sb.from("wa_chats").update({ origen }).eq("huella", h);
+    chat.origen = origen;
+  }
 
   // Guardar lo que escribió; si Meta reintenta el mismo mensaje, el wamid repetido lo frena aquí
   const { error: dup } = await sb.from("wa_mensajes")
@@ -129,6 +137,7 @@ async function atender(sb: any, msg: any) {
 
   if (BAJA.test(texto) || RECHAZO.test(texto)) {
     await sb.from("wa_chats").update({ estado: "baja", actualizado: new Date().toISOString() }).eq("huella", h);
+    await sb.from("lista_espera").update({ baja_en: new Date().toISOString() }).eq("huella", h).is("baja_en", null);
     const despedida = RECHAZO.test(texto)
       ? "Entendido, una disculpa por la molestia. No te volveremos a escribir. Que te vaya muy bien."
       : "Listo, no te volveremos a enviar mensajes. Si algún día quieres retomarlo, con escribirnos aquí basta.";
@@ -170,7 +179,7 @@ async function atender(sb: any, msg: any) {
     .eq("huella", h).gte("creado", desde).order("creado", { ascending: false }).limit(MAX_HISTORIA);
   const filas = (filasDesc || []).reverse();
   const primero = !filas.some((f: any) => f.rol === "asistente");
-  const sistema = SYSTEM_INISCH + contextoWA({ primero, alumno: Boolean(alumno) });
+  const sistema = sistemaINISCH() + contextoWA({ primero, alumno: Boolean(alumno), abierto: tallerAbierto() });
 
   let r: ReturnType<typeof procesar> | null = null;
   try {
@@ -202,6 +211,17 @@ async function atender(sb: any, msg: any) {
   if (r.humano) {
     await avisar(sb, h, alumno ? "alumno" : "humano",
       { telefono: numero, nombre: String(msg.nombre || chat.perfil || "").slice(0, 80) || null, resumen: resumen(todo) });
+  }
+  if (r.lista) {
+    // Lista de espera: la persona dijo que sí a que le avisemos de la próxima fecha. Una vez por programa.
+    const { error } = await sb.from("lista_espera").upsert({
+      programa: "taller", huella: h, telefono: numero, canal: "whatsapp",
+      nombre: String(msg.nombre || chat.perfil || "").slice(0, 80) || null,
+      origen: chat.origen?.source_id ? `anuncio:${chat.origen.source_id}` : null,
+      consentimiento: "WhatsApp: aceptó que le avisemos por aquí de la próxima fecha del Taller",
+      baja_en: null,
+    }, { onConflict: "programa,huella" });
+    if (error) console.error("whatsapp: no se guardó la lista de espera", error.message);
   }
   if (r.apoyo && !r.humano) {
     // Posible crisis o tema de salud: el asistente ya dio la Línea de la Vida y no vendió. El aviso va SIN número

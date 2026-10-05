@@ -1,7 +1,8 @@
 // Pruebas de la lógica del asistente de WhatsApp. Correr: node supabase/functions/whatsapp-agent/logica.test.ts
 import {
-  BAJA, RECHAZO, aWhatsApp, canonico, contextoWA, historiaParaModelo, hoyMX, procesar, textoDe, videosVigentes,
+  BAJA, RECHAZO, aWhatsApp, canonico, contextoWA, historiaParaModelo, hoyMX, origenDe, procesar, textoDe, videosVigentes,
 } from "./logica.ts";
+import { lineaFechaTaller, sistemaINISCH, tallerAbierto } from "../_shared/conocimiento.ts";
 
 let fallas = 0;
 function ok(cond: boolean, nombre: string) {
@@ -55,6 +56,27 @@ const h = historiaParaModelo([
   { rol: "asistente", texto: "hola" }, { rol: "usuario", texto: "a" }, { rol: "usuario", texto: "b" }, { rol: "asistente", texto: "c" },
 ]);
 ok(h.length === 2 && h[0].role === "user" && h[0].content === "a\nb", "historia empieza con la persona y une turnos seguidos");
+
+// Lista de espera (v2)
+const pl = procesar("Listo, te avisamos por aquí en cuanto haya fecha.\n[LISTA_ESPERA]");
+ok(pl.lista && !pl.texto.includes("LISTA_ESPERA"), "la etiqueta de lista de espera se detecta y no se le manda a la persona");
+ok(!procesar("Hola").lista, "sin etiqueta no hay lista");
+ok(contextoWA({ primero: false, alumno: false, abierto: false }).includes("todavia no tiene fecha"), "sin fecha: ofrece la lista de espera");
+ok(contextoWA({ primero: false, alumno: false, abierto: true }).includes("no puede en la fecha vigente"), "con fecha: lista solo si no puede ir");
+ok(contextoWA({ primero: false, alumno: false }).includes("[LISTA_ESPERA]"), "siempre pide permiso antes de anotar");
+
+// Origen de la plática (anuncio con botón de WhatsApp)
+const og = origenDe({ referral: { source_type: "ad", source_id: "120200", headline: "Taller", ctwa_clid: "abc", body: "texto largo" } });
+ok(og?.tipo === "ad" && og?.source_id === "120200" && og?.ctwa_clid === "abc" && !("body" in (og || {})), "guarda el anuncio de origen sin el cuerpo");
+ok(origenDe({ type: "text" }) === null, "sin referral no hay origen");
+
+// Fecha del Taller desde el conocimiento compartido
+ok(tallerAbierto(new Date("2026-10-09T23:00:00Z")), "el 9 de octubre (hora de México) sigue abierto");
+ok(!tallerAbierto(new Date("2026-10-10T07:00:00Z")), "el 10 ya cerraron las inscripciones");
+ok(lineaFechaTaller(new Date("2026-10-05T18:00:00Z")).includes("10 y 11 de octubre"), "antes del cierre: la fecha vigente");
+ok(lineaFechaTaller(new Date("2026-10-12T18:00:00Z")).includes("NO tiene fecha confirmada"), "después: lista de espera, sin fecha vencida");
+ok(!sistemaINISCH(new Date("2026-10-12T18:00:00Z")).includes("{{FECHA_TALLER}}") &&
+   !sistemaINISCH(new Date("2026-10-12T18:00:00Z")).includes("10 y 11 de octubre de 2026. Inscripciones"), "el sistema ya no ofrece la fecha vencida");
 
 console.log(fallas ? `${fallas} FALLAS` : "TODO BIEN");
 if (fallas) process.exit(1);
