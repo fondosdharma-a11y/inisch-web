@@ -140,13 +140,39 @@ Campus.boot("Bitácora", function(c, u){
       var rows = todas.filter(function(r){
         if (filtroPatron && r.patron !== filtroPatron) return false;
         if (!filtroTexto) return true;
-        var txt = [r.situacion, r.emocion, r.desde_donde, r.comprension].join(" ").toLowerCase();
+        var txt = [r.situacion, r.emocion, r.desde_donde, r.eco_sentidos, r.comprension].join(" ").toLowerCase();
         return txt.indexOf(filtroTexto) >= 0;
       });
       var h = "";
       if ((filtroTexto || filtroPatron)){
         h += '<p class="muted tiny" style="margin-bottom:14px">' + rows.length +
              ' de ' + todas.length + ' anotaciones coinciden.</p>';
+      }
+
+      /* tu semana en preguntas: cuenta solo lo que escribiste y termina con una pregunta, sin conclusiones */
+      var desde = new Date(Date.now() - 6*864e5).toISOString().slice(0,10);
+      var semana = todas.filter(function(r){ return String(r.fecha||"") >= desde; });
+      if (semana.length >= 2){
+        var emo = {}, pat = {}, ecos = 0;
+        semana.forEach(function(r){
+          String(r.emocion||"").toLowerCase().split(/[,;\/]| y /).forEach(function(x){
+            x = x.trim().replace(/[.!?]+$/,""); if (x) emo[x] = (emo[x]||0) + 1;
+          });
+          if (r.patron) pat[r.patron] = (pat[r.patron]||0) + 1;
+          if (String(r.eco_sentidos||"").trim()) ecos++;
+        });
+        var top = Object.keys(emo).sort(function(a,b){ return emo[b]-emo[a]; }).slice(0,3);
+        var topP = Object.keys(pat).sort(function(a,b){ return pat[b]-pat[a]; })[0];
+        var nomP = topP ? (PATRONES.filter(function(p){ return p[0]===topP; })[0] || [topP, topP])[1] : null;
+        h += '<div class="card reveal" style="margin-bottom:24px;border-color:rgba(216,180,90,.4)">';
+        h += '<b>Tu semana en preguntas</b>';
+        h += '<p class="muted" style="margin-top:8px;font-size:15px">En los últimos 7 días anotaste <b>' + semana.length + ' situaciones</b>.' +
+             (top.length ? ' Lo que más escribiste en «¿Qué sentiste?»: ' + top.map(function(x){ return '<b>' + E(x) + '</b>' + (emo[x]>1 ? ' (' + emo[x] + ')' : ''); }).join(', ') + '.' : '') +
+             (nomP && pat[topP] > 1 ? ' El patrón que más marcaste: <b>' + E(nomP) + '</b> (' + pat[topP] + ').' : '') +
+             (ecos ? ' En ' + ecos + ' de ellas algo se pareció a tu infancia.' : '') + '</p>';
+        h += '<p style="margin-top:12px;padding-left:14px;border-left:2px solid var(--gold);font-size:15.5px">¿Qué tienen en común estas situaciones? ¿A qué escena de entre tus 2 y tus 10 años se parecen?</p>';
+        h += '<div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap"><a class="btn-o btn-sm" href="dinamicas.html">Hacer la dinámica «La escena que se repite» ›</a></div>';
+        h += '</div>';
       }
 
       /* resumen de patrones */
@@ -192,6 +218,7 @@ Campus.boot("Bitácora", function(c, u){
           if (r.situacion)   h += '<p style="font-size:15.5px">' + E(r.situacion) + '</p>';
           if (r.emocion)     h += '<p class="muted tiny" style="margin-top:8px"><b>Sentí:</b> ' + E(r.emocion) + '</p>';
           if (r.desde_donde) h += '<p class="muted tiny" style="margin-top:5px"><b>Desde dónde:</b> ' + E(r.desde_donde) + '</p>';
+          if (r.eco_sentidos) h += '<p class="muted tiny" style="margin-top:5px"><b>Se parece a:</b> ' + E(r.eco_sentidos) + '</p>';
           if (r.comprension) h += '<p style="margin-top:12px;padding-left:14px;border-left:2px solid var(--gold);font-size:15px">' + E(r.comprension) + '</p>';
           h += '</div>';
           h += '<div style="display:flex;flex-direction:column;gap:6px">' +
@@ -260,6 +287,9 @@ Campus.boot("Bitácora", function(c, u){
     h += '<label class="fl" style="margin-top:18px">¿Desde dónde viene esto?</label>' +
          '<textarea class="fld fld-t" id="b-dd" rows="3" placeholder="¿A quién de tu infancia le viste o le escuchaste esto? ¿Qué escena se está repitiendo?">' + E(rec.desde_donde||"") + '</textarea>';
 
+    h += '<label class="fl" style="margin-top:18px">¿Qué de lo que viste, oíste, oliste, probaste o tocaste de niño se parece a esto?</label>' +
+         '<textarea class="fld fld-t" id="b-eco" rows="2" placeholder="Un sonido, un olor, un sabor, una imagen o una textura. Si no recuerdas nada, está bien.">' + E(rec.eco_sentidos||"") + '</textarea>';
+
     h += '<label class="fl" style="margin-top:18px">¿Qué comprendiste?</label>' +
          '<textarea class="fld fld-t" id="b-comp" rows="3" placeholder="No tiene que ser una conclusión. Basta con lo que alcanzaste a ver.">' + E(rec.comprension||"") + '</textarea>';
     h += '</div>';
@@ -293,6 +323,7 @@ Campus.boot("Bitácora", function(c, u){
         emocion:     sh.querySelector("#b-emo").value.trim(),
         patron:      patron,
         desde_donde: sh.querySelector("#b-dd").value.trim(),
+        eco_sentidos: sh.querySelector("#b-eco").value.trim(),
         comprension: sh.querySelector("#b-comp").value.trim()
       };
       if (rec.id) row.id = rec.id;

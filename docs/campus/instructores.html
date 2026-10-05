@@ -96,8 +96,29 @@ Campus.boot("Panel de instructores", function(c, u){
         if (soyAdmin){
           var b = zona.querySelector('[data-solo-admin="1"]');
           if (b) b.style.display = "";
+          resumenDinamicas();
         }
       }).catch(function(){});
+
+      /* Dinámicas de preguntas: solo conteos, nunca lo que escribió cada alumno (resumen_dinamicas, solo administradores). */
+      function resumenDinamicas(){
+        supabaseClient.rpc("resumen_dinamicas").then(function(r){
+          if (r.error || !r.data) return;
+          var d = r.data, ci = d.cierre || {}, pt = d.por_tipo || {};
+          var card = document.createElement("div");
+          card.className = "card";
+          card.style.marginBottom = "18px";
+          card.innerHTML = '<b>Dinámicas de preguntas</b>' +
+            '<p class="muted tiny" style="margin-top:6px">Solo conteos: lo que escribe cada alumno lo ve únicamente él.</p>' +
+            '<p style="margin-top:10px;font-size:15px">' + (d.personas||0) + ' persona' + (d.personas===1?'':'s') + ' · ' +
+              (d.iniciadas||0) + ' iniciada' + (d.iniciadas===1?'':'s') + ' · ' + (d.terminadas||0) + ' terminada' + (d.terminadas===1?'':'s') + '</p>' +
+            '<p class="muted tiny" style="margin-top:6px">Casa por los sentidos: ' + (pt.casa||0) + ' · Escena que se repite: ' + (pt.escena||0) +
+              ' · Frases de tu casa: ' + (pt.frases||0) + '</p>' +
+            '<p style="margin-top:10px;font-size:15px">¿Vieron la relación con su infancia? Sí: <b>' + (ci.si||0) + '</b> · Todavía no: <b>' +
+              (ci.todavia||0) + '</b> · No están seguros: <b>' + (ci.no_seguro||0) + '</b></p>';
+          zona.insertBefore(card, zona.firstChild);
+        }).catch(function(){});
+      }
       zona.querySelectorAll('.pick .pick-o').forEach(function(b){
         b.addEventListener("click", function(){
           zona.querySelectorAll('.pick .pick-o').forEach(function(x){ x.classList.remove("on"); });

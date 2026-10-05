@@ -42,8 +42,18 @@ var PREGUNTAS = {
     ["rencoroso",    "¿Era rencoroso(a)?"],
     ["miedo",        "¿A qué le tenía miedo o temor?"],
     ["episodio",     "¿Cuál es el episodio que más recuerdas?"]
+  ],
+  /* Lo que guardaron los sentidos (orden del Jefe 2026-10-05): lo que viste, oíste, oliste,
+     probaste y tocaste alrededor de esa persona, siempre como observador (regla de oro). */
+  sentidos: [
+    ["voz",      "¿Cómo era su voz en un día normal? ¿Y cuando se enojaba?"],
+    ["imagen",   "¿Qué imagen de esa persona se te quedó grabada?"],
+    ["olor",     "¿A qué olía esa persona o su espacio?"],
+    ["sabor",    "¿Qué comida o sabor asocias con esa persona?"],
+    ["contacto", "¿Cómo abrazaba o tocaba a los demás?"]
   ]
 };
+var TOTAL_PREGUNTAS = PREGUNTAS.figura.length + PREGUNTAS.sentidos.length;
 
 var TIPOS = {
   paterna:      { t:"Figura paterna",  ic:"♂", d:"Tu papá o tu imagen paterna, antes de tus 10 años." },
@@ -107,7 +117,8 @@ Campus.boot("Mi Película", function(c, u){
       h += '<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px">';
       h += '<div><b>Tu avance</b><p class="muted tiny" style="margin-top:4px">' +
            rows.length + ' registro' + (rows.length===1?"":"s") + ' · ' + totalResp + ' respuesta' + (totalResp===1?"":"s") + ' escrita' + (totalResp===1?"":"s") + '</p></div>';
-      h += '<a class="btn-o btn-sm" href="bitacora.html">Ir a Bitácora ›</a>';
+      h += '<div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn-o btn-sm" href="dinamicas.html">Dinámicas de preguntas ›</a>' +
+           '<a class="btn-o btn-sm" href="bitacora.html">Ir a Bitácora ›</a></div>';
       h += '</div></div>';
 
       /* botones para crear */
@@ -139,7 +150,7 @@ Campus.boot("Mi Película", function(c, u){
           var T = TIPOS[r.tipo] || { t:r.tipo, ic:"◇" };
           var a = r.respuestas || {};
           var n = 0; for (var k in a){ if (String(a[k]).trim()) n++; }
-          var pct = Math.round(n / PREGUNTAS.figura.length * 100);
+          var pct = Math.min(100, Math.round(n / TOTAL_PREGUNTAS * 100));
           h += '<div class="card reveal" style="margin-bottom:14px">';
           h += '<div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">';
           h += '<div style="display:flex;gap:13px;align-items:center">';
@@ -147,7 +158,7 @@ Campus.boot("Mi Película", function(c, u){
           h += '<div><b>' + E(r.etiqueta || T.t) + '</b>' +
                '<p class="muted tiny" style="margin-top:3px">' + T.t +
                (r.personaje_hoy ? ' · hoy: ' + E(r.personaje_hoy) : '') +
-               ' · ' + n + '/' + PREGUNTAS.figura.length + ' respuestas</p></div>';
+               ' · ' + n + '/' + TOTAL_PREGUNTAS + ' respuestas</p></div>';
           h += '</div>';
           h += '<div style="display:flex;gap:8px">' +
                '<button class="btn-o btn-sm mp-open" data-id="' + r.id + '">Abrir</button>' +
@@ -216,13 +227,18 @@ Campus.boot("Mi Película", function(c, u){
     h += '<p class="muted tiny" style="margin-bottom:16px">Responde lo que puedas. Se guarda automáticamente. ' +
          'No hay respuestas correctas ni obligación de llenar todo.</p>';
 
-    PREGUNTAS.figura.forEach(function(q){
+    function pregunta(q){
       var val = (rec.respuestas || {})[q[0]] || "";
       h += '<div class="qi">' +
            '<label class="fl">' + E(q[1]) + '</label>' +
            '<textarea class="fld fld-t" data-q="' + q[0] + '" rows="2">' + E(val) + '</textarea>' +
            '</div>';
-    });
+    }
+    PREGUNTAS.figura.forEach(pregunta);
+    h += '<div class="rule" style="margin:22px 0 14px"></div>' +
+         '<b style="font-size:15px">Lo que guardaron tus sentidos</b>' +
+         '<p class="muted tiny" style="margin:4px 0 14px">Lo que viste, oíste, oliste, probaste y tocaste alrededor de esa persona.</p>';
+    PREGUNTAS.sentidos.forEach(pregunta);
 
     h += '<label class="fl" style="margin-top:14px">Notas libres</label>' +
          '<textarea class="fld fld-t" id="f-notas" rows="3" placeholder="Cualquier cosa que quieras agregar">' + E(rec.notas||"") + '</textarea>';

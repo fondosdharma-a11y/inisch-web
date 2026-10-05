@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dinámicas de preguntas — Campus INISCH</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/favicon.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0A1518">
+<link rel="stylesheet" href="css/campus.css">
+<style>
+  .din-paso{max-width:680px;margin:0 auto}
+  .din-q{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(23px,3.4vw,30px);line-height:1.25;margin:10px 0 18px}
+  .din-acc{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+  .din-nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:22px}
+  .din-marca{font-style:italic;color:var(--ink-dim)}
+  .din-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .din-cols .col-h{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+  .din-fila{border-top:1px solid var(--line);padding:14px 0}
+  .din-fila .fila-t{font-size:13px;color:var(--ink-dim);margin-bottom:8px}
+  .din-sent{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .din-panel{position:fixed;inset:0;z-index:60;background:rgba(5,11,13,.72);display:flex;align-items:center;justify-content:center;padding:18px}
+  .din-panel .card{max-width:520px}
+  .din-cols .col-m{display:none;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:3px}
+  @media(max-width:640px){ .din-cols{grid-template-columns:1fr} .din-cols .col-m{display:block} .din-cols.cab{display:none} }
+</style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/campus-core.js"></script>
+<script>
+
+/* ============================================================
+   Dinámicas de preguntas (orden del Jefe 2026-10-05).
+   Solo preguntas: el campus nunca da la conclusión. Al final muestra juntas
+   las respuestas de la persona y le pregunta qué nota. Sin IA (sin costo).
+   Cada alumno ve solo lo suyo (tabla dinamicas con RLS por student_id).
+   ============================================================ */
+
+var NO_RECUERDO = "__no_recuerdo", PREFIERO_NO = "__prefiero_no";
+
+var DIN = {
+  casa: {
+    t: "La casa de tu infancia por los cinco sentidos", ic: "⌂", orden: 1,
+    d: "Vuelve a la casa donde viviste entre tus 2 y tus 10 años y recórrela con tus sentidos.",
+    intro: "Piensa en la casa o el lugar donde viviste entre tus 2 y tus 10 años. Si hubo varios, elige uno. " +
+           "No hay prisa: responde lo que recuerdes.",
+    preguntas: [
+      { k:"lugar",        q:"¿Qué casa o lugar eliges? ¿Qué edad tenías ahí, más o menos?" },
+      { k:"vista_entrar", s:"Vista",  q:"Al entrar, ¿qué veías primero?" },
+      { k:"vista_mesa",   s:"Vista",  q:"¿Qué veías desde tu lugar en la mesa?" },
+      { k:"oido_dia",     s:"Oído",   q:"¿Qué se oía en esa casa durante el día?" },
+      { k:"oido_noche",   s:"Oído",   q:"¿Y al caer la noche, qué se oía?" },
+      { k:"olfato",       s:"Olfato", q:"¿A qué olía la casa? ¿Y la cocina?" },
+      { k:"gusto",        s:"Gusto",  q:"¿Qué sabor te recuerda a esa época? ¿Con qué momento lo asocias?" },
+      { k:"tacto",        s:"Tacto",  q:"¿Qué texturas recuerdas de esa casa: tu cama, la ropa, los muebles, el piso?" },
+      { k:"ambiente",     q:"Con todo eso, ¿cómo era el ambiente de esa casa?" },
+      { k:"sentias",      q:"¿Qué sentías tú en ese ambiente?" }
+    ],
+    cierre: [
+      { k:"hoy_aparece", q:"¿Alguno de estos sonidos, olores, sabores, imágenes o texturas sigue apareciendo hoy en tu vida? Si es así, ¿dónde y qué sientes?" }
+    ]
+  },
+  escena: {
+    t: "La escena que se repite", ic: "⟲", orden: 2,
+    d: "Parte de algo que hoy se repite en tu vida y vuelve a tus primeros años. Al final las ves juntas.",
+    intro: "Esta dinámica tiene tres partes: primero una situación de hoy, después un recuerdo de cuando tenías " +
+           "entre 2 y 10 años, y al final las dos escenas juntas.",
+    partes: { hoy: "Primera parte · Hoy", entonces: "Segunda parte · Entre tus 2 y tus 10 años" },
+    intro_entonces: "Ahora vuelve a cuando tenías entre 2 y 10 años. No busques nada en especial: deja que llegue lo que llegue.",
+    preguntas: [
+      { k:"hoy_situacion",      p:"hoy", q:"¿Qué situación se repite en tu vida? Cuéntala como si se la contaras a alguien." },
+      { k:"hoy_quienes",        p:"hoy", q:"¿Quiénes participan en ella?" },
+      { k:"hoy_cuerpo",         p:"hoy", q:"¿Qué sientes en el cuerpo cuando pasa?" },
+      { k:"hoy_emocion",        p:"hoy", q:"¿Qué emoción aparece?" },
+      { k:"hoy_te_dices",       p:"hoy", q:"¿Qué te dices en ese momento?" },
+      { k:"hoy_esperas",        p:"hoy", q:"¿Qué esperas que haga la otra persona?" },
+      { k:"entonces_cuando",    p:"entonces", q:"¿Recuerdas haber sentido algo parecido cuando tenías entre 2 y 10 años? ¿Qué edad tenías?" },
+      { k:"entonces_pasaba",    p:"entonces", q:"¿Qué estaba pasando a tu alrededor?" },
+      { k:"entonces_quienes",   p:"entonces", q:"¿Quiénes estaban ahí y qué hacían?" },
+      { k:"entonces_viste",     p:"entonces", s:"Vista",  q:"¿Qué veías?" },
+      { k:"entonces_oias",      p:"entonces", s:"Oído",   q:"¿Qué se oía? ¿Qué se decía?" },
+      { k:"entonces_olia",      p:"entonces", s:"Olfato", q:"¿A qué olía ese lugar?" },
+      { k:"entonces_sabor",     p:"entonces", s:"Gusto",  q:"¿Qué sabor recuerdas de ese momento o de esa época?" },
+      { k:"entonces_texturas",  p:"entonces", s:"Tacto",  q:"¿Qué tocabas? ¿Qué texturas había a tu alrededor?" },
+      { k:"entonces_sentias",   p:"entonces", q:"¿Qué sentías tú?" },
+      { k:"entonces_esperabas", p:"entonces", q:"¿Qué esperabas que pasara?" }
+    ],
+    pares: [
+      ["La escena",             ["hoy_situacion"],            ["entonces_pasaba"]],
+      ["Quiénes",               ["hoy_quienes"],              ["entonces_quienes"]],
+      ["Lo que se dice",        ["hoy_te_dices"],             ["entonces_oias"]],
+      ["Lo que sientes",        ["hoy_emocion", "hoy_cuerpo"],["entonces_sentias"]],
+      ["Lo que esperas",        ["hoy_esperas"],              ["entonces_esperabas"]]
+    ],
+    cierre: [ { k:"notas", q:"¿Qué notas al ver las dos escenas juntas?" } ]
+  },
+  frases: {
+    t: "Las frases de tu casa", ic: "❝", orden: 3,
+    d: "Lo que se decía en tu casa sobre el dinero, el amor, el trabajo, el cuerpo y las emociones.",
+    intro: "Piensa en lo que se decía en tu casa entre tus 2 y tus 10 años: frases que se repetían, dichos, " +
+           "comentarios de todos los días.",
+    preguntas: [
+      { k:"dinero",      tema:"El dinero",          q:"¿Qué se decía en tu casa sobre el dinero? ¿Quién lo decía?" },
+      { k:"amor",        tema:"El amor y la pareja", q:"¿Qué se decía sobre el amor y la pareja? ¿Quién lo decía?" },
+      { k:"trabajo",     tema:"El trabajo",          q:"¿Qué se decía sobre el trabajo y el esfuerzo? ¿Quién lo decía?" },
+      { k:"cuerpo",      tema:"El cuerpo y la comida", q:"¿Qué se decía sobre el cuerpo y la comida? ¿Quién lo decía?" },
+      { k:"emociones",   tema:"Las emociones",       q:"¿Qué se decía sobre llorar, enojarse o tener miedo? ¿Quién lo decía?" },
+      { k:"otra",        tema:"Otra frase",          q:"¿Hay otra frase que se repitiera mucho? ¿Cuál?" },
+      { k:"te_escuchas", q:"De todas esas frases, ¿cuál te has escuchado decir a ti?" },
+      { k:"donde_hoy",   q:"¿En qué situación de hoy aparece?" },
+      { k:"que_pasa",    q:"¿Qué pasa en ti cuando la dices o la piensas?" }
+    ],
+    cierre: [ { k:"notas", q:"¿Qué notas al ver juntas lo que se decía entonces y lo que dices hoy?" } ]
+  }
+};
+
+var MEDICION = "¿Alcanzaste a ver alguna relación entre algo que vives hoy y algo que viviste entre los 2 y los 10 años?";
+var CIERRES = [["si","Sí"], ["todavia","Todavía no"], ["no_seguro","No estoy seguro(a)"]];
+
+/* Palabras que detienen el ejercicio para orientar (protocolo de crisis del Canon §7). Sin acentos. */
+var RIESGO = ["suicid", "matarme", "quitarme la vida", "no quiero vivir", "quiero morir", "me quiero morir",
+              "hacerme dano", "lastimarme", "cortarme", "acabar con mi vida", "acabar con todo", "no vale la pena vivir"];
+var DOLOR  = ["abuso", "abusaba", "abusaron", "violacion", "violaron", "me violo", "golpeaba", "golpeaban",
+              "me pegaba", "me pegaban", "maltrato", "manose"];
+
+function sinAcentos(t){ return String(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+function nivelDeAlerta(t){
+  var s = sinAcentos(t);
+  if (RIESGO.some(function(w){ return s.indexOf(w) >= 0; })) return "riesgo";
+  if (DOLOR.some(function(w){ return s.indexOf(w) >= 0; })) return "dolor";
+  return null;
+}
+
+Campus.boot("Dinámicas", function(c, u){
+  var E = Campus.esc;
+
+  var zona = document.createElement("div");
+  c.appendChild(zona);
+
+  function texto(v){
+    if (v === NO_RECUERDO) return '<span class="din-marca">No lo recuerdo</span>';
+    if (v === PREFIERO_NO) return '<span class="din-marca">Prefiero no responder</span>';
+    return v ? E(v).replace(/\n/g, "<br>") : '<span class="din-marca">Sin respuesta</span>';
+  }
+  function respondidas(D, r){
+    var a = r.respuestas || {}, n = 0;
+    D.preguntas.forEach(function(q){ if (a[q.k]) n++; });
+    return n;
+  }
+  function fecha(r){ return Campus.fechaLarga(String(r.created_at||"").slice(0,10)); }
+
+  /* ---------- lista ---------- */
+  function lista(){
+    zona.innerHTML = '<div class="card"><p class="muted tiny">Cargando tus dinámicas…</p></div>';
+    Campus.DB.list("dinamicas", { order:"created_at", desc:true }).then(function(rows){
+      rows = rows || [];
+      var h = '';
+      h += '<div class="reveal"><div class="eyebrow">Herramienta</div>' +
+           '<h1 style="font-size:clamp(26px,4vw,36px);line-height:1.12">Dinámicas de preguntas</h1>' +
+           '<p class="muted" style="margin-top:10px;max-width:640px">Aquí no hay explicaciones ni respuestas correctas: solo preguntas. ' +
+           'Tú escribes y tú descubres. Al final verás juntas tus propias respuestas. <b>Solo tú ves lo que escribes.</b></p></div>';
+
+      h += '<div class="card reveal" style="border-color:rgba(216,180,90,.4);margin:20px 0 24px">' +
+           '<div style="display:flex;gap:14px;align-items:flex-start"><div style="font-size:20px;color:var(--gold)">✦</div><div>' +
+           '<b>Antes de empezar</b>' +
+           '<p class="muted" style="margin-top:6px;font-size:15px">Como en Mi Película, escribe lo que <b>viste, oíste, oliste, probaste y tocaste</b> a tu alrededor, ' +
+           'no lo que te hicieron a ti. Recordar la infancia puede mover emociones: puedes pausar cuando quieras y lo que escribes se guarda solo. ' +
+           'Siempre puedes responder «No lo recuerdo» o «Prefiero no responder».</p>' +
+           '<p class="muted tiny" style="margin-top:8px">Es un proceso de autoconocimiento de carácter formativo; no sustituye la atención de un profesional de la salud mental.</p>' +
+           '</div></div></div>';
+
+      h += '<div class="grid-3 reveal" style="margin-bottom:26px">';
+      Object.keys(DIN).sort(function(a,b){ return DIN[a].orden - DIN[b].orden; }).forEach(function(k){
+        var D = DIN[k];
+        var hechas = rows.filter(function(r){ return r.tipo === k && r.terminada; }).length;
+        h += '<button class="card din-new" data-tipo="' + k + '" style="text-align:left;cursor:pointer;border:1px solid var(--line)">' +
+             '<div style="font-size:22px;margin-bottom:8px;color:var(--gold)">' + D.ic + '</div>' +
+             '<b style="font-size:15.5px">' + E(D.t) + '</b>' +
+             '<p class="muted tiny" style="margin-top:6px">' + E(D.d) + '</p>' +
+             '<p class="tiny soft" style="margin-top:6px">' + D.preguntas.length + ' preguntas · a tu ritmo</p>' +
+             '<div class="tiny" style="margin-top:10px;color:var(--gold)">' +
+               (hechas ? 'Hecha ' + hechas + ' ' + (hechas===1?"vez":"veces") + ' · Empezar otra' : 'Empezar') + ' ›</div></button>';
+      });
+      h += '</div>';
+
+      if (rows.length){
+        h += '<h3 class="reveal" style="font-size:18px;margin-bottom:12px">Tus dinámicas</h3>';
+        rows.forEach(function(r){
+          var D = DIN[r.tipo]; if (!D) return;
+          var n = respondidas(D, r), pct = Math.round(n / D.preguntas.length * 100);
+          h += '<div class="card reveal" style="margin-bottom:12px">' +
+               '<div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">' +
+               '<div><b>' + D.ic + ' ' + E(D.t) + '</b><p class="muted tiny" style="margin-top:4px">' + E(fecha(r)) + ' · ' +
+               (r.terminada ? 'Terminada' : n + ' de ' + D.preguntas.length + ' preguntas') + '</p></div>' +
+               '<div style="display:flex;gap:8px">' +
+               '<button class="btn-o btn-sm din-abrir" data-id="' + r.id + '">' + (r.terminada ? 'Ver' : 'Continuar') + '</button>' +
+               '<button class="btn-o btn-sm din-del" data-id="' + r.id + '" title="Eliminar">✕</button></div></div>' +
+               '<div class="bar" style="margin-top:12px"><i style="width:' + (r.terminada ? 100 : pct) + '%"></i></div></div>';
+        });
+      }
+      zona.innerHTML = h;
+      Campus.reveal(c);
+
+      zona.querySelectorAll(".din-new").forEach(function(b){
+        b.addEventListener("click", function(){ abrir({ tipo:b.dataset.tipo, respuestas:{}, paso:0 }); });
+      });
+      zona.querySelectorAll(".din-abrir").forEach(function(b){
+        b.addEventListener("click", function(){
+          var r = rows.filter(function(x){ return String(x.id) === b.dataset.id; })[0];
+          if (r) abrir(r);
+        });
+      });
+      zona.querySelectorAll(".din-del").forEach(function(b){
+        b.addEventListener("click", function(){
+          if (!confirm("¿Eliminar esta dinámica y todo lo que escribiste en ella? No se puede recuperar.")) return;
+          Campus.DB.remove("dinamicas", b.dataset.id).then(function(){ Campus.toast("Dinámica eliminada"); lista(); });
+        });
+      });
+    }).catch(function(e){
+      console.error(e);
+      zona.innerHTML = '<div class="card"><p class="muted">No pudimos cargar tus dinámicas. Recarga para intentarlo de nuevo.</p></div>';
+    });
+  }
+
+  /* ---------- una dinámica, paso a paso ---------- */
+  function abrir(rec){
+    var D = DIN[rec.tipo];
+    rec.respuestas = rec.respuestas || {};
+    var N = D.preguntas.length;
+    // pasos: 0 = intro · 1..N = preguntas · N+1 = repaso · N+2 = medición · N+3 = fin
+    var paso = rec.terminada ? N + 3 : Math.min(rec.paso || 0, N + 2);
+    var cola = Promise.resolve();
+
+    // Los guardados van en fila: así un autoguardado y un «Siguiente» seguidos no crean dos registros.
+    function guardar(){
+      cola = cola.then(function(){
+        if (!rec.id && !Object.keys(rec.respuestas).length && !rec.cierre) return;   // nada que guardar todavía
+        var row = { tipo: rec.tipo, respuestas: rec.respuestas, paso: paso,
+                    cierre: rec.cierre || null, terminada: !!rec.terminada };
+        if (rec.id) row.id = rec.id;
+        return Campus.DB.save("dinamicas", row).then(function(s){ if (s && s.id) rec.id = s.id; });
+      }).catch(function(e){ console.error(e); Campus.toast("No se pudo guardar. Revisa tu conexión."); });
+      return cola;
+    }
+
+    function alerta(t){
+      var nivel = nivelDeAlerta(t);
+      if (!nivel) return;
+      var clave = "inisch-din-alerta-" + nivel;
+      try { if (sessionStorage.getItem(clave)) return; sessionStorage.setItem(clave, "1"); } catch(e){}
+      var p = document.createElement("div");
+      p.className = "din-panel";
+      var cuerpo = nivel === "riesgo"
+        ? '<b style="font-size:18px">Gracias por escribirlo</b>' +
+          '<p style="margin-top:10px;font-size:15.5px;line-height:1.6">Lo que estás sintiendo es importante y merece el acompañamiento de un profesional de la salud mental; este ejercicio no sustituye eso.</p>' +
+          '<p style="margin-top:10px;font-size:15.5px;line-height:1.6">Si sientes que tu vida está en riesgo, llama ahora a la <b>Línea de la Vida: 800 911 2000</b> (gratis, las 24 horas).</p>' +
+          '<p class="muted" style="margin-top:10px;font-size:14.5px">Puedes pausar aquí: lo que escribiste queda guardado solo para ti.</p>'
+        : '<b style="font-size:18px">Puedes detenerte aquí</b>' +
+          '<p style="margin-top:10px;font-size:15.5px;line-height:1.6">Si lo que recuerdas te dolió o te dañó, no tienes que seguir con este ejercicio ahora. ' +
+          'Hablarlo con un profesional de la salud mental puede ayudarte; este proceso es formativo y no sustituye ese acompañamiento.</p>' +
+          '<p class="muted" style="margin-top:10px;font-size:14.5px">Si en algún momento sientes que no puedes con esto, llama a la Línea de la Vida: 800 911 2000 (gratis, las 24 horas).</p>';
+      p.innerHTML = '<div class="card">' + cuerpo +
+        '<div class="din-acc" style="margin-top:18px"><button class="btn-p btn-sm" id="pa-pausa">Pausar y salir</button>' +
+        '<button class="btn-o btn-sm" id="pa-seguir">Volver al ejercicio</button></div></div>';
+      document.body.appendChild(p);
+      p.querySelector("#pa-pausa").addEventListener("click", function(){ p.remove(); guardar().then(lista); });
+      p.querySelector("#pa-seguir").addEventListener("click", function(){ p.remove(); });
+    }
+
+    function pintar(){
+      var h = '<div class="din-paso reveal">';
+      h += '<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">' +
+           '<div class="eyebrow">' + D.ic + ' ' + E(D.t) + '</div>' +
+           '<button class="btn-o btn-sm" id="d-pausa">' + (paso >= N + 3 ? 'Volver a las dinámicas' : 'Pausar') + '</button></div>';
+      if (paso >= 1 && paso <= N){
+        h += '<div class="bar" style="margin-bottom:18px"><i style="width:' + Math.round((paso-1)/N*100) + '%"></i></div>';
+      }
+
+      if (paso === 0){
+        h += '<div class="card"><p class="din-q">' + E(D.intro) + '</p>' +
+             '<p class="muted" style="font-size:15px">Una pregunta a la vez. Se guarda solo y puedes pausar cuando quieras.</p>' +
+             '<div class="din-nav"><span></span><button class="btn-p" id="d-sig">Empezar</button></div></div>';
+      } else if (paso <= N){
+        var q = D.preguntas[paso-1];
+        var prev = D.preguntas[paso-2];
+        if (D.partes && q.p && (!prev || prev.p !== q.p)){
+          h += '<div class="eyebrow" style="margin-bottom:6px">' + E(D.partes[q.p]) + '</div>';
+          if (q.p === "entonces") h += '<p class="muted" style="font-size:15px;margin-bottom:10px">' + E(D.intro_entonces) + '</p>';
+        }
+        var v = rec.respuestas[q.k] || "";
+        var marca = (v === NO_RECUERDO || v === PREFIERO_NO);
+        h += '<div class="card">' +
+             '<p class="tiny soft">Pregunta ' + paso + ' de ' + N + (q.s ? ' · ' + E(q.s) : '') + '</p>' +
+             '<p class="din-q">' + E(q.q) + '</p>' +
+             '<textarea class="fld fld-t" id="d-resp" rows="5" placeholder="Escribe lo que llegue, sin buscar la respuesta correcta">' +
+               (marca ? '' : E(v)) + '</textarea>' +
+             (marca ? '<p class="tiny soft" style="margin-top:8px">Respondiste: ' + texto(v) + '</p>' : '') +
+             '<div class="din-acc"><button class="btn-o btn-sm" id="d-nore">No lo recuerdo</button>' +
+             '<button class="btn-o btn-sm" id="d-prefiero">Prefiero no responder</button></div>' +
+             '<div class="din-nav"><button class="btn-o btn-sm" id="d-ant">‹ Anterior</button>' +
+             '<button class="btn-p" id="d-sig">' + (paso === N ? 'Ver mis respuestas juntas' : 'Siguiente ›') + '</button></div></div>';
+      } else if (paso === N + 1){
+        h += repaso();
+        h += '<div class="card" style="margin-top:16px">';
+        D.cierre.forEach(function(q){
+          h += '<div class="qi"><label class="fl" style="font-size:15.5px;color:var(--ink)">' + E(q.q) + '</label>' +
+               '<textarea class="fld fld-t d-cierre" data-k="' + q.k + '" rows="4">' + E(rec.respuestas[q.k] || "") + '</textarea></div>';
+        });
+        h += '<div class="din-nav"><button class="btn-o btn-sm" id="d-ant">‹ Anterior</button>' +
+             '<button class="btn-p" id="d-sig">Siguiente ›</button></div></div>';
+      } else if (paso === N + 2){
+        h += '<div class="card"><p class="din-q">' + E(MEDICION) + '</p><div class="pick" id="d-med">';
+        CIERRES.forEach(function(o){
+          h += '<button type="button" class="pick-o' + (rec.cierre === o[0] ? ' on' : '') + '" data-v="' + o[0] + '">' + E(o[1]) + '</button>';
+        });
+        h += '</div><p class="muted tiny" style="margin-top:12px">Cualquier respuesta está bien. El Instituto solo ve cuántas personas eligen cada opción; lo que escribes solo lo ves tú.</p>' +
+             '<div class="din-nav"><button class="btn-o btn-sm" id="d-ant">‹ Anterior</button>' +
+             '<button class="btn-p" id="d-sig">Terminar</button></div></div>';
+      } else {
+        h += '<div class="card" style="text-align:center;padding:36px 24px"><div style="font-size:30px;color:var(--gold);margin-bottom:10px">✦</div>' +
+             '<b style="font-size:18px">Gracias por darte este tiempo</b>' +
+             '<p class="muted" style="margin:10px auto 0;max-width:460px;font-size:15px">Lo que escribiste queda en tu campus. Puedes volver a hacer esta dinámica ' +
+             'con otra situación cuando quieras, o seguir en tu Bitácora y en Mi Película.</p>' +
+             '<div class="din-acc" style="justify-content:center;margin-top:20px">' +
+             '<a class="btn-o btn-sm" href="bitacora.html">Anotar en mi Bitácora</a>' +
+             '<a class="btn-o btn-sm" href="mi-pelicula.html">Ir a Mi Película</a>' +
+             '<button class="btn-o btn-sm" id="d-repaso">Ver mis respuestas</button></div></div>';
+      }
+      h += '</div>';
+      zona.innerHTML = h;
+      Campus.reveal(c);
+      window.scrollTo(0, 0);
+      eventos();
+    }
+
+    function repaso(){
+      var a = rec.respuestas, h = '';
+      h += '<div class="eyebrow" style="margin-bottom:6px">Tus respuestas, juntas</div>';
+      if (rec.tipo === "escena"){
+        h += '<div class="card"><div class="din-cols cab" style="margin-bottom:6px"><div class="col-h">Hoy</div><div class="col-h">Entre tus 2 y tus 10 años</div></div>';
+        D.pares.forEach(function(p){
+          h += '<div class="din-fila"><div class="fila-t">' + E(p[0]) + '</div><div class="din-cols">' +
+               '<div><div class="col-m">Hoy</div>' + p[1].map(function(k){ return texto(a[k]); }).join('<br>') + '</div>' +
+               '<div><div class="col-m">Entre tus 2 y tus 10 años</div>' + p[2].map(function(k){ return texto(a[k]); }).join('<br>') + '</div></div></div>';
+        });
+        h += '<div class="din-fila"><div class="fila-t">Lo que guardaron tus sentidos</div><div class="din-sent">';
+        D.preguntas.filter(function(q){ return q.s; }).forEach(function(q){
+          h += '<div><div class="tiny soft">' + E(q.s) + '</div>' + texto(a[q.k]) + '</div>';
+        });
+        h += '</div></div></div>';
+      } else if (rec.tipo === "casa"){
+        h += '<div class="card"><p class="muted tiny" style="margin-bottom:10px">' + texto(a.lugar) + '</p><div class="din-sent">';
+        ["Vista","Oído","Olfato","Gusto","Tacto"].forEach(function(s){
+          var qs = D.preguntas.filter(function(q){ return q.s === s; });
+          h += '<div><div class="col-h" style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:6px">' + s + '</div>' +
+               qs.map(function(q){ return texto(a[q.k]); }).join('<br>') + '</div>';
+        });
+        h += '</div><div class="din-fila" style="margin-top:12px"><div class="fila-t">El ambiente</div>' + texto(a.ambiente) + '</div>' +
+             '<div class="din-fila"><div class="fila-t">Lo que sentías</div>' + texto(a.sentias) + '</div></div>';
+      } else {
+        h += '<div class="card"><div class="din-cols"><div><div class="col-h">Lo que se decía entonces</div>';
+        D.preguntas.filter(function(q){ return q.tema; }).forEach(function(q){
+          h += '<div class="din-fila"><div class="fila-t">' + E(q.tema) + '</div>' + texto(a[q.k]) + '</div>';
+        });
+        h += '</div><div><div class="col-h">Lo que dices hoy</div>' +
+             '<div class="din-fila"><div class="fila-t">La frase que te escuchas decir</div>' + texto(a.te_escuchas) + '</div>' +
+             '<div class="din-fila"><div class="fila-t">Dónde aparece hoy</div>' + texto(a.donde_hoy) + '</div>' +
+             '<div class="din-fila"><div class="fila-t">Qué pasa en ti</div>' + texto(a.que_pasa) + '</div>' +
+             '</div></div></div>';
+      }
+      return h;
+    }
+
+    function tomarRespuesta(){
+      var t = document.getElementById("d-resp");
+      if (t && paso >= 1 && paso <= N){
+        var q = D.preguntas[paso-1], v = t.value.trim();
+        if (v) rec.respuestas[q.k] = v;
+        else if (rec.respuestas[q.k] !== NO_RECUERDO && rec.respuestas[q.k] !== PREFIERO_NO) delete rec.respuestas[q.k];
+      }
+      zona.querySelectorAll(".d-cierre").forEach(function(x){
+        var v = x.value.trim();
+        if (v) rec.respuestas[x.dataset.k] = v; else delete rec.respuestas[x.dataset.k];
+      });
+    }
+
+    function ir(nuevo){ tomarRespuesta(); paso = nuevo; guardar(); pintar(); }
+
+    function eventos(){
+      var b;
+      if ((b = document.getElementById("d-pausa"))) b.addEventListener("click", function(){
+        tomarRespuesta();
+        if (paso >= N + 3){ lista(); return; }
+        guardar().then(function(){ Campus.toast("Guardado. Puedes continuar cuando quieras."); lista(); });
+      });
+      if ((b = document.getElementById("d-ant"))) b.addEventListener("click", function(){ ir(Math.max(0, paso - 1)); });
+      if ((b = document.getElementById("d-sig"))) b.addEventListener("click", function(){
+        var t = document.getElementById("d-resp");
+        if (t) alerta(t.value);
+        zona.querySelectorAll(".d-cierre").forEach(function(x){ alerta(x.value); });
+        if (paso === N + 2){
+          if (!rec.cierre){ Campus.toast("Elige una opción; cualquiera está bien."); return; }
+          rec.terminada = true;
+        }
+        ir(paso + 1);
+      });
+      if ((b = document.getElementById("d-nore"))) b.addEventListener("click", function(){
+        rec.respuestas[D.preguntas[paso-1].k] = NO_RECUERDO; paso++; guardar(); pintar();
+      });
+      if ((b = document.getElementById("d-prefiero"))) b.addEventListener("click", function(){
+        rec.respuestas[D.preguntas[paso-1].k] = PREFIERO_NO; paso++; guardar(); pintar();
+      });
+      if ((b = document.getElementById("d-repaso"))) b.addEventListener("click", function(){
+        zona.innerHTML = '<div class="din-paso">' +
+          '<div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="btn-o btn-sm" id="d-volver">Volver a las dinámicas</button></div>' +
+          repaso() + '<div class="card" style="margin-top:16px">' +
+          D.cierre.map(function(q){ return '<div class="din-fila"><div class="fila-t">' + E(q.q) + '</div>' + texto(rec.respuestas[q.k]) + '</div>'; }).join('') +
+          '</div></div>';
+        document.getElementById("d-volver").addEventListener("click", lista);
+        window.scrollTo(0, 0);
+      });
+      zona.querySelectorAll("#d-med .pick-o").forEach(function(x){
+        x.addEventListener("click", function(){
+          zona.querySelectorAll("#d-med .pick-o").forEach(function(y){ y.classList.remove("on"); });
+          x.classList.add("on"); rec.cierre = x.dataset.v;
+        });
+      });
+      // Autoguardado y orientación si aparece algo de riesgo
+      var timer = null;
+      zona.querySelectorAll("#d-resp, .d-cierre").forEach(function(t){
+        t.addEventListener("input", function(){
+          clearTimeout(timer);
+          timer = setTimeout(function(){ tomarRespuesta(); guardar(); alerta(t.value); }, 1200);
+        });
+      });
+    }
+
+    pintar();
+  }
+
+  lista();
+});
+
+</script>
+<script src="js/instalar.js"></script>
+</body>
+</html>

@@ -309,6 +309,7 @@
     { h:"dashboard.html",  ic:"◈", t:"Inicio" },
     { h:"lecciones.html",  ic:"▤", t:"Mis lecciones" },
     { lbl:"Herramientas" },
+    { h:"dinamicas.html",  ic:"❖", t:"Dinámicas" },
     { h:"mi-pelicula.html",ic:"🎥", t:"Mi Película" },
     { h:"bitacora.html",   ic:"✎", t:"Bitácora" },
     { h:"practica.html",   ic:"◉", t:"Práctica" },
