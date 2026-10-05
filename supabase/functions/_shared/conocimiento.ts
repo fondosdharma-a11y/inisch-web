@@ -134,7 +134,7 @@ export const CUPON_FUNDADOR_VENCE = Date.UTC(2026, 10, 5, 5, 59, 59);
 /** La linea del cupon mientras esta vigente; despues, nada (los asistentes ya no lo ofrecen). */
 export function lineaCupon(ahora: Date = new Date()): string {
   if (ahora.getTime() > CUPON_FUNDADOR_VENCE) return "";
-  return "CUPON VIGENTE: con el cupon FUNDADOR, el acceso al campus queda en $299.50 MXN (50% de descuento) hasta el 4 de noviembre de 2026. " +
+  return "CUPON VIGENTE: con el cupon FUNDADOR, el acceso al campus queda en $299.50 MXN (50% de descuento), valido hasta el 4 de noviembre de 2026 a las 23:59 h (hora del centro de Mexico); da siempre esa hora y zona. " +
     "Solo aplica al acceso al campus (no al Taller, al Retiro ni a otros programas). Se escribe en la pagina de pago, o ya va puesto en el boton " +
     "\"Usar el cupon\" de la barra de arriba del sitio: https://buy.stripe.com/8x25kEgwg7Li2AJdkVgEg2N?prefilled_promo_code=FUNDADOR\n";
 }
