@@ -506,7 +506,10 @@
   var ENLACE_CAMPUS = "https://buy.stripe.com/8x25kEgwg7Li2AJdkVgEg2N";
 
   function pantallaSinAcceso(content){
-    var pagoCampus = ENLACE_CAMPUS + (USER.email ? "?prefilled_email=" + encodeURIComponent(USER.email) : "");
+    // Cupon FUNDADOR: 50% hasta el 4-nov-2026 23:59 (hora de Mexico); el codigo va ya puesto en el pago.
+    var conCupon = Date.now() <= Date.UTC(2026, 10, 5, 5, 59, 59);
+    var pagoCampus = ENLACE_CAMPUS + "?" + (USER.email ? "prefilled_email=" + encodeURIComponent(USER.email) + "&" : "") +
+                     (conCupon ? "prefilled_promo_code=FUNDADOR" : "");
     content.innerHTML =
       '<div class="card" style="text-align:center;padding:clamp(40px,7vw,64px) 26px;max-width:620px;margin:0 auto">' +
         '<img src="../assets/mandala.png" alt="" style="width:72px;height:72px;border-radius:50%;margin-bottom:22px">' +
@@ -515,6 +518,8 @@
           'El campus se abre de dos formas: con tu inscripción al <b>Taller Intensivo</b>, que ya lo incluye, ' +
           'o con el <b>acceso al campus por $599 MXN durante 12 meses</b>, un complemento para estudiar a tu ritmo que no sustituye al Taller. ' +
           'Ahí encontrarás las lecciones en video, Mi Película, la Bitácora y la Práctica.</p>' +
+        (conCupon ? '<p style="font-size:15.5px;line-height:1.7;margin-bottom:8px">Hasta el 4 de noviembre, con el cupón ' +
+          '<b>FUNDADOR</b> el acceso al campus queda en <b>$299.50</b> (50% de descuento). Ya va puesto en el botón de pago.</p>' : '') +
         '<p class="muted" style="font-size:15.5px;line-height:1.7">' +
           'Si ya pagaste, escríbenos y lo activamos enseguida: a veces tarda unas horas.</p>' +
         '<div style="display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin-top:26px">' +

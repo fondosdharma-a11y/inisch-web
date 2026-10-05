@@ -215,7 +215,66 @@ window.INISCH_COHORTES = [
     });
   }
 
-  function arrancar(){ pintar(); pintarBarra(); }
+  /* ------------------------------------------------------------
+     CUPON FUNDADOR (orden del Jefe 2026-10-05)
+     50% en el acceso al campus ($599 -> $299.50), hasta el 4 de
+     noviembre de 2026 a las 23:59 (hora de Mexico). Va hasta arriba,
+     encima de la barra de la proxima fecha, y se quita sola al vencer.
+     ------------------------------------------------------------ */
+  var CUPON = {
+    codigo: "FUNDADOR",
+    vence: Date.UTC(2026, 10, 5, 5, 59, 59),   // 4-nov-2026 23:59:59 en la Ciudad de Mexico
+    pago: "https://buy.stripe.com/8x25kEgwg7Li2AJdkVgEg2N?prefilled_promo_code=FUNDADOR"
+  };
+  window.INISCH_CUPON = CUPON;
+
+  // Los colores van aqui y no en main.css: asi se ven bien aunque el navegador tenga la hoja vieja guardada.
+  var CSS_CUPON =
+    // Contenedor propio (no .an-in): pagos.js pone la etiqueta de la promocion del 25% en la primera .anuncio .an-in.
+    '.an-cupon .an-inc{max-width:1180px;margin:0 auto;padding:11px 46px 11px 32px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center}' +
+    '@media(max-width:640px){.an-cupon .an-inc{padding:10px 40px 10px 18px;gap:9px;font-size:13.5px}}' +
+    '.anuncio.an-cupon{background:linear-gradient(100deg,var(--gold),var(--gold-soft));color:#0A1518}' +
+    '.anuncio.an-cupon .an-tag{background:rgba(10,21,24,.14)}' +
+    '.anuncio.an-cupon .an-btn:hover{background:rgba(10,21,24,.14)}' +
+    '[data-theme="dark"] .anuncio.an-cupon{background:linear-gradient(100deg,var(--teal-deep),var(--teal));color:#F2F8F9}' +
+    '[data-theme="dark"] .anuncio.an-cupon .an-tag{background:rgba(255,255,255,.18)}' +
+    '[data-theme="dark"] .anuncio.an-cupon .an-btn:hover{background:rgba(255,255,255,.18)}';
+
+  function pintarCupon(){
+    if (document.querySelector(".an-cupon")) return;
+    if (Date.now() > CUPON.vence) return;
+    var clave = "inisch-cupon-" + CUPON.codigo;
+    try { if (sessionStorage.getItem(clave) === "x") return; } catch(e){}
+    if (!document.getElementById("estilo-cupon")){
+      var st = document.createElement("style");
+      st.id = "estilo-cupon";
+      st.textContent = CSS_CUPON;
+      document.head.appendChild(st);
+    }
+
+    var b = document.createElement("div");
+    b.className = "anuncio an-cupon";
+    b.innerHTML =
+      '<div class="an-inc">' +
+        '<span class="an-tag">' + T("Por tiempo limitado", "Limited time") + '</span>' +
+        '<span class="an-txt"><b>' + T("Cupón " + CUPON.codigo + ": 50% de descuento", "Code " + CUPON.codigo + ": 50% off") + '</b> ' +
+          T("en el acceso al campus por 12 meses: $599 → $299.50 MXN · hasta el 4 de noviembre",
+            "the student portal for 12 months: $599 → $299.50 MXN · until November 4") + '</span>' +
+        '<a class="an-btn" href="' + CUPON.pago + '" target="_blank" rel="noopener">' +
+          T("Usar el cupón", "Use the code") + '</a>' +
+        '<button class="an-x" aria-label="' + T("Cerrar","Close") + '">&times;</button>' +
+      '</div>';
+    document.body.insertBefore(b, document.body.firstChild);
+    document.documentElement.classList.add("con-anuncio");
+
+    b.querySelector(".an-x").addEventListener("click", function(){
+      try { sessionStorage.setItem(clave, "x"); } catch(e){}
+      b.remove();
+      if (!document.querySelector(".anuncio")) document.documentElement.classList.remove("con-anuncio");
+    });
+  }
+
+  function arrancar(){ pintar(); pintarBarra(); pintarCupon(); }
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", arrancar);
   else arrancar();
