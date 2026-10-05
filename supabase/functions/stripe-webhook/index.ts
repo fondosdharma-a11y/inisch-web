@@ -1,5 +1,6 @@
 // ============================================================
-// INISCH - Webhook de Stripe (v6, PREPARADA para Stripe Connect; desplegada: v5)
+// INISCH - Webhook de Stripe (PREPARADA para Stripe Connect, sin desplegar; la desplegada es la v6 de Supabase:
+// la v5 + el acceso al campus de $599 del 2026-10-05)
 // ============================================================
 // 1. Al confirmarse un pago, abre el acceso al campus.
 // 2. Si el pago vino con codigo de referido, acredita el 10%
@@ -38,6 +39,7 @@ const CUENTA_VIEJA = "acct_1UCKA9L8Oy5fwasW";
 
 const ETAPA: Record<string, number> = {
   taller: 1, taller_inscripcion: 1, taller_contado: 1, taller_ref_contado: 1,
+  campus: 1, campus_egresado: 1,
   diplomado_inscripcion: 2, diplomado_contado: 2, diplomado_auto: 2, diplomado_ref_contado: 2,
   instructor_inscripcion: 3, instructor_inscripcion_reg: 3, instructor_contado: 3,
   instructor_contado_reg: 3, instructor_auto: 3, instructor_auto_reg: 3,
@@ -47,6 +49,7 @@ const ETAPA: Record<string, number> = {
 // Precio de lista por concepto, solo para referencia en el registro
 const LISTA: Record<string, number> = {
   taller: 8500, taller_inscripcion: 8500, taller_contado: 8500, taller_ref_contado: 8500,
+  campus: 599,
   diplomado_inscripcion: 36000, diplomado_contado: 36000, diplomado_auto: 36000, diplomado_ref_contado: 36000,
   instructor_contado_reg: 57800, instructor_inscripcion_reg: 57800, instructor_ref_contado_reg: 57800,
   instructor_contado: 37666, instructor_inscripcion: 37666, instructor_ref_contado: 37666,

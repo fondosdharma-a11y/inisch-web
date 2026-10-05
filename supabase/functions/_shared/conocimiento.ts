@@ -68,6 +68,11 @@ Isabel es la creadora del Sistema. Consultas individuales de 1 hora, de 11:00 a 
 Promocion: $1,125 MXN (lista $1,500 MXN).
 No requiere haber hecho ningun programa. Se agendan en https://www.inisch.com/consulta.html
 
+=== ACCESO AL CAMPUS (sin tomar el Taller) ===
+El campus de alumnos tambien se puede contratar solo: $599 MXN, pago unico, con acceso por 12 meses. Incluye las 6 lecciones en video del Taller Intensivo (repaso de lo que se ve en el Taller), Mi Pelicula, la Bitacora del darte cuenta y Mi practica. No tiene promocion.
+Es un complemento: no sustituye al Taller ni incluye la Constancia de Formacion del Taller. Quien paga el Taller ya tiene el campus incluido, sin costo extra.
+Se contrata creando la cuenta en https://inisch.com/campus, donde aparece el boton de pago.
+
 === COMO SE PAGA ===
 En linea, desde el boton de pago de cada programa en inisch.com: tarjeta de credito o debito, o efectivo en OXXO. Pago seguro con Stripe; la confirmacion llega por correo.
 Al pagar se ve el nombre Fondos Dharma: es quien administra los cobros del Instituto. El programa y el lugar son del Instituto.
