@@ -30,7 +30,7 @@ ok(RECHAZO.test("La verdad no me interesa, gracias"), "rechazo en medio");
 ok(!RECHAZO.test("me interesa el taller"), "interés no es rechazo");
 
 // Etiquetas
-const antes = new Date("2026-10-05T18:00:00Z"), despues = new Date("2026-10-12T18:00:00Z");
+const antes = new Date("2026-10-03T18:00:00Z"), despues = new Date("2026-10-05T18:00:00Z");   // los videos de octubre vencieron el 4
 let r = procesar("Claro, te mando un video corto.\n[VIDEO_APARTAR]", antes);
 ok(r.videos.length === 1 && r.videos[0] === "VIDEO_APARTAR" && !r.texto.includes("["), "video vigente se manda y la etiqueta se borra");
 r = procesar("Claro.\n[VIDEO_APARTAR]", despues);
@@ -71,12 +71,13 @@ ok(og?.tipo === "ad" && og?.source_id === "120200" && og?.ctwa_clid === "abc" &&
 ok(origenDe({ type: "text" }) === null, "sin referral no hay origen");
 
 // Fecha del Taller desde el conocimiento compartido
-ok(tallerAbierto(new Date("2026-10-09T23:00:00Z")), "el 9 de octubre (hora de México) sigue abierto");
-ok(!tallerAbierto(new Date("2026-10-10T07:00:00Z")), "el 10 ya cerraron las inscripciones");
-ok(lineaFechaTaller(new Date("2026-10-05T18:00:00Z")).includes("10 y 11 de octubre"), "antes del cierre: la fecha vigente");
-ok(lineaFechaTaller(new Date("2026-10-12T18:00:00Z")).includes("NO tiene fecha confirmada"), "después: lista de espera, sin fecha vencida");
-ok(!sistemaINISCH(new Date("2026-10-12T18:00:00Z")).includes("{{FECHA_TALLER}}") &&
-   !sistemaINISCH(new Date("2026-10-12T18:00:00Z")).includes("10 y 11 de octubre de 2026. Inscripciones"), "el sistema ya no ofrece la fecha vencida");
+ok(tallerAbierto(new Date("2026-11-20T23:00:00Z")), "el 20 de noviembre (hora de México) sigue abierto");
+ok(!tallerAbierto(new Date("2026-11-21T07:00:00Z")), "el 21 ya cerraron las inscripciones");
+ok(lineaFechaTaller(new Date("2026-10-05T18:00:00Z")).includes("21 y 22 de noviembre"), "antes del cierre: la fecha vigente");
+ok(lineaFechaTaller(new Date("2026-11-23T18:00:00Z")).includes("NO tiene fecha confirmada"), "después: lista de espera, sin fecha vencida");
+ok(!sistemaINISCH(new Date("2026-11-23T18:00:00Z")).includes("{{FECHA_TALLER}}") &&
+   !sistemaINISCH(new Date("2026-11-23T18:00:00Z")).includes("21 y 22 de noviembre de 2026 (sabado y domingo). Inscripciones"), "el sistema ya no ofrece la fecha vencida");
+ok(sistemaINISCH().includes("taller de 4 horas"), "el taller de 4 horas aparece como próximamente");
 
 console.log(fallas ? `${fallas} FALLAS` : "TODO BIEN");
 if (fallas) process.exit(1);

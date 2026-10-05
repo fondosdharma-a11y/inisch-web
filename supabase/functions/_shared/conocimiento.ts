@@ -27,6 +27,7 @@ Fuera de la promocion existen: 15% de descuento pagando de contado, y 25% si ade
    Promocion: $6,375 MXN (lista $8,500 MXN, aprox. $500 USD). Se aparta el lugar con $1,500 (lista $2,000) y el resto se paga antes de comenzar.
    {{FECHA_TALLER}}
    Es completo en si mismo. La mayoria hace solo esto y no necesita nada mas.
+   PROXIMAMENTE, ademas: un taller de 4 horas en un solo dia (no es el Intensivo). Su fecha, modalidad y precio todavia no se anuncian: no los inventes; si le interesa, ofrece avisarle.
    Pagina: https://www.inisch.com/taller.html
 
 2) DIPLOMADO Y CERTIFICACION DE ESPECIALISTA EN AUTOCONOCIMIENTO DEL SCH
@@ -100,8 +101,8 @@ Nunca expliques estas etiquetas ni las menciones en tu texto.`;
 // Fecha del Taller (UNICA fuente). null = sin fecha confirmada: lista de espera.
 // ------------------------------------------------------------
 export const TALLER: { cierre: string; texto: string } | null = {
-  cierre: "2026-10-09",
-  texto: "10 y 11 de octubre de 2026. Inscripciones abiertas hasta el 9 de octubre.",
+  cierre: "2026-11-20",
+  texto: "21 y 22 de noviembre de 2026 (sabado y domingo). Inscripciones abiertas hasta el 20 de noviembre.",
 };
 
 // Numero del asistente de IA de WhatsApp (la lista de espera vive ahi). Vacio hasta que Meta lo active.

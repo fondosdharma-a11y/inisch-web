@@ -16,13 +16,13 @@ export const VIDEOS: Record<string, { link: string; caption: string; hasta: stri
   VIDEO_APARTAR: {
     link: "https://www.inisch.com/assets/video/como-apartar.mp4",
     caption: "Así se aparta tu lugar en el Taller Intensivo, paso a paso.",
-    hasta: "2026-10-11",
+    hasta: "2026-10-04",   // dicen 10 y 11 de octubre: el Taller pasó al 21-22 de noviembre
     nombre: "Cómo apartar tu lugar",
   },
   VIDEO_TALLER: {
     link: "https://www.inisch.com/assets/video/taller-octubre.mp4",
     caption: "La invitación al Taller Intensivo del 10 y 11 de octubre.",
-    hasta: "2026-10-11",
+    hasta: "2026-10-04",   // dicen 10 y 11 de octubre: el Taller pasó al 21-22 de noviembre
     nombre: "Invitación al Taller",
   },
 };
