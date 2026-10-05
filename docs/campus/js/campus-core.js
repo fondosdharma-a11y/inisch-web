@@ -513,7 +513,7 @@
         '<h1 style="font-size:clamp(22px,4vw,28px);line-height:1.2;margin-bottom:14px">Tu cuenta está creada</h1>' +
         '<p class="muted" style="font-size:15.5px;line-height:1.7;margin-bottom:8px">' +
           'El campus se abre de dos formas: con tu inscripción al <b>Taller Intensivo</b>, que ya lo incluye, ' +
-          'o con el <b>acceso al campus por $599 MXN durante 12 meses</b>. ' +
+          'o con el <b>acceso al campus por $599 MXN durante 12 meses</b>, un complemento para estudiar a tu ritmo que no sustituye al Taller. ' +
           'Ahí encontrarás las lecciones en video, Mi Película, la Bitácora y la Práctica.</p>' +
         '<p class="muted" style="font-size:15.5px;line-height:1.7">' +
           'Si ya pagaste, escríbenos y lo activamos enseguida: a veces tarda unas horas.</p>' +
