@@ -501,22 +501,29 @@
       });
   }
 
+  /* Acceso al campus vendido aparte: $599 MXN, pago unico, 12 meses (orden del Jefe 2026-10-05).
+     Quien paga el Taller Intensivo lo tiene incluido. */
+  var ENLACE_CAMPUS = "https://buy.stripe.com/8x25kEgwg7Li2AJdkVgEg2N";
+
   function pantallaSinAcceso(content){
+    var pagoCampus = ENLACE_CAMPUS + (USER.email ? "?prefilled_email=" + encodeURIComponent(USER.email) : "");
     content.innerHTML =
       '<div class="card" style="text-align:center;padding:clamp(40px,7vw,64px) 26px;max-width:620px;margin:0 auto">' +
         '<img src="../assets/mandala.png" alt="" style="width:72px;height:72px;border-radius:50%;margin-bottom:22px">' +
         '<h1 style="font-size:clamp(22px,4vw,28px);line-height:1.2;margin-bottom:14px">Tu cuenta está creada</h1>' +
         '<p class="muted" style="font-size:15.5px;line-height:1.7;margin-bottom:8px">' +
-          'El campus se abre al confirmarse tu inscripción al <b>Taller Intensivo</b>. ' +
-          'Ahí encontrarás tus lecciones, Mi Película, la Bitácora y la Práctica.</p>' +
+          'El campus se abre de dos formas: con tu inscripción al <b>Taller Intensivo</b>, que ya lo incluye, ' +
+          'o con el <b>acceso al campus por $599 MXN durante 12 meses</b>. ' +
+          'Ahí encontrarás las lecciones en video, Mi Película, la Bitácora y la Práctica.</p>' +
         '<p class="muted" style="font-size:15.5px;line-height:1.7">' +
           'Si ya pagaste, escríbenos y lo activamos enseguida: a veces tarda unas horas.</p>' +
         '<div style="display:flex;gap:11px;justify-content:center;flex-wrap:wrap;margin-top:26px">' +
-          '<a class="btn-p btn-sm" href="../taller.html">Ver el Taller Intensivo</a>' +
+          '<a class="btn-p btn-sm" target="_blank" rel="noopener" href="' + esc(pagoCampus) + '">Acceso al campus · $599</a>' +
+          '<a class="btn-o btn-sm" href="../taller.html">Ver el Taller Intensivo</a>' +
           '<a class="btn-o btn-sm" href="referidos.html">Mi enlace de referido</a>' +
           '<a class="btn-o btn-sm" target="_blank" rel="noopener" ' +
             'href="https://wa.me/523314701563?text=' +
-            encodeURIComponent("Hola, ya pagué el Taller Intensivo y me gustaría activar mi acceso al campus. Mi correo es: " + (USER.email||"")) +
+            encodeURIComponent("Hola, ya pagué y me gustaría activar mi acceso al campus. Mi correo es: " + (USER.email||"")) +
             '">Ya pagué, activar mi acceso</a>' +
         '</div>' +
         '<p class="tiny soft" style="margin-top:24px">Sesión iniciada como ' + esc(USER.email||"") + ' · ' +
