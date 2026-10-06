@@ -24,6 +24,8 @@ h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacin
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 input,select,textarea,button{font-family:inherit}
+/* Tarjetas que son botones (Dinámicas, Mi Película): el navegador les pone texto negro y centra el contenido. */
+button.card{color:var(--ink);font-size:inherit;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;text-align:left;width:100%}
 
 /* ============ ESTRUCTURA ============ */
 .shell{display:flex;min-height:100vh}
