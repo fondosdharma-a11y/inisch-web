@@ -8,7 +8,7 @@
 <link rel="icon" type="image/png" href="../assets/favicon.png">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0A1518">
-<link rel="stylesheet" href="css/campus.css">
+<link rel="stylesheet" href="css/campus.css?v=20261005b">
 <style>
   .din-paso{max-width:680px;margin:0 auto}
   .din-q{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(23px,3.4vw,30px);line-height:1.25;margin:10px 0 18px}
@@ -176,7 +176,7 @@ Campus.boot("Dinámicas", function(c, u){
       Object.keys(DIN).sort(function(a,b){ return DIN[a].orden - DIN[b].orden; }).forEach(function(k){
         var D = DIN[k];
         var hechas = rows.filter(function(r){ return r.tipo === k && r.terminada; }).length;
-        h += '<button class="card din-new" data-tipo="' + k + '" style="text-align:left;cursor:pointer;border:1px solid var(--line)">' +
+        h += '<button class="card din-new" data-tipo="' + k + '" style="color:var(--ink);display:flex;flex-direction:column;justify-content:flex-start;text-align:left;cursor:pointer;border:1px solid var(--line)">' +
              '<div style="font-size:22px;margin-bottom:8px;color:var(--gold)">' + D.ic + '</div>' +
              '<b style="font-size:15.5px">' + E(D.t) + '</b>' +
              '<p class="muted tiny" style="margin-top:6px">' + E(D.d) + '</p>' +
