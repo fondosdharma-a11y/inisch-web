@@ -10,19 +10,20 @@ export const MAX_DIA = 40;                      // mensajes atendidos por númer
 export const MAX_HISTORIA = 20;                 // 10 idas y vueltas
 export const VENTANA_HORAS = 24;                // la ventana de servicio de WhatsApp también es de 24 h
 
-/** Videos que el asistente puede mandar con una etiqueta. Cada uno deja de ofrecerse cuando caduca:
- *  los dos hablan del Taller del 10 y 11 de octubre y de los precios de la promoción. */
+/** Videos que el asistente puede mandar con una etiqueta. Cada uno deja de ofrecerse cuando caduca.
+ *  Versiones de noviembre (2026-10-05): la invitación lleva la fecha solo en su cierre y «Cómo apartar» no tiene fecha
+ *  (pero dice que al pagar se ve Fondos Dharma: al pasar a Stripe Connect se cambia). Los dos, hasta el cierre de inscripciones. */
 export const VIDEOS: Record<string, { link: string; caption: string; hasta: string; nombre: string }> = {
   VIDEO_APARTAR: {
-    link: "https://www.inisch.com/assets/video/como-apartar.mp4",
+    link: "https://www.inisch.com/assets/video/como-apartar-2.mp4",
     caption: "Así se aparta tu lugar en el Taller Intensivo, paso a paso.",
-    hasta: "2026-10-04",   // dicen 10 y 11 de octubre: el Taller pasó al 21-22 de noviembre
+    hasta: "2026-11-20",   // cierre de inscripciones del Taller del 21-22 de noviembre
     nombre: "Cómo apartar tu lugar",
   },
   VIDEO_TALLER: {
-    link: "https://www.inisch.com/assets/video/taller-octubre.mp4",
-    caption: "La invitación al Taller Intensivo del 10 y 11 de octubre.",
-    hasta: "2026-10-04",   // dicen 10 y 11 de octubre: el Taller pasó al 21-22 de noviembre
+    link: "https://www.inisch.com/assets/video/taller-invitacion.mp4",
+    caption: "La invitación al Taller Intensivo del 21 y 22 de noviembre.",
+    hasta: "2026-11-20",   // su cierre dice 21 y 22 de noviembre
     nombre: "Invitación al Taller",
   },
 };

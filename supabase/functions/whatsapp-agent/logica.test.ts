@@ -1,6 +1,6 @@
 // Pruebas de la lógica del asistente de WhatsApp. Correr: node supabase/functions/whatsapp-agent/logica.test.ts
 import {
-  BAJA, RECHAZO, aWhatsApp, canonico, contextoWA, historiaParaModelo, hoyMX, origenDe, procesar, textoDe, videosVigentes,
+  BAJA, RECHAZO, VIDEOS, aWhatsApp, canonico, contextoWA, historiaParaModelo, hoyMX, origenDe, procesar, textoDe, videosVigentes,
 } from "./logica.ts";
 import { lineaCupon, lineaFechaTaller, sistemaINISCH, tallerAbierto } from "../_shared/conocimiento.ts";
 
@@ -30,7 +30,8 @@ ok(RECHAZO.test("La verdad no me interesa, gracias"), "rechazo en medio");
 ok(!RECHAZO.test("me interesa el taller"), "interés no es rechazo");
 
 // Etiquetas
-const antes = new Date("2026-10-03T18:00:00Z"), despues = new Date("2026-10-05T18:00:00Z");   // los videos de octubre vencieron el 4
+const antes = new Date("2026-11-10T18:00:00Z"), despues = new Date("2026-11-22T18:00:00Z");   // los de noviembre vencen con el cierre (20-nov)
+ok(VIDEOS.VIDEO_APARTAR.link.endsWith("/como-apartar-2.mp4") && VIDEOS.VIDEO_TALLER.link.endsWith("/taller-invitacion.mp4"), "videos de noviembre (los de octubre ya no existen)");
 let r = procesar("Claro, te mando un video corto.\n[VIDEO_APARTAR]", antes);
 ok(r.videos.length === 1 && r.videos[0] === "VIDEO_APARTAR" && !r.texto.includes("["), "video vigente se manda y la etiqueta se borra");
 r = procesar("Claro.\n[VIDEO_APARTAR]", despues);
