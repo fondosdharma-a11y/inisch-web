@@ -48,13 +48,24 @@
   panel.appendChild(messagesEl);
   panel.appendChild(inputRow);
 
+  // Las respuestas pueden traer markdown («**$6,375 MXN**»); aquí se muestran como texto plano.
+  function sinMarkdown(t) {
+    return String(t || '')
+      .replace(/\*\*(.+?)\*\*/g, '$1')
+      .replace(/__(.+?)__/g, '$1')
+      .replace(/^#{1,6}\s*/gm, '')
+      .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, function (m, txt, url) { return txt.trim() === url ? url : txt + ': ' + url; })
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
+
   function addMessage(text, who) {
     var row = document.createElement('div');
-    row.style.cssText = 'max-width:85%; padding:8px 12px; border-radius:10px; line-height:1.4; ' +
+    row.style.cssText = 'max-width:85%; padding:8px 12px; border-radius:10px; line-height:1.4; white-space:pre-line; ' +
       (who === 'user'
         ? 'align-self:flex-end; background:var(--teal-deep,#254C58); color:var(--bg,#F7F2E7);'
         : 'align-self:flex-start; background:var(--bg-2,#EFE5D0); color:var(--ink,#25353C);');
-    row.textContent = text;
+    row.textContent = who === 'user' ? text : sinMarkdown(text);
     messagesEl.appendChild(row);
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }
