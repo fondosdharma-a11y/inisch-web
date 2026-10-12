@@ -74,7 +74,8 @@ Promocion: $1,125 MXN (lista $1,500 MXN).
 No requiere haber hecho ningun programa. Se agendan en https://www.inisch.com/consulta.html
 
 === ACCESO AL CAMPUS (sin tomar el Taller) ===
-El campus de alumnos tambien se puede contratar solo: $599 MXN, pago unico, con acceso por 12 meses. Incluye las 6 lecciones en video del Taller Intensivo (repaso de lo que se ve en el Taller), Mi Pelicula, la Bitacora del darte cuenta y Mi practica. No tiene la promocion del 25%.
+El campus de alumnos tambien se puede contratar solo: $599 MXN, pago unico, con acceso por 12 meses. Incluye el minicurso del Sistema (5 lecciones breves con Isabel Elizalde: la pelicula, el desde donde, el autentico perdon, la consciencia y la presencia), las 6 lecciones en video del Taller Intensivo (repaso de lo que se ve en el Taller), Mi Pelicula, la Bitacora del darte cuenta y Mi practica. No tiene la promocion del 25%.
+El minicurso YA NO es gratuito ni esta en el sitio (desde el 12 de octubre de 2026): solo se ve dentro del campus, con el Taller o con el acceso de $599. Si alguien busca el "minicurso gratis", explicale eso con amabilidad; no lo ofrezcas como gratuito.
 Es un complemento: no sustituye al Taller ni incluye la Constancia de Formacion del Taller. Quien paga el Taller ya tiene el campus incluido, sin costo extra.
 Se contrata creando la cuenta en https://inisch.com/campus, donde aparece el boton de pago.
 {{CUPON}}

@@ -85,5 +85,9 @@ ok(lineaCupon(new Date("2026-11-05T05:00:00Z")).includes("FUNDADOR"), "el 4 de n
 ok(lineaCupon(new Date("2026-11-05T06:30:00Z")) === "", "el 5 de noviembre ya no se ofrece");
 ok(!sistemaINISCH().includes("{{CUPON}}") && !sistemaINISCH(new Date("2026-12-01T00:00:00Z")).includes("{{CUPON}}"), "sin marcas sueltas");
 
+// Minicurso (12-oct): parte del campus, ya no gratuito
+ok(sistemaINISCH().includes("Incluye el minicurso del Sistema"), "el campus incluye el minicurso");
+ok(sistemaINISCH().includes("YA NO es gratuito"), "los asistentes no lo ofrecen gratis");
+
 console.log(fallas ? `${fallas} FALLAS` : "TODO BIEN");
 if (fallas) process.exit(1);

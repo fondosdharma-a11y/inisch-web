@@ -1,7 +1,7 @@
 /* Campus INISCH · trabajador de servicio
    Guarda la interfaz para que el campus abra aunque no haya conexion.
    Los DATOS del alumno nunca se guardan aqui: siempre se piden al servidor. */
-var CACHE = "inisch-campus-v5";
+var CACHE = "inisch-campus-v6";
 var BASE = [
   "/campus/dashboard.html", "/campus/lecciones.html", "/campus/leccion.html",
   "/campus/dinamicas.html", "/campus/mi-pelicula.html", "/campus/bitacora.html", "/campus/practica.html",

@@ -29,7 +29,7 @@ var LOGROS = [
   { id:"personajes",   ic:"🎭", t:"Los personajes",        d:"Identificaste 3 personajes de tu película.",
     test:function(s){ return s.personajes >= 3; } },
   { id:"etapa_uno",    ic:"❖", t:"Taller Intensivo completo",      d:"Terminaste todas las lecciones del Taller Intensivo.",
-    test:function(s){ return s.total > 0 && s.lecciones >= s.total; } }
+    test:function(s){ return s.totalTaller > 0 && s.leccionesTaller >= s.totalTaller; } }
 ];
 
 Campus.boot("Certificados", function(c, u){
@@ -54,12 +54,18 @@ Campus.boot("Certificados", function(c, u){
                Campus.DB.list("practicas",{})])
   .then(function(r){
     var courses=r[0]||[], prog=r[1]||[], bit=r[2]||[], pel=r[3]||[], pra=r[4]||[];
-    var total = 0; courses.forEach(function(co){ total += (co.lessons||[]).length; });
+    var total = 0, delTaller = {}, totalTaller = 0;
+    courses.forEach(function(co){
+      total += (co.lessons||[]).length;
+      if (co.etapa === 1) (co.lessons||[]).forEach(function(l){ delTaller[l.id] = 1; totalTaller++; });
+    });
     var dias = {}; pra.forEach(function(p){ if(p.fecha) dias[String(p.fecha).slice(0,10)]=true; });
 
     var s = {
       lecciones: prog.length,
       total: total,
+      leccionesTaller: prog.filter(function(p){ return delTaller[p.lesson_id]; }).length,
+      totalTaller: totalTaller,
       bitacora: bit.length,
       personajes: pel.filter(function(x){ return x.tipo==="personaje"; }).length,
       tienePaterna: pel.some(function(x){ return x.tipo==="paterna"; }),
