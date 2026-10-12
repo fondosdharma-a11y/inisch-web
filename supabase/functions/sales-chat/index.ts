@@ -16,6 +16,7 @@ const CORS = {
 };
 
 import { sistemaINISCH } from "../_shared/conocimiento.ts";
+import { contarPreguntaInversion, preguntaInversion, respuestaInversion } from "../_shared/inversion.ts";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
@@ -36,6 +37,11 @@ Deno.serve(async (req) => {
     if (!mensaje.trim()) {
       return new Response(JSON.stringify({ reply: "En que te puedo ayudar?" }), { headers: CORS });
     }
+
+    // Regla de Fondos Dharma: pregunta de inversion → texto exacto, sin IA; solo +1 al contador diario
+    if (preguntaInversion(mensaje)) await contarPreguntaInversion("inisch_sitio");
+    const fija = respuestaInversion(mensaje, historial.filter((m) => m && m.role === "assistant").map((m) => String(m.content || "")));
+    if (fija) return new Response(JSON.stringify({ reply: fija }), { headers: CORS });
 
     const messages = [
       ...historial

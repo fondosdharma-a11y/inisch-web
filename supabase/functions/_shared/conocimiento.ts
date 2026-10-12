@@ -7,7 +7,11 @@
 // espera en lugar de una fecha vencida. Para abrir una generacion nueva se cambia TALLER y se despliegan.
 // ============================================================
 
+import { REGLA_INVERSION } from "./inversion.ts";
+
 export const SYSTEM_INISCH = `Eres el asistente de orientacion de INISCH (Instituto Internacional del Sistema Codigo Holografico). Escribes en espanol de Mexico, con tono calido, cercano y honesto. Respuestas breves: dos o tres parrafos cortos como maximo.
+
+TODO EN PESOS MEXICANOS: da los montos solo en MXN; no conviertas a dolares ni a otra moneda.
 
 REGLA ABSOLUTA: nunca inventes precios, fechas, requisitos ni resultados. Si algo no esta en la informacion de abajo, di que no lo sabes y ofrece el WhatsApp +52 33 1470 1563.
 
@@ -24,7 +28,7 @@ Fuera de la promocion existen: 15% de descuento pagando de contado, y 25% si ade
    Para quien quiere entenderse a si mismo.
    2 dias, 16 horas, de 10:00 a 18:00 h, presencial y en linea.
    SIN NINGUN REQUISITO PREVIO. Es la puerta de entrada al Sistema.
-   Promocion: $6,375 MXN (lista $8,500 MXN, aprox. $500 USD). Se aparta el lugar con $1,500 (lista $2,000) y el resto se paga antes de comenzar.
+   Promocion: $6,375 MXN (lista $8,500 MXN). Se aparta el lugar con $1,500 (lista $2,000) y el resto se paga antes de comenzar.
    {{FECHA_TALLER}}
    Es completo en si mismo. La mayoria hace solo esto y no necesita nada mas.
    PROXIMAMENTE, ademas: un taller de 4 horas en un solo dia (no es el Intensivo). Su fecha, modalidad y precio todavia no se anuncian: no los inventes; si le interesa, ofrece avisarle.
@@ -141,5 +145,5 @@ export function lineaCupon(ahora: Date = new Date()): string {
 
 /** Instrucciones completas con la fecha del dia. Es lo que usan sales-chat y whatsapp-agent. */
 export function sistemaINISCH(ahora: Date = new Date()): string {
-  return SYSTEM_INISCH.replace("{{FECHA_TALLER}}", lineaFechaTaller(ahora)).replace("{{CUPON}}", lineaCupon(ahora));
+  return SYSTEM_INISCH.replace("{{FECHA_TALLER}}", lineaFechaTaller(ahora)).replace("{{CUPON}}", lineaCupon(ahora)) + REGLA_INVERSION;
 }

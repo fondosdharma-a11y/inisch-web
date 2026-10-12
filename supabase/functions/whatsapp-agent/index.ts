@@ -23,6 +23,7 @@
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 import { sistemaINISCH, tallerAbierto } from "../_shared/conocimiento.ts";
+import { contarPreguntaInversion, preguntaInversion, respuestaInversion } from "../_shared/inversion.ts";
 import {
   BAJA, HUMANO, MAX_DIA, MAX_HISTORIA, RECHAZO, VENTANA_HORAS, VIDEOS,
   aWhatsApp, canonico, contextoWA, historiaParaModelo, hoyMX, origenDe, procesar, resumen, textoDe,
@@ -178,6 +179,16 @@ async function atender(sb: any, msg: any) {
   const { data: filasDesc } = await sb.from("wa_mensajes").select("rol, texto, creado")
     .eq("huella", h).gte("creado", desde).order("creado", { ascending: false }).limit(MAX_HISTORIA);
   const filas = (filasDesc || []).reverse();
+
+  // Regla de Fondos Dharma: pregunta de inversion → texto exacto, sin IA, sin aviso a nadie; solo +1 al contador diario
+  if (preguntaInversion(texto)) await contarPreguntaInversion("inisch_whatsapp");
+  const fija = respuestaInversion(texto, filas.filter((f: any) => f.rol === "asistente").map((f: any) => String(f.texto || "")));
+  if (fija) {
+    if (await mandar(para, { type: "text", text: { body: fija } })) {
+      await sb.from("wa_mensajes").insert({ huella: h, rol: "asistente", texto: fija });
+    }
+    return;
+  }
   const primero = !filas.some((f: any) => f.rol === "asistente");
   const sistema = sistemaINISCH() + contextoWA({ primero, alumno: Boolean(alumno), abierto: tallerAbierto() });
 
